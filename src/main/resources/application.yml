@@ -1,7 +1,7 @@
 server:
-  port: 8094
+  port: 8100
   servlet:
-    contextPath: /mssintetrans-asignaciones
+    contextPath: /mssintetrans-ccom-rutas-asig
 
 jwt:
   secretkey: funcionamuybien
