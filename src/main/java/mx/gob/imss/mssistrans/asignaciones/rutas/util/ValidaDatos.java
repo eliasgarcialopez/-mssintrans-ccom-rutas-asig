@@ -1,6 +1,5 @@
 package mx.gob.imss.mssistrans.asignaciones.rutas.util;
 
-
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -10,14 +9,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import com.google.gson.Gson;
 
 import mx.gob.imss.mssistrans.asignaciones.rutas.dto.AsigRutasResponse;
+import mx.gob.imss.mssistrans.asignaciones.rutas.dto.DatosAsigResponse;
 import mx.gob.imss.mssistrans.asignaciones.rutas.dto.DatosUsuarioDTO;
+import mx.gob.imss.mssistrans.asignaciones.rutas.dto.RegistroRecorridoResponse;
 import mx.gob.imss.mssistrans.asignaciones.rutas.dto.Response;
 import mx.gob.imss.mssistrans.asignaciones.rutas.dto.RutasResponse;
 import mx.gob.imss.mssistrans.asignaciones.rutas.dto.SolicitudTrasladoResponse;
-import mx.gob.imss.mssistrans.asignaciones.rutas.dto.VehiculoResponse;
+import mx.gob.imss.mssistrans.asignaciones.rutas.dto.TripulacionAsigResponse;
 
-
-@SuppressWarnings({"unchecked", "rawtypes"})
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class ValidaDatos {
 
 	public static boolean getAccess() {
@@ -49,15 +49,16 @@ public class ValidaDatos {
 		respuesta.setDatos((T) content);
 		return respuesta;
 	}
-	public static <T> Response<?> respRutas(Response<T> respuesta, String msg, 
-			List<RutasResponse> listadeRutas) {
+
+	public static <T> Response<?> respRutas(Response<T> respuesta, String msg, List<RutasResponse> listadeRutas) {
 		respuesta.setCodigo(HttpStatus.OK.value());
 		respuesta.setError(false);
 		respuesta.setMensaje(msg);
 		respuesta.setDatos((T) listadeRutas);
 		return respuesta;
 	}
-	public static <T> Response<?> respSolTras(Response<T> respuesta, String msg, 
+
+	public static <T> Response<?> respSolTras(Response<T> respuesta, String msg,
 			List<SolicitudTrasladoResponse> listadeRutas) {
 		respuesta.setCodigo(HttpStatus.OK.value());
 		respuesta.setError(false);
@@ -66,8 +67,8 @@ public class ValidaDatos {
 		return respuesta;
 	}
 
-	public static <T> Response<?> respVehiculos(Response<T> respuesta, String msg,
-			List<VehiculoResponse> objetoMapeado) {
+	public static <T> Response<?> respDatosAsig(Response<T> respuesta, String msg,
+			List<DatosAsigResponse> objetoMapeado) {
 		respuesta.setCodigo(HttpStatus.OK.value());
 		respuesta.setError(false);
 		respuesta.setMensaje(msg);
@@ -75,16 +76,25 @@ public class ValidaDatos {
 		return respuesta;
 	}
 
-	public static DatosUsuarioDTO datosUsuarios () {
+	public static DatosUsuarioDTO datosUsuarios() {
 
-        String usuario = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Gson gson = new Gson();
-        return gson.fromJson(usuario, DatosUsuarioDTO.class);
-        //return null;
+		String usuario = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Gson gson = new Gson();
+		return gson.fromJson(usuario, DatosUsuarioDTO.class);
+		// return null;
 	}
 
-/*
-	public static <T> Response<?> respUnidadCromatica(Respuesta<T> respuesta, String msg, List<Unidad> listaDeUnidad) {
+	public static <T> Response<?> respTripulacionAsig(Response<T> respuesta, String msg,
+			List<TripulacionAsigResponse> objetoMapeado) {
+		respuesta.setCodigo(HttpStatus.OK.value());
+		respuesta.setError(false);
+		respuesta.setMensaje(msg);
+		respuesta.setDatos((T) objetoMapeado);
+		return respuesta;
+	}
+
+	public static <T> Response<?> respRegistroRecorrido(Response<T> respuesta, String msg,
+			RegistroRecorridoResponse listaDeUnidad) {
 		respuesta.setCodigo(HttpStatus.OK.value());
 		respuesta.setError(false);
 		respuesta.setMensaje(msg);
@@ -92,25 +102,23 @@ public class ValidaDatos {
 		return respuesta;
 	}
 
-	public static <T> Response<?> respVehiculosCromatica(Respuesta<T> respuesta, String msg,
-			VehiculosCromaticaByIdResponse content) {
-		respuesta.setCodigo(HttpStatus.OK.value());
-		respuesta.setError(false);
-		respuesta.setMensaje(msg);
-		respuesta.setDatos((T) content);
-		return respuesta;
-	}
-*/
+	/*
+	 * public static <T> Response<?> respVehiculosCromatica(Respuesta<T> respuesta,
+	 * String msg, VehiculosCromaticaByIdResponse content) {
+	 * respuesta.setCodigo(HttpStatus.OK.value()); respuesta.setError(false);
+	 * respuesta.setMensaje(msg); respuesta.setDatos((T) content); return respuesta;
+	 * }
+	 */
 	public static String getNameCol(String nameCol) {
 		if (nameCol.equals("idRutaAsignacion"))
-			return "ID_RUTA_ASIGNACION";
+			return "ID_RUTA";
 		else if (nameCol.equals("idSolicitud"))
 			return "ID_SOLICITUD";
 		else if (nameCol.equals("CVE_ECCO"))
 			return "cveEcco";
 		else if (nameCol.equals("idEstatusSolicitud"))
-			return "ID_ESTATUS_SOLICITUD";
+			return "DES_ESTATUS_ASIGNA";
 		else
-			return "ID_RUTA_ASIGNACION";
+			return "ID_RUTA";
 	}
 }

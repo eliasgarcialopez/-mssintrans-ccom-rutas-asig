@@ -15,16 +15,18 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "SINTRANST_VEHICULOS")
-public class VehiculoEntity {
+@Table(name = "SINTRANST_TRIPULACION")
+public class TripulacionAsigCam01Entity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID_VEHICULO", unique = false, nullable = true)
 	private String idVehiculo;
-	@Column(name = "CVE_ECCO", unique = false, nullable = true)
-	private String cveEcco;
-	@Column(name = "NUM_PLACAS", unique = false, nullable = true)
-	private String numPlacas;
+	@Column(name = "DES_NOMBRE", unique = false, nullable = true)
+	private String nomTripulante;
+	@Column(name = "CVE_MATRICULA_PERSONAL", unique = false, nullable = true)
+	private String cveMatricula;
+	@Column(name = "NUM_FOLIO_TJTA_COMBUSTIBLE", unique = false, nullable = true)
+	private String numTarjetaDig;
 }
 

@@ -24,15 +24,15 @@ import mx.gob.imss.mssistrans.asignaciones.rutas.util.ValidaDatos;
 
 @SuppressWarnings({ "rawtypes", "unused", "unchecked" })
 @RestController
-@RequestMapping("/asigRutas")
+@RequestMapping("/RutasAsignacionesCCOM")
 @CrossOrigin(methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE })
-public class AsigRutasController {
+public class RutasAsignacionesCCOMController {
 
 	@Autowired
 	AsigRutasServiceImpl asigRutasServiceImpl;
 
 	@GetMapping
-	public <T> ResponseEntity<Response> consultarAsignacionRutas(@RequestParam Integer pagina,
+	public <T> ResponseEntity<Response> consultarRutasAsignaciones(@RequestParam Integer pagina,
 			@RequestParam(defaultValue = "10") Integer tamanio, @RequestParam(defaultValue = "asc") String orden,
 			@RequestParam(defaultValue = "idEstatusSolicitud") String ordenCol) {
 		Response<T> respuesta = new Response<>();
@@ -48,7 +48,7 @@ public class AsigRutasController {
 
 	@GetMapping(path = "/consultaById")
 	public <T> ResponseEntity<Response> consultaById(@RequestParam Integer pagina,
-			@RequestParam(defaultValue = "10") Integer tamanio, @RequestParam String idAsignacion,
+			@RequestParam(defaultValue = "10") Integer tamanio, @RequestParam String idRutaAsig,
 			@RequestParam String idSolicitud, @RequestParam(defaultValue = "asc") String orden,
 			@RequestParam(defaultValue = "idEstatusSolicitud") String ordenCol) {
 
@@ -58,24 +58,24 @@ public class AsigRutasController {
 			return new ResponseEntity<>(respuesta, HttpStatus.OK);
 		} else {
 			Pageable pageable = PageRequest.of(pagina, tamanio);
-
-			Response response = asigRutasServiceImpl.consultaById(pagina, tamanio, idAsignacion, idSolicitud);
+			Response response = asigRutasServiceImpl.consultaById(pagina, tamanio, idRutaAsig, idSolicitud);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	}
 
-	@DeleteMapping(path = "{idAsignacion}")
-	public <T> ResponseEntity<Response> delete(@PathVariable String idAsignacion) {
+	@DeleteMapping(path = "{idRutaAsignacion}")
+	public <T> ResponseEntity<Response> delete(@PathVariable String idRutaAsignacion) {
 		Response<T> respuesta = new Response<>();
 		if (ValidaDatos.getAccess()) {
 			respuesta = ValidaDatos.noAutorizado(respuesta);
 			return new ResponseEntity<>(respuesta, HttpStatus.OK);
 		} else {
-			Response response = asigRutasServiceImpl.delete(idAsignacion);
+			Response response = asigRutasServiceImpl.delete(idRutaAsignacion);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	}
-/****** HU006 - 26 **********/
+
+	/****** HU006 - 26 **********/
 	@GetMapping(path = "/getRutas")
 	public <T> ResponseEntity<Response> obtenerRuta() {
 
@@ -84,49 +84,65 @@ public class AsigRutasController {
 			respuesta = ValidaDatos.noAutorizado(respuesta);
 			return new ResponseEntity<>(respuesta, HttpStatus.OK);
 		} else {
-	        DatosUsuarioDTO datosUsuarios = ValidaDatos.datosUsuarios();
+			DatosUsuarioDTO datosUsuarios = ValidaDatos.datosUsuarios();
 			Response response = asigRutasServiceImpl.getRutas(datosUsuarios.getIDOOAD());
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	}
 
-	@GetMapping(path = "/getSolTraslado/{idRuta}")
-	public <T> ResponseEntity<Response> getSolicitudTraslado(@PathVariable String idRuta) {
+	@GetMapping(path = "/getSolTraslado/{idVehiculo}")
+	public <T> ResponseEntity<Response> getSolicitudTraslado(@PathVariable Integer idVehiculo) {
 
 		Response<T> respuesta = new Response<>();
 		if (ValidaDatos.getAccess()) {
 			respuesta = ValidaDatos.noAutorizado(respuesta);
 			return new ResponseEntity<>(respuesta, HttpStatus.OK);
 		} else {
-			Response response = asigRutasServiceImpl.getSolicitudTraslado(idRuta);
+			DatosUsuarioDTO datosUsuarios = ValidaDatos.datosUsuarios();
+			Response response = asigRutasServiceImpl.getSolicitudTraslado(datosUsuarios.getIdUnidadAdscripcion(), idVehiculo);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	}
 
-	
-	@GetMapping(path = "/getDatosAsignacion/{idVehiculo}")
-	public <T> ResponseEntity<Response> getDatosAsignacion(@PathVariable String idVehiculo) {
+	@GetMapping(path = "/getDatosAsignacion")
+	public <T> ResponseEntity<Response> getDatosAsignacion(@RequestParam Integer idVehiculo,
+			@RequestParam Integer idRuta, @RequestParam Integer idSolicitud) {
 
 		Response<T> respuesta = new Response<>();
 		if (ValidaDatos.getAccess()) {
 			respuesta = ValidaDatos.noAutorizado(respuesta);
 			return new ResponseEntity<>(respuesta, HttpStatus.OK);
 		} else {
-	        DatosUsuarioDTO datosUsuarios = ValidaDatos.datosUsuarios();
-			Response response = asigRutasServiceImpl.getDatosAsignacion(idVehiculo, datosUsuarios.getIDOOAD());
+			DatosUsuarioDTO datosUsuarios = ValidaDatos.datosUsuarios();
+			Response response = asigRutasServiceImpl.getDatosAsignacion(idVehiculo, idRuta,	idSolicitud);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	}
 
-	@GetMapping(path = "/getTripulacionAsignada/{idVehiculo}")
-	public <T> ResponseEntity<Response> getTripulacionAsignada(@PathVariable String idVehiculo) {
+	@GetMapping(path = "/getTripulacionAsignada")
+	public <T> ResponseEntity<Response> getTripulacionAsignada(@RequestParam Integer idVehiculo,
+			@RequestParam Integer idRuta, @RequestParam Integer idSolicitud) {
 
 		Response<T> respuesta = new Response<>();
 		if (ValidaDatos.getAccess()) {
 			respuesta = ValidaDatos.noAutorizado(respuesta);
 			return new ResponseEntity<>(respuesta, HttpStatus.OK);
 		} else {
-			Response response = asigRutasServiceImpl.getTripulacionAsignada(idVehiculo, 1);
+			Response response = asigRutasServiceImpl.getTripulacionAsignada(idRuta, idVehiculo, idSolicitud);
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		}
+	}
+
+	@GetMapping(path = "/getRegRecorrido")
+	public <T> ResponseEntity<Response> getRegRecorrido(@RequestParam Integer idVehiculo,
+			@RequestParam Integer idRuta) {
+
+		Response<T> respuesta = new Response<>();
+		if (ValidaDatos.getAccess()) {
+			respuesta = ValidaDatos.noAutorizado(respuesta);
+			return new ResponseEntity<>(respuesta, HttpStatus.OK);
+		} else {
+			Response response = asigRutasServiceImpl.getRegistroRecorrido(idVehiculo, idRuta);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	}

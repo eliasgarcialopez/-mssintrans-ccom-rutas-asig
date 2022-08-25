@@ -15,23 +15,22 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "SINTRANST_CONTROL_RUTAS")
-public class AsigRutasEntity {
+@Table(name = "SINTRANST_ASIGNACIONES")
+public class DatosAsigEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ID_SOLICITUD", unique = false, nullable = true)
-	private String idSolicitud;
-
-	@Column(name = "ID_RUTA", unique = false, nullable = true)
-	private String idRutaAsignacion;
-	
+	@Column(name = "ID_VEHICULO", unique = false, nullable = true)
+	private String idVehiculo;
 	@Column(name = "CVE_ECCO", unique = false, nullable = true)
 	private String cveEcco;
-	
+	@Column(name = "NUM_PLACAS", unique = false, nullable = true)
+	private String numPlacas;
+	@Column(name = "ID_RUTA", unique = false, nullable = true)
+	private String idRuta;
+	@Column(name = "ID_SOLICITUD", unique = false, nullable = true)
+	private String idSolicitud;
 	@Column(name = "DES_ESTATUS_ASIGNA", unique = false, nullable = true)
-	private String desEstatusSolicitud;
-	
-	
+	private String desEstatus;
 }
 

@@ -11,22 +11,24 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonRootName(value = "AsignacionRutas")
-public class AsigRutasResponse {
+@JsonRootName(value = "SolicitudTraslado")
+public class DatosAsigResponse {
 
 	@JsonProperty
-	private String idRutaAsignacion;
-	
+	private String idRuta;
+
 	@JsonProperty
 	private String idSolicitud;
-	
 
 	@JsonProperty
 	private String cveEcco;
 	
 	@JsonProperty
-	private String desEstatusSolicitud;
+	private String numPlacas;
+
+	@JsonProperty
+	private String desEstatus;
 	
-	
-	
+	@JsonProperty
+	private String idVehiculo;
 }

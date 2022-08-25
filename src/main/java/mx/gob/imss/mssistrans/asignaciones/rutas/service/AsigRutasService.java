@@ -7,11 +7,15 @@ public interface AsigRutasService {
 	<T>Response<?> consultaGeneral (Integer pagina, Integer tamanio, String orden, String columna);
 	<T>Response<?> consultaById (Integer pagina, Integer tamanio, String idAsignacion, String idSolicitud);
 	Response delete ( String id );
+	
+	
 	<T>Response getRutas(Integer idOoad);
-	<T>Response getSolicitudTraslado(String idrutaTraslado);
+	<T>Response getSolicitudTraslado(Integer idUnidadAdscripcion, Integer idVehiculo);
+	<T>Response getDatosAsignacion(Integer idVehiculo, Integer idRuta, Integer idSolicitud);
 
-	<T>Response getDatosAsignacion(String idVehiuclo, Integer idOoad );
-	<T>Response getTripulacionAsignada(String idVehiuclo, Integer idOoad );
+	<T>Response getTripulacionAsignada(Integer idRuta, Integer idVehiculo, Integer idSolicitud);
+
+	<T>Response getRegistroRecorrido(Integer idVehiculo, Integer idRuta);
 	
 /*	<T>Response consultaUnidades ();
 	<T>Response generaPDF (Integer idOoad, Integer idUnidad, Integer idArrendatario);
