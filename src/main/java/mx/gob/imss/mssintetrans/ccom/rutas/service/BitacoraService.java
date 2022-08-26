@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import mx.gob.imss.mssintetrans.ccom.rutas.dto.DatosBitacora;
 import mx.gob.imss.mssintetrans.ccom.rutas.dto.Respuesta;
-import mx.gob.imss.mssintetrans.ccom.rutas.dto.BitacoraServicio;
 
 public interface BitacoraService {
 	
@@ -16,6 +15,6 @@ public interface BitacoraService {
 	/**
  	 * Genera bitacora de servcios
  	 */
- 	Respuesta<byte[]> generaBitacora(BitacoraServicio bitacoraServicio, String matricula) throws IOException;
+ 	Respuesta<byte[]> generaBitacora(Integer idOoad, Integer idControlRuta, String fechaResg, String matricula) throws IOException;
 
 }

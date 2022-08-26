@@ -2,6 +2,7 @@ package mx.gob.imss.mssintetrans.ccom.rutas.service.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
-import mx.gob.imss.mssintetrans.ccom.rutas.dto.BitacoraServicio;
 import mx.gob.imss.mssintetrans.ccom.rutas.dto.DatosBitacora;
 import mx.gob.imss.mssintetrans.ccom.rutas.dto.Respuesta;
 import mx.gob.imss.mssintetrans.ccom.rutas.model.ControlRutas;
@@ -62,6 +62,14 @@ public class BitacoraServiceImpl implements BitacoraService {
                 datosBitacora.setDesTipoServicio(controlRutaEntity.getRuta().getDesServicio());
                 datosBitacora.setNumRuta(controlRutaEntity.getRuta().getNumFolioRuta());
                 datosBitacora.setIdControlRuta(controlRutaEntity.getIdControlRuta());
+                datosBitacora.setIdOoad(idOoad);
+                List<BitacoraServiciosEntity> lstBitacoraServiciosEntity = bitacoraRepository.findBitacoraByCr(controlRutaEntity.getIdControlRuta());
+                if (lstBitacoraServiciosEntity.size() > 0) {
+                	datosBitacora.setNumBitacora(lstBitacoraServiciosEntity.get(0).getNumBitacora());
+                	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            		String fechaBit = sdf.format(lstBitacoraServiciosEntity.get(0).getFecBitacora());
+                	datosBitacora.setFecBitacora(fechaBit);
+                }
                 response.setDatos(datosBitacora);
             } else {
                 response.setDatos(null);
@@ -81,42 +89,45 @@ public class BitacoraServiceImpl implements BitacoraService {
 	}
 
 	@Override
-	public Respuesta<byte[]> generaBitacora(BitacoraServicio bitacoraServicio, String matricula) throws IOException {
+	public Respuesta<byte[]> generaBitacora(Integer idOoad, Integer idControlRuta, String fechaResg, String matricula) throws IOException {
 		Map<String, Object> parameters = new HashMap<>();
         Respuesta<byte[]> response = new Respuesta<>();
-		String numBitacora = getSigBitacora(bitacoraServicio.getIdOoad());
+		String numBitacora = getSigBitacora(idOoad);
 		try {
 			log.info("Creando bitácora");
-			List<BitacoraServiciosEntity> lstBitacoraServiciosEntity = bitacoraRepository.findBitacoraByCr(bitacoraServicio.getId());
+			List<BitacoraServiciosEntity> lstBitacoraServiciosEntity = bitacoraRepository.findBitacoraByCr(idControlRuta);
 			BitacoraServiciosEntity bitacoraServiciosEntity = null;
 			if (lstBitacoraServiciosEntity.size() == 0) {
 				bitacoraServiciosEntity = new BitacoraServiciosEntity();
 			    bitacoraServiciosEntity.setNumBitacora(numBitacora);
 			    bitacoraServiciosEntity.setFecBitacora(new Date());
-			    bitacoraServiciosEntity.setIdOoad(bitacoraServicio.getIdOoad());
-			    bitacoraServiciosEntity.setControlRuta(controlRutasRepository.getById(bitacoraServicio.getId()));
+			    bitacoraServiciosEntity.setIdOoad(idOoad);
+			    bitacoraServiciosEntity.setControlRuta(controlRutasRepository.getById(idControlRuta));
 			    bitacoraServiciosEntity.setMatricula(matricula);
 			    bitacoraServiciosEntity.setFechaAlta(new Date());
 			    bitacoraServiciosEntity.setIndActivo(true);
-			    bitacoraServiciosEntity.setIndSistema(false);
+			    bitacoraServiciosEntity.setIndSistema(true);
 			    bitacoraRepository.save(bitacoraServiciosEntity);
 			} else {
 				bitacoraServiciosEntity = lstBitacoraServiciosEntity.get(0);
 			}
-			    
-			    
+			
 			log.info("Armando reporte");
 			parameters.put("numBitacora", numBitacora);
-			parameters.put("fecha", bitacoraServicio.getFechaBitacora());
+			parameters.put("fecha", fechaResg);
 			parameters.put("inmueble", bitacoraServiciosEntity.getControlRuta().getIdVehiculo().getUnidad().getNomUnidadAdscripcion());
 			parameters.put("marca", bitacoraServiciosEntity.getControlRuta().getIdVehiculo().getDesMarca());
 			parameters.put("placas", bitacoraServiciosEntity.getControlRuta().getIdVehiculo().getNumPlacas());
 			parameters.put("tipo", bitacoraServiciosEntity.getControlRuta().getIdVehiculo().getDesTipoVehiculo());
 			parameters.put("modelo", bitacoraServiciosEntity.getControlRuta().getIdVehiculo().getDesModelo().toString());
 			parameters.put("unidadAdscripcion", bitacoraServiciosEntity.getControlRuta().getIdVehiculo().getUnidad().getNomUnidadAdscripcion());
+			parameters.put("tripulacion", bitacoraServiciosEntity.getControlRuta().getTripulacion().getIdTripulacion().toString());
+			parameters.put("chofer", bitacoraServiciosEntity.getControlRuta().getTripulacion().getPersonalChofer().getDesNombre());
+			parameters.put("camillero1", bitacoraServiciosEntity.getControlRuta().getTripulacion().getPersonalCamillero1().getDesNombre());
+			parameters.put("camillero2", bitacoraServiciosEntity.getControlRuta().getTripulacion().getPersonalCamillero2().getDesNombre());
 			parameters.put("tipoServicio", bitacoraServiciosEntity.getControlRuta().getRuta().getDesServicio());
 			parameters.put("idRuta", bitacoraServiciosEntity.getControlRuta().getRuta().getNumFolioRuta());
-			InputStream reportStream = ReporteUtil.recuperarInputStream.apply("reportes/formato-bitacora-servicios.jrxml");
+			InputStream reportStream = ReporteUtil.recuperarInputStream.apply("reportes/formato-bitacora-servicios-ccom.jrxml");
             JasperReport report = ReporteUtil.recuperarJasperReport.apply(reportStream);
             reportStream.close();
 			byte[] filePdf = ReporteUtil.generarPdf.apply(report, parameters);

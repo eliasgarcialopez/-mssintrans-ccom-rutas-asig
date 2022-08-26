@@ -20,7 +20,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import mx.gob.imss.mssintetrans.ccom.rutas.service.BitacoraService;
-import mx.gob.imss.mssintetrans.ccom.rutas.dto.BitacoraServicio;
 import mx.gob.imss.mssintetrans.ccom.rutas.dto.DatosBitacora;
 import mx.gob.imss.mssintetrans.ccom.rutas.dto.DatosUsuario;
 import mx.gob.imss.mssintetrans.ccom.rutas.dto.Respuesta;
@@ -66,8 +65,8 @@ public class BitacoraServiciosController {
      * @param bitacoraServicio
      * @return
      */
-    @PostMapping(path = "/genera", consumes = "application/json" )
-    public ResponseEntity<?> bitacoraServicio(@RequestBody BitacoraServicio bitacoraServicio) throws IOException {
+    @PostMapping(path = "/genera/{idOoad}/{idControlRuta}/{fechaResg}")
+    public ResponseEntity<?> bitacoraServicio(@PathVariable Integer idOoad, @PathVariable Integer idControlRuta, @PathVariable String fechaResg) throws IOException {
     	
     	String usuario = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (usuario.equals("denegado")) {
@@ -83,7 +82,7 @@ public class BitacoraServiciosController {
         datosUsuarios.getIDOOAD();
         datosUsuarios.getRol();
 
-        Respuesta<byte[]> response = bitacoraService.generaBitacora(bitacoraServicio, datosUsuarios.getMatricula());
+        Respuesta<byte[]> response = bitacoraService.generaBitacora(idOoad, idControlRuta, fechaResg, datosUsuarios.getMatricula());
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, "application/pdf")
                 .header(HttpHeaders.CONTENT_DISPOSITION,
                         "attachment; filename=formato-bitacora-servicio.pdf")

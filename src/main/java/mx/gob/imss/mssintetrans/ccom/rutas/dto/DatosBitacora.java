@@ -55,4 +55,14 @@ public class DatosBitacora {
 	@JsonProperty
 	private Integer idControlRuta;
 	
+	// Si ya existe la bitacora
+	@JsonProperty
+	private String numBitacora;
+	
+	@JsonProperty
+	private String fecBitacora;
+	
+	@JsonProperty
+	private Integer idOoad;
+	
 }
