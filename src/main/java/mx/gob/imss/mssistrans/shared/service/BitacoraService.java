@@ -1,4 +1,4 @@
-package mx.gob.imss.mssistrans.asignaciones.service;
+package mx.gob.imss.mssistrans.shared.service;
 
 import mx.gob.imss.mssistrans.asignaciones.dto.BitacoraServicio;
 import mx.gob.imss.mssistrans.asignaciones.dto.Respuesta;

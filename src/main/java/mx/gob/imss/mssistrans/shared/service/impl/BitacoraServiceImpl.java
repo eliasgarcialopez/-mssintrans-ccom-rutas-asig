@@ -1,4 +1,4 @@
-package mx.gob.imss.mssistrans.asignaciones.service.impl;
+package mx.gob.imss.mssistrans.shared.service.impl;
 
 import java.io.InputStream;
 import java.util.Calendar;
@@ -18,8 +18,8 @@ import mx.gob.imss.mssistrans.asignaciones.model.PrestamosEntity;
 import mx.gob.imss.mssistrans.asignaciones.repository.AsignacionesRepository;
 import mx.gob.imss.mssistrans.asignaciones.repository.BitacoraServiciosRepository;
 import mx.gob.imss.mssistrans.asignaciones.repository.PrestamosRepository;
-import mx.gob.imss.mssistrans.asignaciones.service.BitacoraService;
-import mx.gob.imss.mssistrans.asignaciones.util.ReporteUtil;
+import mx.gob.imss.mssistrans.shared.service.BitacoraService;
+import mx.gob.imss.mssistrans.shared.util.ReporteUtil;
 import net.sf.jasperreports.engine.JasperReport;
 
 /**

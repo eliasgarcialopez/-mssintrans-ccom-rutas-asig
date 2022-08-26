@@ -1,4 +1,4 @@
-package mx.gob.imss.mssistrans.asignaciones.util;
+package mx.gob.imss.mssistrans.shared.util;
 
 import net.bytebuddy.ByteBuddy;
 import net.sf.jasperreports.engine.*;

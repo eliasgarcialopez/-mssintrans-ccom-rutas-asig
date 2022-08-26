@@ -16,10 +16,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import mx.gob.imss.mssistrans.asignaciones.dto.*;
 import mx.gob.imss.mssistrans.asignaciones.service.AsignacionesService;
-import mx.gob.imss.mssistrans.asignaciones.service.BitacoraService;
+import mx.gob.imss.mssistrans.shared.service.BitacoraService;
 
 import java.util.List;
 
