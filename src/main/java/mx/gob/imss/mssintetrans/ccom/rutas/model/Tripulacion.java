@@ -3,7 +3,6 @@ package mx.gob.imss.mssintetrans.ccom.rutas.model;
 import lombok.Getter;
 import lombok.Setter;
 import javax.persistence.*;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import java.io.Serializable;
 import java.time.LocalDate;
 
@@ -26,16 +25,19 @@ public class Tripulacion implements Serializable {
 	private Integer idVehiculo;
 
 	@Basic
-	@Column(name = "CVE_MATRICULA_CHOFER")
-	private String cveMatriculaChofer;
+    @OneToOne
+	@JoinColumn(name = "ID_PERSONAL_AMBULANCIA_CHOFER")
+	private PersonalAmbulancia personalChofer;
 
 	@Basic
-	@Column(name = "CVE_MATRICULA_CAMILLERO1")
-	private String cveMatriculaCamillero1;
+    @OneToOne
+	@JoinColumn(name = "ID_PERSONAL_AMBULANCIA_C1")
+	private PersonalAmbulancia personalCamillero1;
 
 	@Basic
-	@Column(name = "CVE_MATRICULA_CAMILLERO2")
-	private String cveMatriculaCamillero2;
+    @OneToOne
+	@JoinColumn(name = "ID_PERSONAL_AMBULANCIA_C2")
+	private PersonalAmbulancia personalCamillero2;
 	
 	@Basic
 	@Column(name = "FEC_ALTA")

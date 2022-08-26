@@ -27,18 +27,12 @@ public class ModuloAmbulancia implements Serializable {
     @Column(name = "DES_NOMBRE")
     private String desNombre;
     
-    @Basic
-    @Column(name = "DES_TIPO_MODULO")
-    private String desTipoModulo;
-    
-	
 	@JsonBackReference
 	@Basic
 	 @OneToOne(cascade = CascadeType.ALL)
 		@JoinColumn(name = "ID_MODULO_AMBULANCIA", unique = false, nullable = true)
 	private ZonaAtencion zona;
-  
-	
+ 
     @Basic
     @Column(name = "CVE_PRESUPUESTAL")
     private String cvePresupuestal;
@@ -57,16 +51,7 @@ public class ModuloAmbulancia implements Serializable {
     @Basic
     @Column(name = "ID_OOAD")
     private Integer idOOAD;
-    @Basic
-    @Column(name = "NUM_TELEFONO_OOAD")
-    private Integer numTelefonoOOAD; 
-
-    @Basic
-    @Column(name = "DES_REFERENCIA_OOAD")
-    private String desReferenciaOOAD;
-    
-
-    
+     
     @Basic
     @Column(name = "CVE_MATRICULA")
     private String cveMatricula;

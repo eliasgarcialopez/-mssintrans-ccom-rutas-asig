@@ -112,7 +112,7 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 				rutasTabla.setModulo(rutas.getModulo().getDesNombre());
 				
 				Optional<UnidadAdscripcion> origen = unidadAdscripcionRepository
-						.findByIdUnidadAdscripcionAndActivoEquals(rutas.getIdSolcitud().getCveAreaOrigen(), true);
+						.findByIdUnidadAdscripcionAndActivoEquals(rutas.getIdSolcitud().getDesAreaOrigen(), true);
 				
 				if(origen.isPresent())
 				rutasTabla.setOrigen(origen.get().getNomUnidadAdscripcion());
@@ -162,11 +162,11 @@ public class ControlRutasServiceImpl implements ControlRutasService {
             	 
             	 
             	 Optional<UnidadAdscripcion> origen = unidadAdscripcionRepository
- 						.findByIdUnidadAdscripcionAndActivoEquals(ruta.getIdSolcitud().getCveAreaOrigen(), true);
+ 						.findByIdUnidadAdscripcionAndActivoEquals(ruta.getIdSolcitud().getDesAreaOrigen(), true);
  				if(origen.isPresent())    	 rutasResponse.setOrigen(origen.get());
  				
  				 Optional<UnidadAdscripcion> destino = unidadAdscripcionRepository
-  						.findByIdUnidadAdscripcionAndActivoEquals(ruta.getIdSolcitud().getCveAreaDestino(), true);
+  						.findByIdUnidadAdscripcionAndActivoEquals(ruta.getIdSolcitud().getDesAreaDestino(), true);
   				if(destino.isPresent())    	 rutasResponse.setDestino(destino.get());
   				
   				rutasResponse.setFechaRuta(ruta.getFechaInicioAsigna().toString());
@@ -203,17 +203,17 @@ public class ControlRutasServiceImpl implements ControlRutasService {
   				
   				TripulacionResponse tripRes=new TripulacionResponse();
   				if(ruta.getTripulacion()!=null) {
-  				tripRes.setCveMatriculaCamillero1(ruta.getTripulacion().getCveMatriculaCamillero1());
-  				tripRes.setCveMatriculaCamillero2(ruta.getTripulacion().getCveMatriculaCamillero2());
-  				tripRes.setCveMatriculaChofer(ruta.getTripulacion().getCveMatriculaChofer());
+  				tripRes.setCveMatriculaCamillero1(ruta.getTripulacion().getPersonalCamillero1().getCveMatriculaPersonal());
+  				tripRes.setCveMatriculaCamillero2(ruta.getTripulacion().getPersonalCamillero2().getCveMatriculaPersonal());
+  				tripRes.setCveMatriculaChofer(ruta.getTripulacion().getPersonalChofer().getCveMatriculaPersonal());
   				
-  				Usuario  camillero1=usuarioRepository.getUsuario(ruta.getTripulacion().getCveMatriculaCamillero1());
+  				Usuario  camillero1=usuarioRepository.getUsuario(ruta.getTripulacion().getPersonalCamillero1().getCveMatriculaPersonal());
 	        	tripRes.setNombreCamillero1(camillero1.getNOM_USUARIO()+ " "+camillero1.getNOM_APELLIDO_PATERNO() + " "+ camillero1.getNOM_APELLIDO_MATERNO());
 
-	        	Usuario  camillero2=usuarioRepository.getUsuario(ruta.getTripulacion().getCveMatriculaCamillero2());
+	        	Usuario  camillero2=usuarioRepository.getUsuario(ruta.getTripulacion().getPersonalCamillero2().getCveMatriculaPersonal());
 	        	tripRes.setNombreCamillero2(camillero2.getNOM_USUARIO()+ " "+camillero2.getNOM_APELLIDO_PATERNO() + " "+ camillero2.getNOM_APELLIDO_MATERNO());
 	        	
-	        	Usuario  chofer=usuarioRepository.getUsuario(ruta.getTripulacion().getCveMatriculaChofer());
+	        	Usuario  chofer=usuarioRepository.getUsuario(ruta.getTripulacion().getPersonalChofer().getCveMatriculaPersonal());
 	        	tripRes.setNombreChofer(chofer.getNOM_USUARIO()+ " "+chofer.getNOM_APELLIDO_PATERNO() + " "+ chofer.getNOM_APELLIDO_MATERNO());
 	        	
 	        	
@@ -338,7 +338,7 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 			 if(veOp.isPresent()) controlRutas.setIdVehiculo(veOp.get());
 			 else log.info("Vehiculo no encontrado"+rutas.getIdVehiculo());
 			 //pendiente ver el catalog de status asignado
-			 controlRutas.setIndEstatusAsigna(1);;
+			 controlRutas.setDesEstatusAsigna("1");
 			 controlRutas.setIndiceSistema(true);
 			 
 			 Optional<ModuloAmbulancia> moduloOp= moAmbulanciaRepository.findByIdOOADAndActivoEquals(rutas.getIdModulo(), true);

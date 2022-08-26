@@ -37,8 +37,8 @@ public class ControlRutas implements Serializable {
    
     
     @Basic
-    @Column(name = "IND_ESTATUS_ASIGNA")
-    private Integer indEstatusAsigna;
+    @Column(name = "DES_ESTATUS_ASIGNA")
+    private String desEstatusAsigna;
     
 
 
