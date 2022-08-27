@@ -90,8 +90,8 @@ public class TripulacionServiceImpl implements TripulacionService {
 	        		   
 	        	}else {
 	        		 response.setDatos(null);
-		 	            response.setError(false);
-		 	            response.setMensaje("Exito");
+		 	            response.setError(true);
+		 	            response.setMensaje("ECCO  sin tripulación");
 		 	            response.setCodigo(HttpStatus.OK.value()); 
 	        	}
 	        } catch (Exception exception) {

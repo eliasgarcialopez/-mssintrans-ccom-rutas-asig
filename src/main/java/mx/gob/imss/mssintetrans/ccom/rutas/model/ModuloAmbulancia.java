@@ -55,7 +55,10 @@ public class ModuloAmbulancia implements Serializable {
     @Basic
     @Column(name = "CVE_MATRICULA")
     private String cveMatricula;
-        
+    
+    @Basic
+    @Column(name = "DES_TIPO_MODULO")
+    private String desTipoModulo;
 	
     @Basic
     @Column(name = "FEC_ALTA")

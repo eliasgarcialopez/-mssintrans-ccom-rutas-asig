@@ -363,6 +363,7 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 			 if(moduloOp.isPresent())
 			 controlRutas.setModulo(moduloOp.get());
 			 else log.info("modulo no encontrado"+rutas.getIdModulo());
+			 log.info("folio.."+rutas.getNumFolioTarjeta());
 			 controlRutas.setNumFolioTarjetaCombustible(""+rutas.getNumFolioTarjeta());
 			 controlRutas.setRuta(ruta);
 			 controlRutas.setFechaInicioAsigna(LocalDate.parse(rutas.getFechaRuta()));;

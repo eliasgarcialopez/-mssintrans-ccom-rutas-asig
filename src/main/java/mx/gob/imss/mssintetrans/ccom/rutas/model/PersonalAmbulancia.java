@@ -42,13 +42,13 @@ public class PersonalAmbulancia {
     @Basic
     @Column(name = "DES_ESTATUS", unique = false, nullable = true)
     private String desEstatus;
-
-    @Basic
-    @Column(name="ID_INCIDENCIA_PERS_AMB")
-    private Integer idIncidenciaPersAmb;
+//
+//    @Basic
+//    @Column(name="ID_INCIDENCIA_PERS_AMB")
+//    private Integer idIncidenciaPersAmb;
     
     @Basic
-    @Column(name = "CVE_MATRICULA_AUDITORIA", unique = false, nullable = true)
+ @Column(name = "CVE_MATRICULA_AUDITORIA", unique = false, nullable = true)
     private String cveMatriculaAlt;
     
     @Basic

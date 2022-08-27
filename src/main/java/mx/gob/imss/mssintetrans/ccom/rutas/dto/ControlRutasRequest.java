@@ -14,7 +14,7 @@ import lombok.Data;
 public class ControlRutasRequest {
 	    private Integer idSolicitudTraslado;
 	    private Integer idModulo;
-	    private Integer numFolioTarjeta;
+	    private String numFolioTarjeta;
 	    private Integer idTripulacion;	 
 	    private Integer idVehiculo;	
 	    private String fechaRuta;
