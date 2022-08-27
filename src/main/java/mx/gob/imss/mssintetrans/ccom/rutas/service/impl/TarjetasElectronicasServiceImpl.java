@@ -5,11 +5,15 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import com.google.gson.Gson;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mx.gob.imss.mssintetrans.ccom.rutas.dto.CatalogoGenerico;
+import mx.gob.imss.mssintetrans.ccom.rutas.dto.DatosUsuario;
 import mx.gob.imss.mssintetrans.ccom.rutas.dto.Respuesta;
 import mx.gob.imss.mssintetrans.ccom.rutas.model.TarjetasElectronicas;
 import mx.gob.imss.mssintetrans.ccom.rutas.repository.ControlRutasRepository;
@@ -28,13 +32,27 @@ public class TarjetasElectronicasServiceImpl implements TarjetasElectronicasServ
 	private ControlRutasRepository controlRutasRepository;
 
 	@Override
-	public Respuesta<List<CatalogoGenerico>> busquedaTarjetasDigitales(Integer idOoad) {
+	public Respuesta<List<CatalogoGenerico>> busquedaTarjetasDigitales() {
 		Respuesta<List<CatalogoGenerico>> response = new Respuesta<>();
         List<CatalogoGenerico> lstTarjetas = new ArrayList<CatalogoGenerico>();
 
         try {
-            TarjetasElectronicas tarjetaEntity = tarjetasRepository.findTarjetasDigitalesByOoad(idOoad);
-            ArrayList<String> lstTarjetasUsadas = controlRutasRepository.findTarjetasByOoad(idOoad); // Para descartar tarjetas utilizadas
+        	
+        	String usuario = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			log.info("usuario {}", usuario);
+			
+			if (usuario.equals("denegado")) {
+			
+				response.setError(false);
+				response.setCodigo(HttpStatus.UNAUTHORIZED.value());
+				response.setMensaje(usuario);
+				return response;
+			}
+			Gson gson = new Gson();
+			DatosUsuario datosUsuarios = gson.fromJson(usuario, DatosUsuario.class);
+			
+            TarjetasElectronicas tarjetaEntity = tarjetasRepository.findTarjetasDigitalesByOoad(datosUsuarios.getIDOOAD());
+            ArrayList<String> lstTarjetasUsadas = controlRutasRepository.findTarjetasByOoad(datosUsuarios.getIDOOAD()); // Para descartar tarjetas utilizadas
             int folioInicial = Integer.parseInt(tarjetaEntity.getNumFolioInicial());
             int folioFinal = Integer.parseInt(tarjetaEntity.getNumFolioFinal());
             for (int i = folioInicial; i <= folioFinal; i++) {

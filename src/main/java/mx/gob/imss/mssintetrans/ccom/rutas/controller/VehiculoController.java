@@ -39,16 +39,16 @@ public class VehiculoController {
 	private VehiculoService vehiculoService;
 
 	/**
-	 * Consultar los vehiculos disponibles por IdOOAD
+	 * Consultar los vehiculos disponibles por IdOOAD se obtiene del token
 	 *
 	 * @param idOOAD
 	 *
 	 * @return
 	 */
 	@GetMapping
-	public ResponseEntity<Respuesta<?>> consultarVehiculos(@RequestParam Integer idOOAD) {
+	public ResponseEntity<Respuesta<?>> consultarVehiculos() {
 	
-	Respuesta<?> response =vehiculoService.findVehiculoAsignables(idOOAD);
+	Respuesta<?> response =vehiculoService.findVehiculoAsignables();
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 

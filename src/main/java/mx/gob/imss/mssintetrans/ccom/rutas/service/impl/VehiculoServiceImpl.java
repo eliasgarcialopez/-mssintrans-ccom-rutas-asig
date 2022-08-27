@@ -12,8 +12,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.google.gson.Gson;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mx.gob.imss.mssintetrans.ccom.rutas.dto.DatosUsuario;
 import mx.gob.imss.mssintetrans.ccom.rutas.dto.Respuesta;
 import mx.gob.imss.mssintetrans.ccom.rutas.dto.VehiculoResponse;
 import mx.gob.imss.mssintetrans.ccom.rutas.model.ModuloAmbulancia;
@@ -34,7 +37,7 @@ private VehiculosRepository vehiculosRepository;
 private ModuloAmbulanciaRepository moAmbulanciaRepository;
 
 	@Override
-	public Respuesta<List<VehiculoResponse>> findVehiculoAsignables(Integer idOOAD) {
+	public Respuesta<List<VehiculoResponse>> findVehiculoAsignables() {
 		 Respuesta<List<VehiculoResponse>> response = new Respuesta<>();
 			
 	        try {
@@ -48,9 +51,13 @@ private ModuloAmbulanciaRepository moAmbulanciaRepository;
 					response.setMensaje(usuario);
 					return response;
 				}
-	        	 log.info("consultando los vehiculos disponibles, {}", idOOAD);
+
+				Gson gson = new Gson();
+				DatosUsuario datosUsuarios = gson.fromJson(usuario, DatosUsuario.class);
+				
+	        	 log.info("consultando los vehiculos disponibles, {}", datosUsuarios.getIDOOAD());
 	        	 
-	        	Optional<ModuloAmbulancia> modOp= moAmbulanciaRepository.findByIdOOADAndActivoEquals(idOOAD, true);
+	        	Optional<ModuloAmbulancia> modOp= moAmbulanciaRepository.findByIdOOADAndActivoEquals(datosUsuarios.getIDOOAD(), true);
 	        	if(modOp.isPresent()) {
 	        	ZonaAtencion zona=	modOp.get().getZona();
 	        	

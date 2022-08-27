@@ -87,9 +87,9 @@ public static ArrayList<String> getHorarioStringByTurno(Integer idHorario) {
 	public static String generateFolio(String ooadNombre, Integer consecutivo)
 			throws Exception {
 
-//- ID de la ruta (alfanumérico, 15 caracteres, obligatorio)  número consecutivo + siglas de la OOAD el sufijo AMB 
+//- ID de la ruta (alfanumérico, 15 caracteres, obligatorio)  número consecutivo + siglas de la OOAD(se confirma sea el mismo id generado) el sufijo AMB 
 
-		String siglas = getAbvFromOOAD(ooadNombre);
+		String siglas = getAbvFromOOAD(consecutivo);
 	    String sufijo= "AMB";
 		String numeroStr = "" + consecutivo;
 		String consecutivoCeros = "";
@@ -109,7 +109,7 @@ public static ArrayList<String> getHorarioStringByTurno(Integer idHorario) {
 			numeroFolio = "" + consecutivo;
 
 		}
-		idGenerado = siglas + numeroFolio + sufijo;
+		idGenerado = numeroFolio+siglas  + sufijo;
 		if (idGenerado.length() > 15)
 			throw new Exception("Se excedio la longitud del folio, debe ser de 15>Folio" + idGenerado);
 
@@ -118,58 +118,16 @@ public static ArrayList<String> getHorarioStringByTurno(Integer idHorario) {
 public static void main(String[] args) {
 	
 	try {
-		System.out.println(""+Utility.generateFolio("",1));
+		System.out.println(""+Utility.generateFolio("",10000));
 	} catch (Exception e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
 }
-	public static String getAbvFromOOAD(String nombreOOAD) {
-		String abrev = "";
-		//pendiente validar las siglas de la ooad
-		switch (nombreOOAD) {
-		case "Acrobacia":
-			abrev = "AC";
-			break;
-		case "Apoyo Administrativo":
-			abrev = "AA";
-			break;
-		case "Apoyo Administrativo U M":
-			abrev = "AAUM";
-			break;
-		case "Estafeta":
-			abrev = "ESTA";
-			break;
-		case "Programa Adec":
-			abrev = "PR";
-			break;
-		case "Servicios Generales":
-			abrev = "SG";
-			break;
-		case "Traslado de funcionarios":
-			abrev = "TF";
-			break;
-		case "Traslado de Personal":
-			abrev = "TPR";
-			break;
-		case "Abastecimientos":
-			abrev = "ABS";
-			break;
-		case "Suministro de Agua":
-			abrev = "SA";
-			break;
-		case "Carga":
-			abrev = "C";
-			break;
-		case "Traslado de Ropa":
-			abrev = "TR";
-			break;
-		default:
-			abrev="";
-			break;
-			
-		}
-		return abrev;
+	public static String getAbvFromOOAD(Integer consecutivo) {
+	 if(consecutivo<10) return "0"+consecutivo;
+	 else 
+		return ""+consecutivo;
 	}
 
 	

@@ -18,7 +18,7 @@ public interface SolicitudTrasladoRepository extends JpaRepository<SolicitudTras
   *turno sela Matutino horario del turno 06.01 a 14:00, 
   *vespertino horario del turno 14.01 a 19:00,
   *nocturno o especial horario del turno 19.01 a 06:00
-  * 1 acepta 2 rechazada 3 cancelada
+  * 1 acepta 2 rechazada 3 cancelada 4 asignada.
 
   * @param idArrendadora
   * @param activo

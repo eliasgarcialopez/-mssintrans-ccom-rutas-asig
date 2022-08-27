@@ -3,6 +3,7 @@ package mx.gob.imss.mssintetrans.ccom.rutas.service.impl;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -19,6 +20,7 @@ import mx.gob.imss.mssintetrans.ccom.rutas.dto.Respuesta;
 import mx.gob.imss.mssintetrans.ccom.rutas.dto.SolicitudTrasladoResponse;
 import mx.gob.imss.mssintetrans.ccom.rutas.model.ControlRutas;
 import mx.gob.imss.mssintetrans.ccom.rutas.model.SolicitudTraslado;
+import mx.gob.imss.mssintetrans.ccom.rutas.model.UnidadAdscripcion;
 import mx.gob.imss.mssintetrans.ccom.rutas.repository.ControlRutasRepository;
 import mx.gob.imss.mssintetrans.ccom.rutas.repository.ModuloAmbulanciaRepository;
 import mx.gob.imss.mssintetrans.ccom.rutas.repository.RutasDestinosRepository;
@@ -38,7 +40,8 @@ import mx.gob.imss.mssintetrans.ccom.rutas.util.Utility;
 public class SolicitudTrasladoServiceImpl implements SolicitudTrasladoService {
 	@Autowired
 	private SolicitudTrasladoRepository solicitudTrasladoRepository;
-
+   @Autowired
+   private UnidadAdscripcionRepository uAdscripcionRepository;
 	@Override
 	public Respuesta<List<SolicitudTrasladoResponse>> consultarSolicitudesByEstatusAndTurno(Integer turno) {
 		 Respuesta<List<SolicitudTrasladoResponse>> response = new Respuesta<>();
@@ -75,12 +78,29 @@ public class SolicitudTrasladoServiceImpl implements SolicitudTrasladoService {
 	        
 	        	}
 	            log.info("solicitudes, {}", result.size());
-	            
-	            
-	            final List<SolicitudTrasladoResponse> content = result
-	                    .stream()
-	                    .map(SolicitudTrasladoMapper.INSTANCE::solicitudTrasladoEntityToJsonTo)
-	                    .collect(Collectors.toList());
+	            List<SolicitudTrasladoResponse> content = new ArrayList<>();
+	            for (SolicitudTraslado solicitudTraslado : result) {
+	            	SolicitudTrasladoResponse r =new SolicitudTrasladoResponse();
+	            	r.setIdSolicitud(solicitudTraslado.getIdSolicitud());
+	            	
+	            	log.info("origen id "+solicitudTraslado.getCveOrigen());
+
+	            	Optional<UnidadAdscripcion> opUdes= uAdscripcionRepository.findById(solicitudTraslado.getCveDestino());
+	            	if(opUdes.isPresent()) {
+	            		log.info("destino id "+opUdes.get().getNomUnidadAdscripcion());
+	            		r.setCveDestino(opUdes.get());
+	            	}
+	            	else log.info("No se encuentra id unidad adscripcion"+ solicitudTraslado.getCveDestino());
+	            	
+	            	Optional<UnidadAdscripcion> opUOrig= uAdscripcionRepository.findById(solicitudTraslado.getCveOrigen());
+	            	if(opUOrig.isPresent()) {
+	            		log.info("destino id "+opUOrig.get().getNomUnidadAdscripcion());
+	            		r.setCveOrigen(opUOrig.get());
+	            	}
+	            	else log.info("No se encuentra id unidad adscripcion"+ solicitudTraslado.getCveOrigen());
+	            	content.add(r);
+					
+				}
 
 	            
 	            response.setDatos(content);

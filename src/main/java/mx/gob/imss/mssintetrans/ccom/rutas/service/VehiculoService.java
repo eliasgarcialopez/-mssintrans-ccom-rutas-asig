@@ -17,6 +17,6 @@ public interface VehiculoService {
      * @param idControlRuta
      * @return
      */
-	  Respuesta<List<VehiculoResponse>>findVehiculoAsignables(Integer idOOAD);
+	  Respuesta<List<VehiculoResponse>>findVehiculoAsignables();
 
 }

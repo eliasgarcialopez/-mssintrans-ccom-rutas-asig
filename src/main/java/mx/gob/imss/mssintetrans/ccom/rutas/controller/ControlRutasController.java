@@ -29,6 +29,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mx.gob.imss.mssintetrans.ccom.rutas.dto.ControlRutasRequest;
 import mx.gob.imss.mssintetrans.ccom.rutas.dto.ControlRutasResponse;
+import mx.gob.imss.mssintetrans.ccom.rutas.dto.ControlRutasTotalesResponse;
 import mx.gob.imss.mssintetrans.ccom.rutas.dto.Respuesta;
 import mx.gob.imss.mssintetrans.ccom.rutas.service.ControlRutasService;
 
@@ -75,6 +76,19 @@ public class ControlRutasController {
 		Respuesta<ControlRutasResponse> response = rutasService.consultarRutas(idRuta);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
+	
+	/**
+	 * Endpoint para consultar total de vehiculos por ooad se obtiene del token
+	 *
+	 * @param idRuta
+	 * @return
+	 */
+	@GetMapping("/totales/")
+	public ResponseEntity<?> consultarTotalesVehiculos() {
+		Respuesta<ControlRutasTotalesResponse> response = rutasService.consultarTotalesVehiculos();
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
 	/**
 	 * Endpoint para crear una Ruta
 	 *

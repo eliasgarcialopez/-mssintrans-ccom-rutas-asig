@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 
 import mx.gob.imss.mssintetrans.ccom.rutas.dto.ControlRutasResponse;
 import mx.gob.imss.mssintetrans.ccom.rutas.dto.ControlRutasTablaResponse;
+import mx.gob.imss.mssintetrans.ccom.rutas.dto.ControlRutasTotalesResponse;
 import mx.gob.imss.mssintetrans.ccom.rutas.dto.Respuesta;
 import mx.gob.imss.mssintetrans.ccom.rutas.dto.ControlRutasRequest;
 
@@ -19,7 +20,13 @@ public interface ControlRutasService {
      * @return
      */
     Respuesta<Page<ControlRutasTablaResponse>> consultarRutas(Pageable pageable);
-    
+    /**
+     * Consulta los totales del vehiculos por modulo 
+     *
+     * @param idControlRuta
+     * @return
+     */
+    Respuesta<ControlRutasTotalesResponse> consultarTotalesVehiculos();
     
     /**
      * Consulta una ruta y su control por el Identificador

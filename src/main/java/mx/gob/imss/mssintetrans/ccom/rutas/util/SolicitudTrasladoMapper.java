@@ -3,6 +3,7 @@ package mx.gob.imss.mssintetrans.ccom.rutas.util;
 import java.util.List;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 import mx.gob.imss.mssintetrans.ccom.rutas.dto.SolicitudTrasladoResponse;
@@ -22,6 +23,8 @@ public interface SolicitudTrasladoMapper {
      * @return
      * @deprecated
      */
+	  @Mapping(target= "cveOrigen", ignore= true)
+	  @Mapping(target= "cveDestino", ignore= true)
 	SolicitudTraslado jsonToSolicitudTrasladoEntity(SolicitudTrasladoResponse solicitud);
 	 /**
      * se transforma una solicitud traslado entity a dto
@@ -30,6 +33,8 @@ public interface SolicitudTrasladoMapper {
      * @return
      * @deprecated
      */
+	  @Mapping(target= "cveOrigen", ignore= true)
+	  @Mapping(target= "cveDestino", ignore= true)
 	SolicitudTrasladoResponse solicitudTrasladoEntityToJsonTo(SolicitudTraslado solicitud);
     /**
      * 

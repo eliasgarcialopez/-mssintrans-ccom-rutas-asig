@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import com.google.gson.Gson;
 
@@ -24,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import mx.gob.imss.mssintetrans.ccom.rutas.dto.ControlRutasRequest;
 import mx.gob.imss.mssintetrans.ccom.rutas.dto.ControlRutasResponse;
 import mx.gob.imss.mssintetrans.ccom.rutas.dto.ControlRutasTablaResponse;
+import mx.gob.imss.mssintetrans.ccom.rutas.dto.ControlRutasTotalesResponse;
 import mx.gob.imss.mssintetrans.ccom.rutas.dto.DatosUsuario;
 import mx.gob.imss.mssintetrans.ccom.rutas.dto.Respuesta;
 import mx.gob.imss.mssintetrans.ccom.rutas.dto.TripulacionResponse;
@@ -250,7 +252,7 @@ public class ControlRutasServiceImpl implements ControlRutasService {
         return response;
 	}
     @Transactional
-	@Override
+
 	public Respuesta<Integer> crearRuta(ControlRutasRequest rutas) {
 		Respuesta<Integer> response = new Respuesta<>();
 		try {// Pendiente crear el campo foliador....
@@ -281,9 +283,14 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 			
 		Optional<SolicitudTraslado>	solicitud=   solRepository.findById(rutas.getIdSolicitudTraslado());
 		if(solicitud.isPresent()) {
-			ruta.setIdOrigen(solicitud.get().getCveOrigen());
-			ruta.setIdUnidadDestino(solicitud.get().getCveDestino());
-			ruta.setIdUnidadSolcitante(solicitud.get().getIdUnidadSolicitante());
+			SolicitudTraslado solicitudTraslado=solicitud.get();
+			ruta.setIdOrigen(solicitudTraslado.getCveOrigen());
+			ruta.setIdUnidadDestino(solicitudTraslado.getCveDestino());
+			ruta.setIdUnidadSolcitante(solicitudTraslado.getIdUnidadSolicitante());
+			
+			log.info("Actualizando estatus a asignada ");
+			solicitudTraslado.setDesEstatusSolicitud("4");
+			solRepository.save(solicitudTraslado);
 		} else log.info("Solicitud no encontrado"+rutas.getIdSolicitudTraslado());
 		//pendiente
 		//ruta.setNumFolioRuta(user)
@@ -332,10 +339,21 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 			controlRutas.setFechaAlta(LocalDate.now());
 			
 			 if(solicitud.isPresent()) 	controlRutas.setIdSolcitud(solicitud.get());
+			 
+			 else log.info("Solicitud no encontrado");
 			
 			 
 			 Optional<Vehiculos> veOp=   vehiculoRepository.findById(rutas.getIdVehiculo());
-			 if(veOp.isPresent()) controlRutas.setIdVehiculo(veOp.get());
+			 if(veOp.isPresent()) {
+				 controlRutas.setIdVehiculo(veOp.get());
+				 Vehiculos ve=veOp.get();
+				 
+				 log.info("ajustando vehiculo a asignado");
+				 ve.setDesEstatusVehiculo("9");
+				 vehiculoRepository.save(ve);
+				 log.info(" vehiculo a asignado");
+				 
+			 }
 			 else log.info("Vehiculo no encontrado"+rutas.getIdVehiculo());
 			 //pendiente ver el catalog de status asignado
 			 controlRutas.setIndEstatusAsigna(1);;
@@ -358,6 +376,9 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 			 
 			 controlRutasRepository.save(controlRutas);
 			
+			 log.info("Ruta asignada..");
+			// As 
+			 
 			
 			response.setCodigo(HttpStatus.OK.value());
 			response.setMensaje("Exito");
@@ -366,6 +387,7 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 		} catch (Exception exception) {
 			exception.printStackTrace();
 			log.error("Ha ocurrido un error al guardar la ruta, error: {}", ExceptionUtils.getStackTrace(exception));
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			response.setCodigo(HttpStatus.INTERNAL_SERVER_ERROR.value());
 			response.setMensaje(exception.getMessage());
 			response.setError(true);
@@ -373,7 +395,6 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 		return response;
 	}
 @Transactional
-	@Override
 	public Respuesta<Integer> editarRuta(Integer idControlRuta, ControlRutasRequest rutaDTO) {
 Respuesta<Integer> response = new Respuesta<>();
 		
@@ -408,9 +429,18 @@ Respuesta<Integer> response = new Respuesta<>();
 			
 			Optional<SolicitudTraslado>	solicitud=   solRepository.findById(rutaDTO.getIdSolicitudTraslado());
 			if(solicitud.isPresent()) {
-				ruta.setIdOrigen(solicitud.get().getCveOrigen());
-				ruta.setIdUnidadDestino(solicitud.get().getCveDestino());
-				ruta.setIdUnidadSolcitante(solicitud.get().getIdUnidadSolicitante());
+				SolicitudTraslado solicitudTraslado=solicitud.get();
+				ruta.setIdOrigen(solicitudTraslado.getCveOrigen());
+				ruta.setIdUnidadDestino(solicitudTraslado.getCveDestino());
+				ruta.setIdUnidadSolcitante(solicitudTraslado.getIdUnidadSolicitante());
+				contRuta.setIdSolcitud(solicitudTraslado);
+				
+				//Ponemos esta solicitud en asiganda
+				
+				solicitudTraslado.setDesEstatusSolicitud("4");
+				solRepository.save(solicitudTraslado);
+				
+				
 			}
 			//borrando  destinos existentes				
 			for (RutasDestinos destino : ruta.getDestinos()) {
@@ -424,13 +454,16 @@ Respuesta<Integer> response = new Respuesta<>();
 			RutasDestinos destinos=new RutasDestinos();
 			destinos.setActivo(true);
 			destinos.setIdUnidadDestino(ruta.getIdUnidadDestino());
+			;
 			destinos.setIndiceSistema(true);
 			if(horas.size()==2) {
 				destinos.setTimHoraInicio(horas.get(0));
 				destinos.setTimHoraFin(horas.get(1));
 			}
 			destinos.setRuta(ruta);
-			
+			//destinosRepository.save(destinos);
+			log.info("destinos agregados");
+			ruta.getDestinos().clear();
 			ruta.getDestinos().add(destinos);
 			ruta.setFechaActualizacion(LocalDate.now());
 			rutasRepository.save(ruta);
@@ -438,7 +471,17 @@ Respuesta<Integer> response = new Respuesta<>();
 			
             contRuta.setRuta(ruta);
 			 Optional<Vehiculos> veOp=   vehiculoRepository.findById(rutaDTO.getIdVehiculo());
-			 if(veOp.isPresent()) contRuta.setIdVehiculo(veOp.get());
+			 if(veOp.isPresent()) { 
+				 
+				 Vehiculos vehiculo=veOp.get();
+				 contRuta.setIdVehiculo(vehiculo);
+				 vehiculo.setDesEstatusVehiculo("9");//en transito.
+				 vehiculoRepository.save(vehiculo);
+				 log.info("Vehiculo Asignado"+ vehiculo);
+				 
+				
+			 
+			 }
 			 
 			 contRuta.setCveMatricula(rutaDTO.getCveMatricula());
 			 contRuta.setFechaActualizacion(LocalDate.now());
@@ -453,6 +496,8 @@ Respuesta<Integer> response = new Respuesta<>();
 			
 			 Optional<Tripulacion> tripOp=tripulacionRepository.findById(rutaDTO.getIdTripulacion());
 			 if(tripOp.isPresent()) contRuta.setTripulacion(tripOp.get());
+			
+			 
 			 
 			      controlRutasRepository.save(contRuta);
 			 log.info("Asignacion Actualizada");
@@ -472,7 +517,7 @@ Respuesta<Integer> response = new Respuesta<>();
 			
 
 		} catch (Exception exception) {
-
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			log.error("Ha ocurrido un error al actualizar la ruta, error: {}", ExceptionUtils.getStackTrace(exception));
 			response.setCodigo(HttpStatus.INTERNAL_SERVER_ERROR.value());
 			response.setMensaje(exception.getMessage());
@@ -481,7 +526,7 @@ Respuesta<Integer> response = new Respuesta<>();
 		return response;
 	}
 @Transactional
-	@Override
+	
 	public Respuesta<Integer> eliminarRutas(Integer idControlRuta) {
 		Respuesta<Integer> response = new Respuesta<>();
 		try {
@@ -520,6 +565,7 @@ Respuesta<Integer> response = new Respuesta<>();
 			response.setError(false);
 			response.setDatos(rutas.getIdControlRuta());
 		} catch (Exception exception) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			log.error("Ha ocurrido un error al eliminar la ruta, error: {}", ExceptionUtils.getStackTrace(exception));
 			response.setCodigo(HttpStatus.INTERNAL_SERVER_ERROR.value());
 			response.setMensaje(exception.getMessage());
@@ -527,5 +573,68 @@ Respuesta<Integer> response = new Respuesta<>();
 		}
 		return response;
 	}
+
+@Override
+public Respuesta<ControlRutasTotalesResponse> consultarTotalesVehiculos() {
+	Respuesta<ControlRutasTotalesResponse> response = new Respuesta<>();
+    try {
+    	String user = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		log.info("usuario {}", user);
+		if (user.equals("denegado")) {
+			
+			response.setError(false);
+			response.setCodigo(HttpStatus.UNAUTHORIZED.value());
+			response.setMensaje(user);
+			return response;
+		}
+        log.info("Consultando el modulo por idOOAD");
+        Gson gson = new Gson();
+		DatosUsuario datosUsuarios = gson.fromJson(user, DatosUsuario.class);
+	    Integer idOOAD= datosUsuarios.getIDOOAD();
+	    ControlRutasTotalesResponse rutasResponse=new ControlRutasTotalesResponse();
+	   Optional<ModuloAmbulancia> opModulo=moAmbulanciaRepository.findByIdOOADAndActivoEquals(idOOAD, true);
+		if(opModulo.isPresent()) {
+			
+			ModuloAmbulancia moduloAmbulancia=opModulo.get();
+			Integer idZona=moduloAmbulancia.getZona().getIdZona();
+			
+			Integer totalVA=   vehiculoRepository.countTotalVehiculoAsignados(idZona);
+			
+				rutasResponse.setTotalVehiculosAsignados(totalVA);
+				
+				Integer totalVD=   vehiculoRepository.countTotalVehiculoDisponibles(idZona);
+		
+				rutasResponse.setTotalVehiculosDisponibles(totalVD);
+				
+				Integer totalMan=   vehiculoRepository.countTotalVehiculoMantenimiento(idZona);
+	
+			rutasResponse.setTotalVehiculosMantenimiento(totalMan);
+			
+			
+			Integer totalSin=   vehiculoRepository.countTotalVehiculoSiniestrados(idZona);
+		
+			rutasResponse.setTotalVehiculosSiniestrados(totalSin);
+
+			   
+        	response.setDatos(rutasResponse);
+	            response.setError(false);
+	            response.setMensaje("Exito");
+	            response.setCodigo(HttpStatus.OK.value());
+		}
+	    else {
+        	 response.setDatos(null);
+ 	            response.setError(false);
+ 	            response.setMensaje("Exito");
+ 	            response.setCodigo(HttpStatus.OK.value()); 
+         }
+       
+    } catch (Exception exception) {
+        log.info("Ha ocurrido un error al consultar totales de vehiculos error: "+ExceptionUtils.getStackTrace(exception));
+        response.setError(true);
+        response.setMensaje(exception.getMessage());
+        response.setCodigo(HttpStatus.INTERNAL_SERVER_ERROR.value());
+    }
+    return response;
+}
 
 }

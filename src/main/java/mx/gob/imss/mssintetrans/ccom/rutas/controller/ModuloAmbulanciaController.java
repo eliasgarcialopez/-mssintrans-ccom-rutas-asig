@@ -21,6 +21,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mx.gob.imss.mssintetrans.ccom.rutas.dto.Respuesta;
 import mx.gob.imss.mssintetrans.ccom.rutas.service.ControlRutasService;
+import mx.gob.imss.mssintetrans.ccom.rutas.service.ModuloService;
 import mx.gob.imss.mssintetrans.ccom.rutas.service.SolicitudTrasladoService;
 import mx.gob.imss.mssintetrans.ccom.rutas.service.TarjetasElectronicasService;
 
@@ -30,24 +31,24 @@ import mx.gob.imss.mssintetrans.ccom.rutas.service.TarjetasElectronicasService;
 @AllArgsConstructor
 @Slf4j
 @RestController
-@RequestMapping("/tarjetas")
+@RequestMapping("/modulo")
 @CrossOrigin(methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE })
 
-public class TarjetasElectronicasController {
+public class ModuloAmbulanciaController {
 	@Autowired
-	private TarjetasElectronicasService tarjetasElectronicasService;
+	private ModuloService moduloService;
 
 	/**
-	 * Consultar las tarjetas de combustible disponibles por IdOOAD se obtiene del token
+	 * Consulta el  modulo de ambulancia   por IdOOAD se obtiene del token
 	 *
 	 * @param idOOAD
 	 *
 	 * @return
 	 */
 	@GetMapping
-	public ResponseEntity<Respuesta<?>> consultarTarjetasCombustible() {
+	public ResponseEntity<Respuesta<?>> consultarModulo() {
 	
-	Respuesta<?> response =tarjetasElectronicasService.busquedaTarjetasDigitales();
+	Respuesta<?> response =moduloService.busquedaModulo();
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 

@@ -4,6 +4,7 @@ package mx.gob.imss.mssintetrans.ccom.rutas.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import mx.gob.imss.mssintetrans.ccom.rutas.model.UnidadAdscripcion;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -33,10 +34,10 @@ private Integer numTipoServicio;
 private Integer numPosturaPaciente;
 private String fecTransmision;
 private String timTasnmision;
-private Integer cveOrigen;
+private UnidadAdscripcion cveOrigen;
 private Integer cveAreaOrigen;
 private Integer numCamaOrigen;
-private Integer cveDestino;
+private UnidadAdscripcion cveDestino;
 private Integer cveAreaDestino;
 private Integer numCamaDestino;
 private Integer idCodigoPostal;
