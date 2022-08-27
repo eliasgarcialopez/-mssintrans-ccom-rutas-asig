@@ -3,6 +3,7 @@ package mx.gob.imss.mssintetrans.ccom.rutas.service.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,6 +21,8 @@ import mx.gob.imss.mssintetrans.ccom.rutas.model.ControlRutas;
 import mx.gob.imss.mssintetrans.ccom.rutas.repository.ControlRutasRepository;
 import mx.gob.imss.mssintetrans.ccom.rutas.service.BitacoraService;
 import mx.gob.imss.mssintetrans.ccom.rutas.util.ReporteUtil;
+import mx.gob.imss.mssintetrans.ccom.rutas.util.TipoVehEnum;
+import mx.gob.imss.mssintetrans.ccom.rutas.util.TipoServicioEnum;
 import net.sf.jasperreports.engine.JasperReport;
 import mx.gob.imss.mssintetrans.ccom.rutas.repository.BitacoraServiciosRepository;
 import mx.gob.imss.mssintetrans.ccom.rutas.model.BitacoraServiciosEntity;
@@ -118,14 +121,14 @@ public class BitacoraServiceImpl implements BitacoraService {
 			parameters.put("inmueble", bitacoraServiciosEntity.getControlRuta().getIdVehiculo().getUnidad().getNomUnidadAdscripcion());
 			parameters.put("marca", bitacoraServiciosEntity.getControlRuta().getIdVehiculo().getDesMarca());
 			parameters.put("placas", bitacoraServiciosEntity.getControlRuta().getIdVehiculo().getNumPlacas());
-			parameters.put("tipo", bitacoraServiciosEntity.getControlRuta().getIdVehiculo().getDesTipoVehiculo());
+			parameters.put("tipo", recuperaTipoVeh(bitacoraServiciosEntity.getControlRuta().getIdVehiculo().getDesTipoVehiculo()));
 			parameters.put("modelo", bitacoraServiciosEntity.getControlRuta().getIdVehiculo().getDesModelo().toString());
 			parameters.put("unidadAdscripcion", bitacoraServiciosEntity.getControlRuta().getIdVehiculo().getUnidad().getNomUnidadAdscripcion());
 			parameters.put("tripulacion", bitacoraServiciosEntity.getControlRuta().getTripulacion().getIdTripulacion().toString());
 			parameters.put("chofer", bitacoraServiciosEntity.getControlRuta().getTripulacion().getPersonalChofer().getDesNombre());
 			parameters.put("camillero1", bitacoraServiciosEntity.getControlRuta().getTripulacion().getPersonalCamillero1().getDesNombre());
 			parameters.put("camillero2", bitacoraServiciosEntity.getControlRuta().getTripulacion().getPersonalCamillero2().getDesNombre());
-			parameters.put("tipoServicio", bitacoraServiciosEntity.getControlRuta().getRuta().getDesServicio());
+			parameters.put("tipoServicio", recuperaTipoServicio(bitacoraServiciosEntity.getControlRuta().getRuta().getDesServicio()));
 			parameters.put("idRuta", bitacoraServiciosEntity.getControlRuta().getRuta().getNumFolioRuta());
 			InputStream reportStream = ReporteUtil.recuperarInputStream.apply("reportes/formato-bitacora-servicios-ccom.jrxml");
             JasperReport report = ReporteUtil.recuperarJasperReport.apply(reportStream);
@@ -158,5 +161,19 @@ public class BitacoraServiceImpl implements BitacoraService {
 
         return mes + '-' + ooad + '-' + String.format("%04d", Integer.parseInt(ultimoFolio) + 1);
     }
+	
+	private static String recuperaTipoVeh(String tipoVehId) throws Exception {
+		return Arrays.stream(TipoVehEnum.values()).filter(tipoVehValue -> tipoVehValue.getTipoVeh() == Integer.parseInt(tipoVehId))
+				 .map(Enum::name)
+	                .findFirst()
+	                .orElseThrow(() -> new Exception("No se ha encontrado el tipo vehiculo en la lista"));
+	}
+	
+	private static String recuperaTipoServicio(String tipoServicioId) throws Exception {
+		return Arrays.stream(TipoServicioEnum.values()).filter(tipoServicioValue -> tipoServicioValue.getTipoServicio() == Integer.parseInt(tipoServicioId))
+				 .map(Enum::name)
+	                .findFirst()
+	                .orElseThrow(() -> new Exception("No se ha encontrado el tipo vehiculo en la lista"));
+	}
 
 }
