@@ -65,17 +65,17 @@ public class TripulacionServiceImpl implements TripulacionService {
 	        	tripRes.setIdVehiculo(tripulacion.getIdVehiculo());
 	        	
 	        	
-	        	tripRes.setCveMatriculaCamillero1(tripulacion.getCveMatriculaCamillero1());
-	        	tripRes.setCveMatriculaCamillero2(tripulacion.getCveMatriculaCamillero2());
-	        	tripRes.setCveMatriculaChofer(tripulacion.getCveMatriculaChofer());
+	        	tripRes.setCveMatriculaCamillero1(tripulacion.getPersonalCamillero1().getCveMatriculaPersonal());
+	        	tripRes.setCveMatriculaCamillero2(tripulacion.getPersonalCamillero2().getCveMatriculaPersonal());
+	        	tripRes.setCveMatriculaChofer(tripulacion.getPersonalChofer().getCveMatriculaPersonal());
 	        	
-	        	Usuario  camillero1=usuarioRepository.getUsuario(tripulacion.getCveMatriculaCamillero1());
+	        	Usuario  camillero1=usuarioRepository.getUsuario(tripulacion.getPersonalCamillero1().getCveMatriculaPersonal());
 	        	tripRes.setNombreCamillero1(camillero1.getNOM_USUARIO()+ " "+camillero1.getNOM_APELLIDO_PATERNO() + " "+ camillero1.getNOM_APELLIDO_MATERNO());
 
-	        	Usuario  camillero2=usuarioRepository.getUsuario(tripulacion.getCveMatriculaCamillero2());
+	        	Usuario  camillero2=usuarioRepository.getUsuario(tripulacion.getPersonalCamillero2().getCveMatriculaPersonal());
 	        	tripRes.setNombreCamillero2(camillero2.getNOM_USUARIO()+ " "+camillero2.getNOM_APELLIDO_PATERNO() + " "+ camillero2.getNOM_APELLIDO_MATERNO());
 	        	
-	        	Usuario  chofer=usuarioRepository.getUsuario(tripulacion.getCveMatriculaChofer());
+	        	Usuario  chofer=usuarioRepository.getUsuario(tripulacion.getPersonalChofer().getCveMatriculaPersonal());
 	        	tripRes.setNombreChofer(chofer.getNOM_USUARIO()+ " "+chofer.getNOM_APELLIDO_PATERNO() + " "+ chofer.getNOM_APELLIDO_MATERNO());
 	        	
 	        	

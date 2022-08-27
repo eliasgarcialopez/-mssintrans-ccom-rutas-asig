@@ -26,6 +26,10 @@ public class SolicitudTraslado implements Serializable {
     private LocalDate fecSolicitud;
     
     @Basic
+    @Column(name = "DES_NOM_PACIENTE")
+    private String desNomPaciente;
+    
+    @Basic
     @Column(name = "TIM_SOLICITUD")
     private String timSolicitud;
    
@@ -42,10 +46,6 @@ public class SolicitudTraslado implements Serializable {
     @Basic
     @Column(name = "DES_NSS_PACIENTE")
     private String desNssPaciente;
-    
-    @Basic
-    @Column(name = "DES_NOM_PACIENTE")
-    private String desNomPaciente;
     
     @Basic
     @Column(name = "DES_DIAGNOSTICO")
@@ -84,15 +84,13 @@ public class SolicitudTraslado implements Serializable {
     @Column(name = "TIM_TRANSMISION")
     private LocalTime timTasnmision;
     
-    
-    
     @Basic
     @Column(name = "CVE_ORIGEN")
     private Integer cveOrigen;
     
     @Basic
-    @Column(name = "CVE_AREA_ORIGEN")
-    private Integer cveAreaOrigen;
+    @Column(name = "DES_AREA_ORIGEN")
+    private Integer desAreaOrigen;
     
     @Basic
     @Column(name = "NUM_CAMA_ORIGEN")
@@ -102,10 +100,9 @@ public class SolicitudTraslado implements Serializable {
     @Column(name = "CVE_DESTINO")
     private Integer cveDestino;
     
-    
     @Basic
-    @Column(name = "CVE_AREA_DESTINO")
-    private Integer cveAreaDestino;
+    @Column(name = "DES_AREA_DESTINO")
+    private Integer desAreaDestino;
     
     
     @Basic
@@ -165,7 +162,7 @@ public class SolicitudTraslado implements Serializable {
     
     
     @Basic
-    @Column(name = "NUM_MATRICULA_DOCTOR_RECIBE")
+    @Column(name = "CVE_MATRICULA_DOCTOR_RECIBE")
     private String cveMatriculaRecibe;
     
 //    @Basic
@@ -179,7 +176,7 @@ public class SolicitudTraslado implements Serializable {
     
     
     @Basic
-    @Column(name = "NUM_MATRICULA_DOCTOR_AUTORIZA")
+    @Column(name = "CVE_MATRICULA_DOCTOR_AUTORIZA")
     private String numMatriculaAutoriza;
     
 //    

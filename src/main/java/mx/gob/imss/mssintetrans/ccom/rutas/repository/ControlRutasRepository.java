@@ -67,8 +67,16 @@ public interface ControlRutasRepository extends JpaRepository<ControlRutas, Inte
 	        +  "where a.modulo.idOOAD = ?1 and a.activo = true ")
 	ArrayList<String> findTarjetasByOoad(Integer idOoad);
 	
-	
-	
+	/**
+	 * Busca control de rutas por ecco
+	 * @param ecco
+	 * @param idOoad
+	 * @return
+	 */
+	@Query(value = "select cr from ControlRutas cr join cr.idVehiculo v join v.unidad u "
+			+ "where v.cveEcco = ?1 and u.ooad.idOoad = ?2 and v.indActivo = 1 "
+			+ "order by cr.fechaAlta desc")
+	ArrayList<ControlRutas> findVehiculoByEcco(String ecco, Integer idOoad);
 
 	
 }
