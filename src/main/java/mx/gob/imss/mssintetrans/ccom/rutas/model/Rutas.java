@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,8 +40,7 @@ public class Rutas implements Serializable {
     private Integer idOrigen;
 
         
-	@Basic
-	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL) 
+	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "ID_RUTA") 
     @JsonManagedReference
 	private List<RutasDestinos> destinos=new ArrayList();
@@ -84,7 +82,7 @@ public class Rutas implements Serializable {
     
     @Basic
     @Column(name = "IND_RUTA_FORANEA")
-    private boolean indRutaForane;
+    private boolean indRutaForanea;
     
     
     @Basic
