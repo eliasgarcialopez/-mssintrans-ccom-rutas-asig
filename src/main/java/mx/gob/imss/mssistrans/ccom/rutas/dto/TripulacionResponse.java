@@ -14,6 +14,10 @@ import javax.persistence.Id;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
+/**
+ * @author opimentel
+ *
+ */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TripulacionResponse {
