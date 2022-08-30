@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.google.gson.Gson;
 
@@ -21,16 +22,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import mx.gob.imss.mssistrans.asignaciones.rutas.dto.DatosUsuarioDTO;
 import mx.gob.imss.mssistrans.asignaciones.rutas.dto.Response;
 import mx.gob.imss.mssistrans.asignaciones.rutas.service.impl.AsigRutasServiceImpl;
+import mx.gob.imss.mssistrans.asignaciones.rutas.service.impl.ReasignacionRutasServiceImpl;
 import mx.gob.imss.mssistrans.asignaciones.rutas.util.ValidaDatos;
 
 @SuppressWarnings({ "rawtypes", "unused", "unchecked" })
 @RestController
-@RequestMapping("/RutasAsignacionesCCOM")
+@RequestMapping("/ReasignacionRutasCCOM")
 @CrossOrigin(methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE })
-public class RutasAsignacionesCCOMController {
+public class ReasignacionRutasCCOMController {
 
 	@Autowired
-	AsigRutasServiceImpl asigRutasServiceImpl;
+	ReasignacionRutasServiceImpl reasignacionRutasServiceImpl;
 
 	@GetMapping
 	public <T> ResponseEntity<Response> consultarRutasAsignaciones(@RequestParam Integer pagina,
@@ -41,7 +43,7 @@ public class RutasAsignacionesCCOMController {
 			respuesta = ValidaDatos.noAutorizado(respuesta);
 			return new ResponseEntity<>(respuesta, HttpStatus.OK);
 		} else {
-			respuesta = asigRutasServiceImpl.consultaGeneral(pagina, tamanio, orden, ordenCol);
+			respuesta = reasignacionRutasServiceImpl.consultaGeneral(pagina, tamanio, orden, ordenCol);
 
 			return new ResponseEntity<>(respuesta, HttpStatus.OK);
 		}
@@ -59,7 +61,7 @@ public class RutasAsignacionesCCOMController {
 			return new ResponseEntity<>(respuesta, HttpStatus.OK);
 		} else {
 			Pageable pageable = PageRequest.of(pagina, tamanio);
-			Response response = asigRutasServiceImpl.consultaById(pagina, tamanio, idRutaAsig, idSolicitud);
+			Response response = reasignacionRutasServiceImpl.consultaById(pagina, tamanio, idRutaAsig, idSolicitud);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	}
@@ -71,12 +73,13 @@ public class RutasAsignacionesCCOMController {
 			respuesta = ValidaDatos.noAutorizado(respuesta);
 			return new ResponseEntity<>(respuesta, HttpStatus.OK);
 		} else {
-			Response response = asigRutasServiceImpl.delete(idRutaAsignacion);
+			Response response = reasignacionRutasServiceImpl.delete(idRutaAsignacion);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	}
 
-	/****** HU006 - 26 **********/
+	/****** HU006 - 28 **********/
+	/*
 	@GetMapping(path = "/getRutas")
 	public <T> ResponseEntity<Response> obtenerRuta() {
 
@@ -104,8 +107,10 @@ public class RutasAsignacionesCCOMController {
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	}
+	
+	*/
 
-	@GetMapping(path = "/getDatosAsignacion")
+	@GetMapping(path = "/getDatosReAsignacion")
 	public <T> ResponseEntity<Response> getDatosAsignacion(@RequestParam Integer idVehiculo,
 			@RequestParam Integer idRuta, @RequestParam Integer idSolicitud) {
 
@@ -115,7 +120,7 @@ public class RutasAsignacionesCCOMController {
 			return new ResponseEntity<>(respuesta, HttpStatus.OK);
 		} else {
 			DatosUsuarioDTO datosUsuarios = ValidaDatos.datosUsuarios();
-			Response response = asigRutasServiceImpl.getDatosAsignacion(idVehiculo, idRuta,	idSolicitud);
+			Response response = reasignacionRutasServiceImpl.getDatosAsignacion(idVehiculo, idRuta,	idSolicitud);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	}
@@ -129,21 +134,20 @@ public class RutasAsignacionesCCOMController {
 			respuesta = ValidaDatos.noAutorizado(respuesta);
 			return new ResponseEntity<>(respuesta, HttpStatus.OK);
 		} else {
-			Response response = asigRutasServiceImpl.getTripulacionAsignada(idRuta, idVehiculo, idSolicitud);
+			Response response = reasignacionRutasServiceImpl.getTripulacionAsignada(idRuta, idVehiculo, idSolicitud);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	}
 
-	@GetMapping(path = "/getRegRecorrido")
-	public <T> ResponseEntity<Response> getRegRecorrido(@RequestParam Integer idVehiculo,
-			@RequestParam Integer idRuta) {
+	@GetMapping(path = "/getIncidentes")
+	public <T> ResponseEntity<Response> getSiniestro() {
 
 		Response<T> respuesta = new Response<>();
 		if (ValidaDatos.getAccess()) {
 			respuesta = ValidaDatos.noAutorizado(respuesta);
 			return new ResponseEntity<>(respuesta, HttpStatus.OK);
 		} else {
-			Response response = asigRutasServiceImpl.getRegistroRecorrido(idVehiculo, idRuta);
+			Response response = reasignacionRutasServiceImpl.getSiniestro();
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	}
@@ -153,7 +157,7 @@ public class RutasAsignacionesCCOMController {
 	public ResponseEntity<Response> update ( @PathVariable String idVehiculo, @RequestParam String idNuevoVehiculo
 			, @RequestParam String idRuta, @RequestParam String idNuevaRuta, @RequestParam String idSolicitud
 			, @RequestParam String idNuevaSolicitud, @RequestParam String desEstatus ){
-		Response response = asigRutasServiceImpl.update(idVehiculo, idNuevoVehiculo, idRuta, idNuevaRuta, idSolicitud, idNuevaSolicitud, desEstatus);
+		Response response = reasignacionRutasServiceImpl.update(idVehiculo, idNuevoVehiculo, idRuta, idNuevaRuta, idSolicitud, idNuevaSolicitud, desEstatus);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 

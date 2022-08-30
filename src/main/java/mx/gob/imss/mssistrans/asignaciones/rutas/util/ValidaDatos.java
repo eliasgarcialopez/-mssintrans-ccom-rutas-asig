@@ -14,6 +14,7 @@ import mx.gob.imss.mssistrans.asignaciones.rutas.dto.DatosUsuarioDTO;
 import mx.gob.imss.mssistrans.asignaciones.rutas.dto.RegistroRecorridoResponse;
 import mx.gob.imss.mssistrans.asignaciones.rutas.dto.Response;
 import mx.gob.imss.mssistrans.asignaciones.rutas.dto.RutasResponse;
+import mx.gob.imss.mssistrans.asignaciones.rutas.dto.SiniestrosResponse;
 import mx.gob.imss.mssistrans.asignaciones.rutas.dto.SolicitudTrasladoResponse;
 import mx.gob.imss.mssistrans.asignaciones.rutas.dto.TripulacionAsigResponse;
 
@@ -101,14 +102,18 @@ public class ValidaDatos {
 		respuesta.setDatos((T) listaDeUnidad);
 		return respuesta;
 	}
+	
+	
 
-	/*
-	 * public static <T> Response<?> respVehiculosCromatica(Respuesta<T> respuesta,
-	 * String msg, VehiculosCromaticaByIdResponse content) {
-	 * respuesta.setCodigo(HttpStatus.OK.value()); respuesta.setError(false);
-	 * respuesta.setMensaje(msg); respuesta.setDatos((T) content); return respuesta;
-	 * }
-	 */
+
+	public static <T> Response<?> respSiniestros(Response<T> respuesta, String msg,
+			List<SiniestrosResponse> listaDeUnidad) {
+		respuesta.setCodigo(HttpStatus.OK.value());
+		respuesta.setError(false);
+		respuesta.setMensaje(msg);
+		respuesta.setDatos((T) listaDeUnidad);
+		return respuesta;
+	}
 	public static String getNameCol(String nameCol) {
 		if (nameCol.equals("idRutaAsignacion"))
 			return "ID_RUTA";

@@ -19,11 +19,13 @@ import mx.gob.imss.mssistrans.asignaciones.rutas.dto.DatosAsigResponse;
 import mx.gob.imss.mssistrans.asignaciones.rutas.dto.RegistroRecorridoResponse;
 import mx.gob.imss.mssistrans.asignaciones.rutas.dto.Response;
 import mx.gob.imss.mssistrans.asignaciones.rutas.dto.RutasResponse;
+import mx.gob.imss.mssistrans.asignaciones.rutas.dto.SiniestrosResponse;
 import mx.gob.imss.mssistrans.asignaciones.rutas.dto.SolicitudTrasladoResponse;
 import mx.gob.imss.mssistrans.asignaciones.rutas.dto.TripulacionAsigResponse;
 import mx.gob.imss.mssistrans.asignaciones.rutas.model.DatosAsigEntity;
 import mx.gob.imss.mssistrans.asignaciones.rutas.model.RegistroRecorridoEntity;
 import mx.gob.imss.mssistrans.asignaciones.rutas.model.RutasAsigEntity;
+import mx.gob.imss.mssistrans.asignaciones.rutas.model.SiniestrosEntity;
 import mx.gob.imss.mssistrans.asignaciones.rutas.model.SolicitudTrasladoEntity;
 import mx.gob.imss.mssistrans.asignaciones.rutas.model.TripulacionAsigCam01Entity;
 import mx.gob.imss.mssistrans.asignaciones.rutas.model.TripulacionAsigCam02Entity;
@@ -33,13 +35,16 @@ import mx.gob.imss.mssistrans.asignaciones.rutas.repository.AsigRutasRepository;
 import mx.gob.imss.mssistrans.asignaciones.rutas.repository.DatosAsigRepository;
 import mx.gob.imss.mssistrans.asignaciones.rutas.repository.RegistroRecorridoRepository;
 import mx.gob.imss.mssistrans.asignaciones.rutas.repository.RutasAsigRepository;
+import mx.gob.imss.mssistrans.asignaciones.rutas.repository.SiniestrosRepository;
 import mx.gob.imss.mssistrans.asignaciones.rutas.repository.SolicitudTrasladoRepository;
 import mx.gob.imss.mssistrans.asignaciones.rutas.repository.TripulacionAsigCamillero01Repository;
 import mx.gob.imss.mssistrans.asignaciones.rutas.repository.TripulacionAsigCamillero02Repository;
 import mx.gob.imss.mssistrans.asignaciones.rutas.repository.TripulacionAsigRepository;
 import mx.gob.imss.mssistrans.asignaciones.rutas.service.AsigRutasService;
+import mx.gob.imss.mssistrans.asignaciones.rutas.service.ReasignacionRutasService;
 import mx.gob.imss.mssistrans.asignaciones.rutas.util.AsigRutasMapper;
 import mx.gob.imss.mssistrans.asignaciones.rutas.util.RutasMapper;
+import mx.gob.imss.mssistrans.asignaciones.rutas.util.SiniestrosMapper;
 import mx.gob.imss.mssistrans.asignaciones.rutas.util.SolicitudTrasladoMapper;
 import mx.gob.imss.mssistrans.asignaciones.rutas.util.TripulacionAsigMapper;
 import mx.gob.imss.mssistrans.asignaciones.rutas.util.ValidaDatos;
@@ -50,7 +55,7 @@ import mx.gob.imss.mssistrans.asignaciones.rutas.util.RegistroRecorridoMapper;
 @Transactional(rollbackOn = SQLException.class)
 @AllArgsConstructor
 @Service
-public class AsigRutasServiceImpl implements AsigRutasService {
+public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 
 	@Autowired
 	private AsigRutasRepository asigRutasRepository;
@@ -67,7 +72,7 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 	@Autowired
 	private TripulacionAsigCamillero02Repository camillero02Repository;
 	@Autowired
-	private RegistroRecorridoRepository regRecorridoRepository;
+	private SiniestrosRepository siniestrosRepository;
 
 	@Override
 	public <T> Response consultaGeneral(Integer pagina, Integer tamanio, String orden, String columna) {
@@ -202,18 +207,18 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 	}
 
 	@Override
-	public <T> Response getRegistroRecorrido(Integer idVehiculo, Integer idRuta) {
+	public <T> Response getSiniestro() {
 		Response<T> respuesta = new Response<>();
-		RegistroRecorridoEntity consultaGeneral = null;
+		List<SiniestrosEntity>  consultaGeneral = null;
 		try {
-			consultaGeneral = regRecorridoRepository.getRegistroRecorrido(idVehiculo, idRuta);
+			consultaGeneral = siniestrosRepository.getSiniestro();
 		} catch (Exception e) {
 			return ValidaDatos.errorException(respuesta, e);
 		}
 
-		RegistroRecorridoResponse listaDeSolicituTraslado = RegistroRecorridoMapper.INSTANCE
+		List<SiniestrosResponse> listaDeSiniestros = SiniestrosMapper.INSTANCE
 				.EntityAJson(consultaGeneral);
-		return ValidaDatos.respRegistroRecorrido(respuesta, "Exito", listaDeSolicituTraslado);
+		return ValidaDatos.respSiniestros(respuesta, "Exito", listaDeSiniestros);
 	}
 
 	@Override
@@ -238,5 +243,6 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 		}
 		return ValidaDatos.respDatosAsig(respuesta, "Exito", null);
 	}
+
 
 }
