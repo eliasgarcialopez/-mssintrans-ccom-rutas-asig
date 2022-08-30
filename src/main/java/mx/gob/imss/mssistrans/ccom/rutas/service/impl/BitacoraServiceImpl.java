@@ -71,7 +71,7 @@ public class BitacoraServiceImpl implements BitacoraService {
                 datosBitacora.setDesTipoServicio(controlRutaEntity.getRuta().getDesServicio());
                 datosBitacora.setNumRuta(controlRutaEntity.getRuta().getNumFolioRuta());
                 datosBitacora.setIdControlRuta(controlRutaEntity.getIdControlRuta());
-                datosBitacora.setIdOoad(idOoad);
+                datosBitacora.setIdOoad(controlRutaEntity.getIdVehiculo().getUnidad().getOoad().getIdOoad());
                 List<BitacoraServiciosEntity> lstBitacoraServiciosEntity = bitacoraRepository.findBitacoraByCr(controlRutaEntity.getIdControlRuta());
                 if (lstBitacoraServiciosEntity.size() > 0) {
                 	datosBitacora.setNumBitacora(lstBitacoraServiciosEntity.get(0).getNumBitacora());
