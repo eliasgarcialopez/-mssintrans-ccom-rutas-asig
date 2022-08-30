@@ -36,23 +36,8 @@ public class RutasAsignacionesCCOMController {
 
 	@Autowired
 	AsigRutasServiceImpl asigRutasServiceImpl;
-
-	@GetMapping
-	public <T> ResponseEntity<Response> consultarRutasAsignaciones(@RequestParam Integer pagina,
-			@RequestParam(defaultValue = "10") Integer tamanio, @RequestParam(defaultValue = "asc") String orden,
-			@RequestParam(defaultValue = "idEstatusSolicitud") String ordenCol) {
-		Response<T> respuesta = new Response<>();
-		if (ValidaDatos.getAccess()) {
-			respuesta = ValidaDatos.noAutorizado(respuesta);
-			return new ResponseEntity<>(respuesta, HttpStatus.OK);
-		} else {
-			respuesta = asigRutasServiceImpl.consultaGeneral(pagina, tamanio, orden, ordenCol);
-
-			return new ResponseEntity<>(respuesta, HttpStatus.OK);
-		}
-	}
-
-	@GetMapping(path = "/consultaById")
+	
+	@GetMapping(path = "/consultaVistaRapida")
 	public <T> ResponseEntity<Response> consultaById(@RequestParam Integer pagina,
 			@RequestParam(defaultValue = "10") Integer tamanio, @RequestParam String idRutaAsig,
 			@RequestParam String idSolicitud, @RequestParam(defaultValue = "asc") String orden,
@@ -64,7 +49,7 @@ public class RutasAsignacionesCCOMController {
 			return new ResponseEntity<>(respuesta, HttpStatus.OK);
 		} else {
 			Pageable pageable = PageRequest.of(pagina, tamanio);
-			Response response = asigRutasServiceImpl.consultaById(pagina, tamanio, idRutaAsig, idSolicitud);
+			Response response = asigRutasServiceImpl.consultaVistaRapida(pagina, tamanio, idRutaAsig, idSolicitud);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	}

@@ -70,43 +70,27 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 	@Autowired
 	private SiniestrosRepository siniestrosRepository;
 
-	@Override
-	public <T> Response consultaGeneral(Integer pagina, Integer tamanio, String orden, String columna) {
-		Response<T> respuesta = new Response<>();
-		String nomCol = ValidaDatos.getNameCol(columna);
-		Pageable page = PageRequest.of(pagina, tamanio,
-				Sort.by(Sort.Direction.fromString(orden.toUpperCase()), nomCol));
-		try {
-			Page consultaAsignacioRutas = asigRutasRepository.consultaGeneral(page);
-			final List<AsigRutasResponse> content = (List<AsigRutasResponse>) AsigRutasMapper.INSTANCE
-					.formatearListaArrendados(consultaAsignacioRutas.getContent());
-			Page<AsigRutasResponse> objetoMapeado = new PageImpl<>(content, page,
-					consultaAsignacioRutas.getTotalElements());
-			return ValidaDatos.respAsignacionRuta(respuesta, "Exito", objetoMapeado);
-		} catch (Exception e) {
-			return ValidaDatos.errorException(respuesta, e);
-		}
-
-	}
 
 	@Override
-	public <T> Response<?> consultaById(Integer pagina, Integer tamanio, String idRutaAsig, String idSolicitud) {
+	public <T> Response<?> consultaVistaRapida(Integer pagina, Integer tamanio, String idRutaAsig, String idSolicitud) {
 		Response<T> respuesta = new Response<>();
 		Pageable page = PageRequest.of(pagina, tamanio, Sort.by("ID_RUTA"));
 		try {
-			Page consultaAsignacioRutas = null;
+			Page consultaAsignacionRutas = null;
 			if (!idRutaAsig.equals("") && !idSolicitud.equals(""))
-				consultaAsignacioRutas = asigRutasRepository.getConsultaById(idRutaAsig, idSolicitud, page);
+				consultaAsignacionRutas = asigRutasRepository.getConsultaById(idRutaAsig, idSolicitud, page);
 			else if (idSolicitud.equals("") && !idRutaAsig.equals(""))
-				consultaAsignacioRutas = asigRutasRepository.getConsultaByIdAsignacion(idRutaAsig, page);
+				consultaAsignacionRutas = asigRutasRepository.getConsultaByIdAsignacion(idRutaAsig, page);
 			else if (idRutaAsig.equals("") && !idSolicitud.equals(""))
-				consultaAsignacioRutas = asigRutasRepository.getConsultaByIdSolicitud(idSolicitud, page);
-
+				consultaAsignacionRutas = asigRutasRepository.getConsultaByIdSolicitud(idSolicitud, page);
+			else
+				consultaAsignacionRutas = asigRutasRepository.consultaGeneral(page);
+			
 			final List<AsigRutasResponse> content = (List<AsigRutasResponse>) AsigRutasMapper.INSTANCE
-					.formatearListaArrendados(consultaAsignacioRutas.getContent());
+					.formatearListaArrendados(consultaAsignacionRutas.getContent());
 
 			Page<AsigRutasResponse> objetoMapeado = new PageImpl<>(content, page,
-					consultaAsignacioRutas.getTotalElements());
+					consultaAsignacionRutas.getTotalElements());
 
 			return ValidaDatos.respAsignacionRuta(respuesta, "Exito", objetoMapeado);
 		} catch (Exception e) {

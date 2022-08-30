@@ -4,8 +4,8 @@ import mx.gob.imss.mssistrans.ccom.rutas.dto.Response;
 
 @SuppressWarnings("rawtypes")
 public interface ReasignacionRutasService {
-	<T>Response<?> consultaGeneral (Integer pagina, Integer tamanio, String orden, String columna);
-	<T>Response<?> consultaById (Integer pagina, Integer tamanio, String idAsignacion, String idSolicitud);
+
+	<T>Response<?> consultaVistaRapida (Integer pagina, Integer tamanio, String idAsignacion, String idSolicitud);
 	Response delete ( String id );
 	
 	
