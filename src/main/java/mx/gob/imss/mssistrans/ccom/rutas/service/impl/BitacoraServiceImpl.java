@@ -47,7 +47,13 @@ public class BitacoraServiceImpl implements BitacoraService {
 		Respuesta<DatosBitacora> response = new Respuesta<DatosBitacora>();
 
         try {
-            List<ControlRutas> lstControlRutasEntity = controlRutasRepository.findVehiculoByEcco(ecco, idOoad);
+        	List<ControlRutas> lstControlRutasEntity;
+        	if (idOoad > 0) {
+                lstControlRutasEntity = controlRutasRepository.findVehiculoByEcco(ecco, idOoad);
+        	}
+            else {
+            	lstControlRutasEntity = controlRutasRepository.findVehiculoByEccoAdm(ecco);
+            }
             if (lstControlRutasEntity.size() > 0) {
             	ControlRutas controlRutaEntity = lstControlRutasEntity.get(0);
                 DatosBitacora datosBitacora = new DatosBitacora();
