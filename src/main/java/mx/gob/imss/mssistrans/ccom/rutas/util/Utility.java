@@ -19,17 +19,17 @@ public class Utility {
 	   Date  d = dateFormat.parse(timeIn);
 		
 		
-		Date matIni=dateFormat.parse("06:01");
-		Date matFin=dateFormat.parse("14:00");
+		Date matIni=dateFormat.parse("06:01:00");
+		Date matFin=dateFormat.parse("14:00:00");
 		
-		Date vesIni=dateFormat.parse("14:01");
-		Date vesFin=dateFormat.parse("19:00");
+		Date vesIni=dateFormat.parse("14:01:00");
+		Date vesFin=dateFormat.parse("19:00:00");
 		
-		Date nocIni=dateFormat.parse("19:01");
-		Date nocFin=dateFormat.parse("24:00");
+		Date nocIni=dateFormat.parse("19:01:00");
+		Date nocFin=dateFormat.parse("24:00:00");
 		
-		Date nocIni2=dateFormat.parse("00:00");
-		Date nocFin2=dateFormat.parse("06:00");
+		Date nocIni2=dateFormat.parse("00:00:00");
+		Date nocFin2=dateFormat.parse("06:00:00");
 		
 		if(d.after(matIni) &&  d.before(matFin)) return "Matutino";
 		if(d.after(vesIni) &&  d.before(vesFin)) return "Vespertino";

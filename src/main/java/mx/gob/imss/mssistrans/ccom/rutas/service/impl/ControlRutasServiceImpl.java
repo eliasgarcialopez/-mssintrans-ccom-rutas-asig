@@ -97,7 +97,7 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 			Gson gson = new Gson();
 			DatosUsuario datosUsuarios = gson.fromJson(usuario, DatosUsuario.class);
 			//Validar si es adminsitrador...
-			final Page<ControlRutas> result = datosUsuarios.getRol().equals("Administrador") ?  controlRutasRepository.findAll(pageable) : controlRutasRepository.findAll(pageable,datosUsuarios.getIDOOAD());
+			final Page<ControlRutas> result = datosUsuarios.getRol().equals("Administrador")  || datosUsuarios.getRol().equals("Operador de Ruta Centracom") || datosUsuarios.getRol().equals("Jefe de Centracom") || datosUsuarios.getRol().equals("Jefe de Modulo de Ambulancias") || datosUsuarios.getRol().equals("Controlador de Rutas Centracom")?  controlRutasRepository.findAll(pageable) : controlRutasRepository.findAll(pageable,datosUsuarios.getIDOOAD());
 		
 			
 			log.info("las rutas, {}", result.getContent().size());
@@ -152,7 +152,7 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 			DatosUsuario datosUsuarios = gson.fromJson(user, DatosUsuario.class);
 		    Integer idOOAD= datosUsuarios.getIDOOAD();
 		    
-		   Optional<ModuloAmbulancia> opModulo=moAmbulanciaRepository.findByIdOOADAndActivoEquals(idOOAD, true);
+		  Optional<ModuloAmbulancia> opModulo=moAmbulanciaRepository.findByIdOOADAndActivoEquals(idOOAD, true);
 		    
 		    
 		     
@@ -225,8 +225,8 @@ public class ControlRutasServiceImpl implements ControlRutasService {
   				}
   				//06.01 a 14:00, vespertino horario del turno 14.01 a 19:00,nocturno o especial horario del turno 19.01 a 06:00 
   				if(ruta.getIdSolcitud()!=null && ruta.getIdSolcitud().getTimSolicitud()!=null ) {
-  					//String turno=Utility.getTurnoByHr(ruta.getIdSolcitud().getTimSolicitud());
-  	  				rutasResponse.setTurno(ruta.getIdSolcitud().getTimSolicitud());
+  					String turno=Utility.getTurnoByHr(ruta.getIdSolcitud().getTimSolicitud());
+  	  				rutasResponse.setTurno(turno);
   				}
   				
   				rutasResponse.setVehiculo(ruta.getIdVehiculo());
