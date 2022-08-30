@@ -1,4 +1,4 @@
-package mx.gob.imss.mssistrans.ccom.rutas;
+package mx.gob.imss.mssistrans;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
