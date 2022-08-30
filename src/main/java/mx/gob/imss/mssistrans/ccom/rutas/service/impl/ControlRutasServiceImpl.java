@@ -204,17 +204,17 @@ public class ControlRutasServiceImpl implements ControlRutasService {
   				
   				TripulacionResponse tripRes=new TripulacionResponse();
   				if(ruta.getTripulacion()!=null) {
-  				tripRes.setCveMatriculaCamillero1(ruta.getTripulacion().getPersonalCamillero1().getCveMatriculaPersonal());
-  				tripRes.setCveMatriculaCamillero2(ruta.getTripulacion().getPersonalCamillero2().getCveMatriculaPersonal());
-  				tripRes.setCveMatriculaChofer(ruta.getTripulacion().getPersonalChofer().getCveMatriculaPersonal());
+  				tripRes.setCveMatriculaCamillero1(ruta.getTripulacion().getPersonalCamillero1().getCamillero().getCveMatricula());
+  				tripRes.setCveMatriculaCamillero2(ruta.getTripulacion().getPersonalCamillero2().getCamillero().getCveMatricula());
+  				tripRes.setCveMatriculaChofer(ruta.getTripulacion().getPersonalChofer().getChofer().getMatricula());
   				
-  				Usuario camillero1=usuarioRepository.getUsuario(ruta.getTripulacion().getPersonalCamillero1().getCveMatriculaPersonal());
+  				Usuario camillero1=usuarioRepository.getUsuario(ruta.getTripulacion().getPersonalCamillero1().getCamillero().getCveMatricula());
 	        	tripRes.setNombreCamillero1(camillero1.getNOM_USUARIO()+ " "+camillero1.getNOM_APELLIDO_PATERNO() + " "+ camillero1.getNOM_APELLIDO_MATERNO());
 
-	        	Usuario  camillero2=usuarioRepository.getUsuario(ruta.getTripulacion().getPersonalCamillero2().getCveMatriculaPersonal());
+	        	Usuario  camillero2=usuarioRepository.getUsuario(ruta.getTripulacion().getPersonalCamillero2().getCamillero().getCveMatricula());
 	        	tripRes.setNombreCamillero2(camillero2.getNOM_USUARIO()+ " "+camillero2.getNOM_APELLIDO_PATERNO() + " "+ camillero2.getNOM_APELLIDO_MATERNO());
 	        	
-	        	Usuario  chofer=usuarioRepository.getUsuario(ruta.getTripulacion().getPersonalChofer().getCveMatriculaPersonal());
+	        	Usuario  chofer=usuarioRepository.getUsuario(ruta.getTripulacion().getPersonalChofer().getChofer().getMatriculaChofer());
 	        	tripRes.setNombreChofer(chofer.getNOM_USUARIO()+ " "+chofer.getNOM_APELLIDO_PATERNO() + " "+ chofer.getNOM_APELLIDO_MATERNO());
 	        	
 	        	

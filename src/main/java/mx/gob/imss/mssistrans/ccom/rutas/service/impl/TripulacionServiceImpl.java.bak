@@ -55,17 +55,17 @@ public class TripulacionServiceImpl implements TripulacionService {
 	        	tripRes.setIdVehiculo(tripulacion.getIdVehiculo());
 	        	
 	        	
-	        	tripRes.setCveMatriculaCamillero1(tripulacion.getPersonalCamillero1().getCamillero().getCveMatricula());
-	        	tripRes.setCveMatriculaCamillero2(tripulacion.getPersonalCamillero2().getCamillero().getCveMatricula());
-	        	tripRes.setCveMatriculaChofer(tripulacion.getPersonalChofer().getChofer().getMatriculaChofer());
+	        	tripRes.setCveMatriculaCamillero1(tripulacion.getPersonalCamillero1().getCveMatriculaPersonal());
+	        	tripRes.setCveMatriculaCamillero2(tripulacion.getPersonalCamillero2().getCveMatriculaPersonal());
+	        	tripRes.setCveMatriculaChofer(tripulacion.getPersonalChofer().getCveMatriculaPersonal());
 	        	
-	        	Usuario camillero1=usuarioRepository.getUsuario(tripulacion.getPersonalCamillero1().getCamillero().getCveMatricula());
+	        	Usuario camillero1=usuarioRepository.getUsuario(tripulacion.getPersonalCamillero1().getCveMatriculaPersonal());
 	        	tripRes.setNombreCamillero1(camillero1.getNOM_USUARIO()+ " "+camillero1.getNOM_APELLIDO_PATERNO() + " "+ camillero1.getNOM_APELLIDO_MATERNO());
 
-	        	Usuario  camillero2=usuarioRepository.getUsuario(tripulacion.getPersonalCamillero2().getCamillero().getCveMatricula());
+	        	Usuario  camillero2=usuarioRepository.getUsuario(tripulacion.getPersonalCamillero2().getCveMatriculaPersonal());
 	        	tripRes.setNombreCamillero2(camillero2.getNOM_USUARIO()+ " "+camillero2.getNOM_APELLIDO_PATERNO() + " "+ camillero2.getNOM_APELLIDO_MATERNO());
 	        	
-	        	Usuario  chofer=usuarioRepository.getUsuario(tripulacion.getPersonalChofer().getChofer().getMatriculaChofer());
+	        	Usuario  chofer=usuarioRepository.getUsuario(tripulacion.getPersonalChofer().getCveMatriculaPersonal());
 	        	tripRes.setNombreChofer(chofer.getNOM_USUARIO()+ " "+chofer.getNOM_APELLIDO_PATERNO() + " "+ chofer.getNOM_APELLIDO_MATERNO());
 	        	
 	        	

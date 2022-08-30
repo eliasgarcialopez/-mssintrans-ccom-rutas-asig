@@ -59,9 +59,9 @@ public class BitacoraServiceImpl implements BitacoraService {
                 datosBitacora.setDesModelo(controlRutaEntity.getIdVehiculo().getDesModelo());
                 datosBitacora.setNomModuloAmb(controlRutaEntity.getModulo().getDesNombre());
                 datosBitacora.setIdTripulacion(controlRutaEntity.getTripulacion().getIdTripulacion());
-                datosBitacora.setCveMatriculaChofer(controlRutaEntity.getTripulacion().getPersonalChofer().getCveMatriculaPersonal());
-                datosBitacora.setCveMatriculaCamillero1(controlRutaEntity.getTripulacion().getPersonalCamillero1().getCveMatriculaPersonal());
-                datosBitacora.setCveMatriculaCamillero2(controlRutaEntity.getTripulacion().getPersonalCamillero2().getCveMatriculaPersonal());
+                datosBitacora.setCveMatriculaChofer(controlRutaEntity.getTripulacion().getPersonalChofer().getChofer().getMatriculaChofer());
+                datosBitacora.setCveMatriculaCamillero1(controlRutaEntity.getTripulacion().getPersonalCamillero1().getCamillero().getCveMatricula());
+                datosBitacora.setCveMatriculaCamillero2(controlRutaEntity.getTripulacion().getPersonalCamillero2().getCamillero().getCveMatricula());
                 datosBitacora.setDesTipoServicio(controlRutaEntity.getRuta().getDesServicio());
                 datosBitacora.setNumRuta(controlRutaEntity.getRuta().getNumFolioRuta());
                 datosBitacora.setIdControlRuta(controlRutaEntity.getIdControlRuta());
@@ -125,9 +125,9 @@ public class BitacoraServiceImpl implements BitacoraService {
 			parameters.put("modelo", bitacoraServiciosEntity.getControlRuta().getIdVehiculo().getDesModelo().toString());
 			parameters.put("unidadAdscripcion", bitacoraServiciosEntity.getControlRuta().getIdVehiculo().getUnidad().getNomUnidadAdscripcion());
 			parameters.put("tripulacion", bitacoraServiciosEntity.getControlRuta().getTripulacion().getIdTripulacion().toString());
-			parameters.put("chofer", bitacoraServiciosEntity.getControlRuta().getTripulacion().getPersonalChofer().getDesNombre());
-			parameters.put("camillero1", bitacoraServiciosEntity.getControlRuta().getTripulacion().getPersonalCamillero1().getDesNombre());
-			parameters.put("camillero2", bitacoraServiciosEntity.getControlRuta().getTripulacion().getPersonalCamillero2().getDesNombre());
+			parameters.put("chofer", bitacoraServiciosEntity.getControlRuta().getTripulacion().getPersonalChofer().getChofer().getNombreChofer());
+			parameters.put("camillero1", bitacoraServiciosEntity.getControlRuta().getTripulacion().getPersonalCamillero1().getCamillero().getNomCamillero());
+			parameters.put("camillero2", bitacoraServiciosEntity.getControlRuta().getTripulacion().getPersonalCamillero2().getCamillero().getNomCamillero());
 			parameters.put("tipoServicio", recuperaTipoServicio(bitacoraServiciosEntity.getControlRuta().getRuta().getDesServicio()));
 			parameters.put("idRuta", bitacoraServiciosEntity.getControlRuta().getRuta().getNumFolioRuta());
 			InputStream reportStream = ReporteUtil.recuperarInputStream.apply("reportes/formato-bitacora-servicios-ccom.jrxml");
