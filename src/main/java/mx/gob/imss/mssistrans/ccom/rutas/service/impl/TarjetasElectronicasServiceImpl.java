@@ -7,6 +7,8 @@ import mx.gob.imss.mssistrans.ccom.rutas.dto.CatalogoGenerico;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosUsuario;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.Respuesta;
 import mx.gob.imss.mssistrans.ccom.rutas.model.TarjetasElectronicas;
+
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 
+import ch.qos.logback.classic.Logger;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.ControlRutasRepository;
@@ -49,9 +52,15 @@ public class TarjetasElectronicasServiceImpl implements TarjetasElectronicasServ
 			}
 			Gson gson = new Gson();
 			DatosUsuario datosUsuarios = gson.fromJson(usuario, DatosUsuario.class);
+			log.info("usuario {}", usuario);
 			
             TarjetasElectronicas tarjetaEntity = tarjetasRepository.findTarjetasDigitalesByOoad(datosUsuarios.getIDOOAD());
+            
+            log.info("consultando folios "+tarjetaEntity);
+			
             ArrayList<String> lstTarjetasUsadas = controlRutasRepository.findTarjetasByOoad(datosUsuarios.getIDOOAD()); // Para descartar tarjetas utilizadas
+            if(tarjetaEntity!=null) {
+            
             int folioInicial = Integer.parseInt(tarjetaEntity.getNumFolioInicial());
             int folioFinal = Integer.parseInt(tarjetaEntity.getNumFolioFinal());
             for (int i = folioInicial; i <= folioFinal; i++) {
@@ -63,9 +72,17 @@ public class TarjetasElectronicasServiceImpl implements TarjetasElectronicasServ
             response.setCodigo(HttpStatus.OK.value());
             response.setMensaje("Exito");
             response.setError(false);
+        	
+            }else {
+            	 response.setDatos(null);
+                 response.setCodigo(HttpStatus.OK.value());
+                 response.setMensaje("Exito");
+                 response.setError(false);
+             	
+            }
 
         } catch (Exception exc) {
-            log.error("Error en busqueda de tarjetas digitales ", exc.getMessage());
+            log.error("Ha ocurrido un error al tarjetas , {}", ExceptionUtils.getStackTrace(exc));
             response.setCodigo(HttpStatus.INTERNAL_SERVER_ERROR.value());
             response.setMensaje("Error en busqueda de tarjetas digitales " + exc.getMessage());
             response.setError(true);

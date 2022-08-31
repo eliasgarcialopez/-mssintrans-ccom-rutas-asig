@@ -99,7 +99,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                 rutasTabla.setModulo(rutas.getModulo().getDesNombre());
 
                 Optional<UnidadAdscripcion> origen = unidadAdscripcionRepository
-                        .findByIdUnidadAdscripcionAndActivoEquals(rutas.getIdSolcitud().getDesAreaOrigen(), true);
+                        .findByIdUnidadAdscripcionAndActivoEquals(rutas.getIdSolcitud().getCveOrigen(), true);
 
                 if (origen.isPresent())
                     rutasTabla.setOrigen(origen.get().getNomUnidadAdscripcion());
@@ -155,11 +155,11 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
 
 
                 Optional<UnidadAdscripcion> origen = unidadAdscripcionRepository
-                        .findByIdUnidadAdscripcionAndActivoEquals(ruta.getIdSolcitud().getDesAreaOrigen(), true);
+                        .findByIdUnidadAdscripcionAndActivoEquals(ruta.getIdSolcitud().getCveOrigen(), true);
                 if (origen.isPresent()) rutasResponse.setOrigen(origen.get());
 
                 Optional<UnidadAdscripcion> destino = unidadAdscripcionRepository
-                        .findByIdUnidadAdscripcionAndActivoEquals(ruta.getIdSolcitud().getDesAreaDestino(), true);
+                        .findByIdUnidadAdscripcionAndActivoEquals(ruta.getIdSolcitud().getCveDestino(), true);
                 if (destino.isPresent()) rutasResponse.setDestino(destino.get());
 
                 rutasResponse.setFechaRuta(ruta.getFechaInicioAsigna().toString());

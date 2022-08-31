@@ -10,6 +10,7 @@ import javax.transaction.Transactional;
 
 import mx.gob.imss.mssistrans.ccom.rutas.util.Utility;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.jfree.util.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -29,6 +30,7 @@ import mx.gob.imss.mssistrans.ccom.rutas.dto.ControlRutasTablaResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.ControlRutasTotalesResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosUsuario;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.Respuesta;
+import mx.gob.imss.mssistrans.ccom.rutas.dto.TripulacionInterfaceResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.TripulacionResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.model.ControlRutas;
 import mx.gob.imss.mssistrans.ccom.rutas.model.ModuloAmbulancia;
@@ -40,6 +42,7 @@ import mx.gob.imss.mssistrans.ccom.rutas.model.Tripulacion;
 import mx.gob.imss.mssistrans.ccom.rutas.model.UnidadAdscripcion;
 import mx.gob.imss.mssistrans.ccom.rutas.model.Usuario;
 import mx.gob.imss.mssistrans.ccom.rutas.model.Vehiculos;
+import mx.gob.imss.mssistrans.ccom.rutas.model.ZonaAtencion;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.ControlRutasRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.ModuloAmbulanciaRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.RutasDestinosRepository;
@@ -49,6 +52,7 @@ import mx.gob.imss.mssistrans.ccom.rutas.repository.TripulacionRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.UnidadAdscripcionRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.UsuarioRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.VehiculosRepository;
+import mx.gob.imss.mssistrans.ccom.rutas.repository.ZonaAtencionRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.service.ControlRutasService;
 
 
@@ -76,6 +80,12 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 	private TripulacionRepository tripulacionRepository;
 	@Autowired
 	 private UsuarioRepository usuarioRepository;
+	
+	@Autowired
+	private ZonaAtencionRepository zonaAtencionRepository;
+	
+	@Autowired	
+	 private TripulacionRepository triRepository;
 
 	@Override
 	public Respuesta<Page<ControlRutasTablaResponse>> consultarRutas(Pageable pageable) {
@@ -113,7 +123,7 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 				rutasTabla.setModulo(rutas.getModulo().getDesNombre());
 				
 				Optional<UnidadAdscripcion> origen = unidadAdscripcionRepository
-						.findByIdUnidadAdscripcionAndActivoEquals(rutas.getIdSolcitud().getDesAreaOrigen(), true);
+						.findByIdUnidadAdscripcionAndActivoEquals(rutas.getIdSolcitud().getCveOrigen(), true);
 				
 				if(origen.isPresent())
 				rutasTabla.setOrigen(origen.get().getNomUnidadAdscripcion());
@@ -163,11 +173,11 @@ public class ControlRutasServiceImpl implements ControlRutasService {
             	 
             	 
             	 Optional<UnidadAdscripcion> origen = unidadAdscripcionRepository
- 						.findByIdUnidadAdscripcionAndActivoEquals(ruta.getIdSolcitud().getDesAreaOrigen(), true);
+ 						.findByIdUnidadAdscripcionAndActivoEquals(ruta.getIdSolcitud().getCveOrigen(), true);
  				if(origen.isPresent())    	 rutasResponse.setOrigen(origen.get());
  				
  				 Optional<UnidadAdscripcion> destino = unidadAdscripcionRepository
-  						.findByIdUnidadAdscripcionAndActivoEquals(ruta.getIdSolcitud().getDesAreaDestino(), true);
+  						.findByIdUnidadAdscripcionAndActivoEquals(ruta.getIdSolcitud().getCveDestino(), true);
   				if(destino.isPresent())    	 rutasResponse.setDestino(destino.get());
   				
   				rutasResponse.setFechaRuta(ruta.getFechaInicioAsigna().toString());
@@ -204,24 +214,50 @@ public class ControlRutasServiceImpl implements ControlRutasService {
   				
   				TripulacionResponse tripRes=new TripulacionResponse();
   				if(ruta.getTripulacion()!=null) {
-  				tripRes.setCveMatriculaCamillero1(ruta.getTripulacion().getPersonalCamillero1().getCamillero().getCveMatricula());
-  				tripRes.setCveMatriculaCamillero2(ruta.getTripulacion().getPersonalCamillero2().getCamillero().getCveMatricula());
-  				tripRes.setCveMatriculaChofer(ruta.getTripulacion().getPersonalChofer().getChofer().getMatricula());
-  				
-  				Usuario camillero1=usuarioRepository.getUsuario(ruta.getTripulacion().getPersonalCamillero1().getCamillero().getCveMatricula());
-	        	tripRes.setNombreCamillero1(camillero1.getNOM_USUARIO()+ " "+camillero1.getNOM_APELLIDO_PATERNO() + " "+ camillero1.getNOM_APELLIDO_MATERNO());
+  					
+  					
+  					
+  					
+  					TripulacionInterfaceResponse tripOp= triRepository.findTripulacionIdVehiculo(ruta.getIdVehiculo().getIdVehiculo());
+  					
+  					if(tripOp!=null) {
+  						
+  					
+  					tripRes.setIdTripulacion(tripOp.getidTripulacion());
+  		        	tripRes.setIdVehiculo(tripOp.getidVehiculo());
+  		        	
+  		        	
+  		        	tripRes.setCveMatriculaCamillero1(tripOp.getcveMatriculaCamillero1());
+  		        	tripRes.setCveMatriculaCamillero2(tripOp.getcveMatriculaCamillero2());
+  		        	tripRes.setCveMatriculaChofer(tripOp.getcveMatriculaChofer());
+  		        	
+  		        	//Usuario camillero1=usuarioRepository.getUsuario(tripulacion.getPersonalCamillero1().getCamillero().getCveMatricula());
+  		        	tripRes.setNombreCamillero1(tripOp.getnombreCamillero1());
 
-	        	Usuario  camillero2=usuarioRepository.getUsuario(ruta.getTripulacion().getPersonalCamillero2().getCamillero().getCveMatricula());
-	        	tripRes.setNombreCamillero2(camillero2.getNOM_USUARIO()+ " "+camillero2.getNOM_APELLIDO_PATERNO() + " "+ camillero2.getNOM_APELLIDO_MATERNO());
-	        	
-	        	Usuario  chofer=usuarioRepository.getUsuario(ruta.getTripulacion().getPersonalChofer().getChofer().getMatriculaChofer());
-	        	tripRes.setNombreChofer(chofer.getNOM_USUARIO()+ " "+chofer.getNOM_APELLIDO_PATERNO() + " "+ chofer.getNOM_APELLIDO_MATERNO());
-	        	
+  		        	//Usuario  camillero2=usuarioRepository.getUsuario(tripulacion.getPersonalCamillero2().getCamillero().getCveMatricula());
+  		        	tripRes.setNombreCamillero2(tripOp.getnombreCamillero2());
+  		        	//Usuario  chofer=usuarioRepository.getUsuario(tripulacion.getPersonalChofer().getChofer().getMatriculaChofer());
+  		        	tripRes.setNombreChofer(tripOp.getnombreChofer());
+  					
+
+  				
 	        	
   				tripRes.setIdTripulacion(ruta.getTripulacion().getIdTripulacion());
   				tripRes.setIdVehiculo(ruta.getTripulacion().getIdVehiculo());
   				tripRes.setFecFecha(ruta.getTripulacion().getFecFecha().toString());;
   				rutasResponse.setTripulacion(tripRes);
+  					}else {
+  						
+  						Log.info("No se econtro la tripulacion por id vehiculo "+ruta.getIdVehiculo().getIdVehiculo());
+  		            	 
+  		            	response.setDatos(null);
+  		 	            response.setError(false);
+  		 	            response.setMensaje("Exito");
+  		 	            response.setCodigo(HttpStatus.OK.value());
+  		 	            return response;
+  					}
+  					
+  					
   				}
   				//06.01 a 14:00, vespertino horario del turno 14.01 a 19:00,nocturno o especial horario del turno 19.01 a 06:00 
   				if(ruta.getIdSolcitud()!=null && ruta.getIdSolcitud().getTimSolicitud()!=null ) {
@@ -358,7 +394,7 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 			 controlRutas.setDesEstatusAsigna("1");
 			 controlRutas.setIndiceSistema(true);
 			 
-			 Optional<ModuloAmbulancia> moduloOp= moAmbulanciaRepository.findByIdOOADAndActivoEquals(rutas.getIdModulo(), true);
+			 Optional<ModuloAmbulancia> moduloOp= moAmbulanciaRepository.findById(rutas.getIdModulo());
 			 if(moduloOp.isPresent())
 			 controlRutas.setModulo(moduloOp.get());
 			 else log.info("modulo no encontrado"+rutas.getIdModulo());
@@ -596,30 +632,36 @@ public Respuesta<ControlRutasTotalesResponse> consultarTotalesVehiculos() {
 		if(opModulo.isPresent()) {
 			
 			ModuloAmbulancia moduloAmbulancia=opModulo.get();
-			Integer idZona=moduloAmbulancia.getZona().getIdZona();
-			
-			Integer totalVA=   vehiculoRepository.countTotalVehiculoAsignados(idZona);
-			
-				rutasResponse.setTotalVehiculosAsignados(totalVA);
+			Optional<ZonaAtencion> zonaOp=   zonaAtencionRepository.findByIdModuloAndActivoEquals(moduloAmbulancia.getIdModulo(),true);
+			if(zonaOp.isPresent()) {
 				
-				Integer totalVD=   vehiculoRepository.countTotalVehiculoDisponibles(idZona);
-		
-				rutasResponse.setTotalVehiculosDisponibles(totalVD);
+				Integer idZona=zonaOp.get().getIdZona();
 				
-				Integer totalMan=   vehiculoRepository.countTotalVehiculoMantenimiento(idZona);
-	
-			rutasResponse.setTotalVehiculosMantenimiento(totalMan);
+				Integer totalVA=   vehiculoRepository.countTotalVehiculoAsignados(idZona);
+				
+					rutasResponse.setTotalVehiculosAsignados(totalVA);
+					
+					Integer totalVD=   vehiculoRepository.countTotalVehiculoDisponibles(idZona);
 			
-			
-			Integer totalSin=   vehiculoRepository.countTotalVehiculoSiniestrados(idZona);
+					rutasResponse.setTotalVehiculosDisponibles(totalVD);
+					
+					Integer totalMan=   vehiculoRepository.countTotalVehiculoMantenimiento(idZona);
 		
-			rutasResponse.setTotalVehiculosSiniestrados(totalSin);
+				rutasResponse.setTotalVehiculosMantenimiento(totalMan);
+				
+				
+				Integer totalSin=   vehiculoRepository.countTotalVehiculoSiniestrados(idZona);
+			
+				rutasResponse.setTotalVehiculosSiniestrados(totalSin);
 
-			   
-        	response.setDatos(rutasResponse);
-	            response.setError(false);
-	            response.setMensaje("Exito");
-	            response.setCodigo(HttpStatus.OK.value());
+				   
+	        	response.setDatos(rutasResponse);
+		            response.setError(false);
+		            response.setMensaje("Exito");
+		            response.setCodigo(HttpStatus.OK.value());
+				
+			}
+			
 		}
 	    else {
         	 response.setDatos(null);

@@ -24,6 +24,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.ModuloAmbulanciaRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.VehiculosRepository;
+import mx.gob.imss.mssistrans.ccom.rutas.repository.ZonaAtencionRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.service.VehiculoService;
 
 @Service
@@ -34,6 +35,8 @@ public class VehiculoServiceImpl implements VehiculoService {
 private VehiculosRepository vehiculosRepository;
 @Autowired
 private ModuloAmbulanciaRepository moAmbulanciaRepository;
+@Autowired
+private ZonaAtencionRepository zonaAtencionRepository;
 
 	@Override
 	public Respuesta<List<VehiculoResponse>> findVehiculoAsignables() {
@@ -58,27 +61,33 @@ private ModuloAmbulanciaRepository moAmbulanciaRepository;
 	        	 
 	        	Optional<ModuloAmbulancia> modOp= moAmbulanciaRepository.findByIdOOADAndActivoEquals(datosUsuarios.getIDOOAD(), true);
 	        	if(modOp.isPresent()) {
-	        	ZonaAtencion zona=	modOp.get().getZona();
+	        	//ZonaAtencion zona=	modOp.get().getZona();
 	        	
-	        	   log.info("zona atencion del modulo  , {}", zona.getIdZona());
+	        	Optional<ZonaAtencion> zonaOp=   zonaAtencionRepository.findByIdModuloAndActivoEquals(modOp.get().getIdModulo(),true);
+				if(zonaOp.isPresent()) {
+					ZonaAtencion zona=zonaOp.get();
+					log.info("zona atencion del modulo  , {}", zona.getIdZona());
 		            
-	             List<Vehiculos> result1 = vehiculosRepository.findVehiculoAsignables(zona.getIdZona());
-	             List<Vehiculos> result2 = vehiculosRepository.findVehiculoArrendadosAsignables(zona.getIdZona());
+		             List<Vehiculos> result1 = vehiculosRepository.findVehiculoAsignables(zona.getIdZona());
+		             List<Vehiculos> result2 = vehiculosRepository.findVehiculoArrendadosAsignables(zona.getIdZona());
 
-	             List<Vehiculos> result =new ArrayList<>();
-	             result.addAll(result1);
-	             result.addAll(result2);
+		             List<Vehiculos> result =new ArrayList<>();
+		             result.addAll(result1);
+		             result.addAll(result2);
 
-	            log.info("vehiculos obtenidos , {}", result.size());
-	            
-	            final List<VehiculoResponse> content = result
-	                    .stream()
-	                    .map(VehiculoMapper.INSTANCE::vehiculoEntityToJsonTo)
-	                    .collect(Collectors.toList());
+		            log.info("vehiculos obtenidos , {}", result.size());
+		            
+		            final List<VehiculoResponse> content = result
+		                    .stream()
+		                    .map(VehiculoMapper.INSTANCE::vehiculoEntityToJsonTo)
+		                    .collect(Collectors.toList());
 
-	            response.setDatos(content);
-	            response.setMensaje("Exito");
-	            response.setCodigo(HttpStatus.OK.value());
+		            response.setDatos(content);
+		            response.setMensaje("Exito");
+		            response.setCodigo(HttpStatus.OK.value());
+				}
+	        	
+	        	   
 		         
 	        		   
 	        	}else {

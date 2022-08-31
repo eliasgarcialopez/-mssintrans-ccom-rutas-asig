@@ -3,6 +3,7 @@ package mx.gob.imss.mssistrans.ccom.rutas.service.impl;
 import java.util.Optional;
 
 import mx.gob.imss.mssistrans.ccom.rutas.dto.Respuesta;
+import mx.gob.imss.mssistrans.ccom.rutas.dto.TripulacionInterfaceResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.TripulacionResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.model.Tripulacion;
 import mx.gob.imss.mssistrans.ccom.rutas.model.Usuario;
@@ -44,34 +45,32 @@ public class TripulacionServiceImpl implements TripulacionService {
 				}
 	        	 log.info("consultando la tripulacion por idVehiculo, {}", idVehiculo);
 	        	 
-	        	Optional<Tripulacion> tripOp= triRepository.findByIdVehiculo(idVehiculo);
-	        	if(tripOp.isPresent()) {
-	        		Tripulacion tripulacion=	tripOp.get();
+	        	TripulacionInterfaceResponse tripOp= triRepository.findTripulacionIdVehiculo(idVehiculo);
+	        	if(tripOp!=null) {
+	        		//Tripulacion tripulacion=	tripOp;
 	        	TripulacionResponse tripRes=new TripulacionResponse();
-	        	if(tripulacion.getFecFecha()!=null)
-	        	tripRes.setFecFecha(tripulacion.getFecFecha().toString());
+	        	//if(tripOp.getFecFecha()!=null)
+	        	//tripRes.setFecFecha(tripulacion.getFecFecha().toString());
 	        	
-	        	tripRes.setIdTripulacion(tripulacion.getIdTripulacion());
-	        	tripRes.setIdVehiculo(tripulacion.getIdVehiculo());
+	        	tripRes.setIdTripulacion(tripOp.getidTripulacion());
+	        	tripRes.setIdVehiculo(tripOp.getidVehiculo());
 	        	
 	        	
-	        	tripRes.setCveMatriculaCamillero1(tripulacion.getPersonalCamillero1().getCamillero().getCveMatricula());
-	        	tripRes.setCveMatriculaCamillero2(tripulacion.getPersonalCamillero2().getCamillero().getCveMatricula());
-	        	tripRes.setCveMatriculaChofer(tripulacion.getPersonalChofer().getChofer().getMatriculaChofer());
+	        	tripRes.setCveMatriculaCamillero1(tripOp.getcveMatriculaCamillero1());
+	        	tripRes.setCveMatriculaCamillero2(tripOp.getcveMatriculaCamillero2());
+	        	tripRes.setCveMatriculaChofer(tripOp.getcveMatriculaChofer());
 	        	
-	        	Usuario camillero1=usuarioRepository.getUsuario(tripulacion.getPersonalCamillero1().getCamillero().getCveMatricula());
-	        	tripRes.setNombreCamillero1(camillero1.getNOM_USUARIO()+ " "+camillero1.getNOM_APELLIDO_PATERNO() + " "+ camillero1.getNOM_APELLIDO_MATERNO());
+	        	//Usuario camillero1=usuarioRepository.getUsuario(tripulacion.getPersonalCamillero1().getCamillero().getCveMatricula());
+	        	tripRes.setNombreCamillero1(tripOp.getnombreCamillero1());
 
-	        	Usuario  camillero2=usuarioRepository.getUsuario(tripulacion.getPersonalCamillero2().getCamillero().getCveMatricula());
-	        	tripRes.setNombreCamillero2(camillero2.getNOM_USUARIO()+ " "+camillero2.getNOM_APELLIDO_PATERNO() + " "+ camillero2.getNOM_APELLIDO_MATERNO());
-	        	
-	        	Usuario  chofer=usuarioRepository.getUsuario(tripulacion.getPersonalChofer().getChofer().getMatriculaChofer());
-	        	tripRes.setNombreChofer(chofer.getNOM_USUARIO()+ " "+chofer.getNOM_APELLIDO_PATERNO() + " "+ chofer.getNOM_APELLIDO_MATERNO());
-	        	
+	        	//Usuario  camillero2=usuarioRepository.getUsuario(tripulacion.getPersonalCamillero2().getCamillero().getCveMatricula());
+	        	tripRes.setNombreCamillero2(tripOp.getnombreCamillero2());
+	        	//Usuario  chofer=usuarioRepository.getUsuario(tripulacion.getPersonalChofer().getChofer().getMatriculaChofer());
+	        	tripRes.setNombreChofer(tripOp.getnombreChofer());
 	        	
 	        	
 	        	
-	        	   log.info("tripulacion  , {}", tripulacion.getIdTripulacion());
+	        	   log.info("tripulacion  , {}", tripOp.getidTripulacion());
 		       
 	            response.setDatos(tripRes);
 	            response.setMensaje("Exito");
