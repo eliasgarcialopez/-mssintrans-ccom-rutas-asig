@@ -74,9 +74,11 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 	private RegistroRecorridoRepository regRecorridoRepository;
 
 	@Override
-	public <T> Response<?> consultaVistaRapida(Integer pagina, Integer tamanio, String idRutaAsig, String idSolicitud) {
+	public <T> Response<?> consultaVistaRapida(Integer pagina, Integer tamanio, String orden, String columna, String idRutaAsig, String idSolicitud) {
 		Response<T> respuesta = new Response<>();
-		Pageable page = PageRequest.of(pagina, tamanio, Sort.by("ID_RUTA"));
+		String nomCol = ValidaDatos.getNameCol(columna);
+		Pageable page = PageRequest.of(pagina, tamanio,
+				Sort.by(Sort.Direction.fromString(orden.toUpperCase()), nomCol));
 		try {
 			Page consultaAsignacioRutas = null;
 			if (!idRutaAsig.equals("") && !idSolicitud.equals(""))

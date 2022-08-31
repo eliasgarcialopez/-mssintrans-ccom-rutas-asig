@@ -37,19 +37,20 @@ public class RutasAsignacionesCCOMController {
 	@Autowired
 	AsigRutasServiceImpl asigRutasServiceImpl;
 	
-	@GetMapping(path = "/consultaVistaRapida")
-	public <T> ResponseEntity<Response> consultaById(@RequestParam Integer pagina,
-			@RequestParam(defaultValue = "10") Integer tamanio, @RequestParam String idRutaAsig,
-			@RequestParam String idSolicitud, @RequestParam(defaultValue = "asc") String orden,
-			@RequestParam(defaultValue = "idEstatusSolicitud") String ordenCol) {
+	@GetMapping
+	public <T> ResponseEntity<Response> consultaById(@RequestParam(defaultValue = "0") Integer pagina,
+			@RequestParam(defaultValue = "10") Integer tamanio,
+			@RequestParam(defaultValue = "idEstatusSolicitud") String ordenCol, 
+			@RequestParam(defaultValue = "asc") String orden,
+			@RequestParam String idRutaAsig,
+			@RequestParam String idSolicitud) {
 
 		Response<T> respuesta = new Response<>();
 		if (ValidaDatos.getAccess()) {
 			respuesta = ValidaDatos.noAutorizado(respuesta);
 			return new ResponseEntity<>(respuesta, HttpStatus.OK);
 		} else {
-			Pageable pageable = PageRequest.of(pagina, tamanio);
-			Response response = asigRutasServiceImpl.consultaVistaRapida(pagina, tamanio, idRutaAsig, idSolicitud);
+			Response response = asigRutasServiceImpl.consultaVistaRapida(pagina, tamanio, orden, ordenCol, idRutaAsig, idSolicitud);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	}
