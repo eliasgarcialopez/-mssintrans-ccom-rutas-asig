@@ -42,8 +42,8 @@ public class RutasAsignacionesCCOMController {
 			@RequestParam(defaultValue = "10") Integer tamanio,
 			@RequestParam(defaultValue = "idEstatusSolicitud") String ordenCol, 
 			@RequestParam(defaultValue = "asc") String orden,
-			@RequestParam String idRutaAsig,
-			@RequestParam String idSolicitud) {
+			@RequestParam(required = false) String idRutaAsig,
+			@RequestParam(required = false) String idSolicitud) {
 
 		Response<T> respuesta = new Response<>();
 		if (ValidaDatos.getAccess()) {

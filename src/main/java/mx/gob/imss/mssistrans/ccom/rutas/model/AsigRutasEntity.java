@@ -23,7 +23,7 @@ public class AsigRutasEntity {
 	@Column(name = "ID_SOLICITUD", unique = false, nullable = true)
 	private String idSolicitud;
 
-	@Column(name = "ID_RUTA", unique = false, nullable = true)
+	@Column(name = "NUM_FOLIO_RUTA", unique = false, nullable = true)
 	private String idRutaAsignacion;
 	
 	@Column(name = "CVE_ECCO", unique = false, nullable = true)

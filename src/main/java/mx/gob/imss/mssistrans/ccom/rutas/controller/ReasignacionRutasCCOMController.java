@@ -43,8 +43,8 @@ public class ReasignacionRutasCCOMController {
 			@RequestParam(defaultValue = "10") Integer tamanio,
 			@RequestParam(defaultValue = "asc") String orden,
 			@RequestParam(defaultValue = "idEstatusSolicitud") String ordenCol,
-			@RequestParam String idRutaAsig,
-			@RequestParam String idSolicitud) {
+			@RequestParam(required = false) String idRutaAsig,
+			@RequestParam(required = false) String idSolicitud) {
 
 		Response<T> respuesta = new Response<>();
 		if (ValidaDatos.getAccess()) {
