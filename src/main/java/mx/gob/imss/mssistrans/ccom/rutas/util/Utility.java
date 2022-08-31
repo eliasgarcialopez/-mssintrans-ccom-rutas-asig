@@ -8,43 +8,45 @@ import java.util.Date;
 
 
 public class Utility {
+ 
+	
+	
+	//06.01 a 14:00, vespertino horario del turno 14.01 a 19:00,nocturno o especial horario del turno 19.01 a 06:00 
+	//pendiente solucionar el tema de 
+	
+	
+	public static String getTurnoByHr(String timeIn) throws ParseException {
+		DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss");
+	   Date  d = dateFormat.parse(timeIn);
+		
+		
+		Date matIni=dateFormat.parse("06:01:00");
+		Date matFin=dateFormat.parse("14:00:00");
+		
+		Date vesIni=dateFormat.parse("14:01:00");
+		Date vesFin=dateFormat.parse("19:00:00");
+		
+		Date nocIni=dateFormat.parse("19:01:00");
+		Date nocFin=dateFormat.parse("24:00:00");
+		
+		Date nocIni2=dateFormat.parse("00:00:00");
+		Date nocFin2=dateFormat.parse("06:00:00");
+		
+		if(d.after(matIni) &&  d.before(matFin)) return "Matutino";
+		if(d.after(vesIni) &&  d.before(vesFin)) return "Vespertino";
+		if(d.after(nocIni2) &&  d.before(nocFin2)) return "Nocturno o Especial";
+		if(d.after(nocIni) &&  d.before(nocFin)) return "Nocturno o Especial";
+		return "";
+		
+	}
+	
+	public static String getIdHorarioByTurno(Integer horario) {
+		if(horario==1) 	return "Matutino";
+		if(horario==2) 	return "Vespertino";
+		if(horario==3) 	return "Nocturno o Especial";
+		return "";
+	}
 
-
-    //06.01 a 14:00, vespertino horario del turno 14.01 a 19:00,nocturno o especial horario del turno 19.01 a 06:00
-    //pendiente solucionar el tema de
-
-
-    public static String getTurnoByHr(String timeIn) throws ParseException {
-        DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss");
-        Date d = dateFormat.parse(timeIn);
-
-
-        Date matIni = dateFormat.parse("06:01");
-        Date matFin = dateFormat.parse("14:00");
-
-        Date vesIni = dateFormat.parse("14:01");
-        Date vesFin = dateFormat.parse("19:00");
-
-        Date nocIni = dateFormat.parse("19:01");
-        Date nocFin = dateFormat.parse("24:00");
-
-        Date nocIni2 = dateFormat.parse("00:00");
-        Date nocFin2 = dateFormat.parse("06:00");
-
-        if (d.after(matIni) && d.before(matFin)) return "Matutino";
-        if (d.after(vesIni) && d.before(vesFin)) return "Vespertino";
-        if (d.after(nocIni2) && d.before(nocFin2)) return "Nocturno o Especial";
-        if (d.after(nocIni) && d.before(nocFin)) return "Nocturno o Especial";
-        return "";
-
-    }
-
-    public static String getIdHorarioByTurno(Integer horario) {
-        if (horario == 1) return "Matutino";
-        if (horario == 2) return "Vespertino";
-        if (horario == 3) return "Nocturno o Especial";
-        return "";
-    }
 
 
     public static ArrayList<String> getHorarioStringByTurno(Integer idHorario) {

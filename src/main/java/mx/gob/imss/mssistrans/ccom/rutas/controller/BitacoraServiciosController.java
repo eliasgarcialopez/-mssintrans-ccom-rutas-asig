@@ -49,11 +49,11 @@ public class BitacoraServiciosController {
         }
        
         Gson gson = new Gson();
-        DatosUsuario datosUsuarios = gson.fromJson(usuario, DatosUsuario.class);
-        datosUsuarios.getIDOOAD();
-        datosUsuarios.getRol();
+        DatosUsuario datosUsuario = gson.fromJson(usuario, DatosUsuario.class);
+        datosUsuario.getIDOOAD();
+        datosUsuario.getRol();
 
-        Respuesta<DatosBitacora> response = bitacoraService.buscaVehiculo(ecco, datosUsuarios.getIDOOAD());
+        Respuesta<DatosBitacora> response = bitacoraService.buscaVehiculo(ecco, datosUsuario.getRol().equals("Administrador") ? 0 : datosUsuario.getIDOOAD());
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	

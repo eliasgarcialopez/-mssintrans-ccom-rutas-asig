@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import lombok.Getter;
@@ -23,14 +25,14 @@ public class PersonalAmbulancia {
     @Column(name = "ID_PERSONAL_AMBULANCIA", unique = false, nullable = true)
     private Long idPersonalAmbulancia;
 
-    @Basic
-    @Column(name = "CVE_MATRICULA_PERSONAL", unique = false, nullable = true)
-    private String cveMatriculaPersonal;
+	@OneToOne
+	@JoinColumn(name = "ID_CHOFER")
+    private ChoferesEntity chofer;
 
-    @Basic
-    @Column(name = "DES_NOMBRE", unique = false, nullable = true)
-    private String desNombre;
-
+	@OneToOne
+	@JoinColumn(name = "ID_CAMILLERO")
+	private CamillerosEntity camillero;
+	
     @Basic
     @Column(name = "DES_PUESTO", unique = false, nullable = true)
     private String desPuesto;
@@ -42,13 +44,13 @@ public class PersonalAmbulancia {
     @Basic
     @Column(name = "DES_ESTATUS", unique = false, nullable = true)
     private String desEstatus;
-//
-//    @Basic
-//    @Column(name="ID_INCIDENCIA_PERS_AMB")
-//    private Integer idIncidenciaPersAmb;
+
+    @Basic
+    @Column(name="ID_INCIDENCIA_PERS_AMB")
+    private Integer idIncidenciaPersAmb;
     
     @Basic
- @Column(name = "CVE_MATRICULA_AUDITORIA", unique = false, nullable = true)
+   @Column(name = "CVE_MATRICULA_AUDITORIA", unique = false, nullable = true)
     private String cveMatriculaAlt;
     
     @Basic
