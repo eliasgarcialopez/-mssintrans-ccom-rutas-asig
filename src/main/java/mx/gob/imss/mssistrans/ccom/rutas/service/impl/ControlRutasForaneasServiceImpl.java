@@ -22,8 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-// todo - hay que recuperar el git ignore, aunque ya se esta recuperando en la otra rama
-// todo - por el momento no te fijes en ese error!!!
 @Service
 @Slf4j
 public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasService {
@@ -38,16 +36,17 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
     private final ViaticosRepository viaticosRepository;
     private final RutasDestinosRepository destinosRepository;
 
-    public ControlRutasForaneasServiceImpl(ControlRutasForaneasRepository controlRutasForaneasRepository,
-                                           UnidadAdscripcionRepository unidadAdscripcionRepository,
-                                           ModuloAmbulanciaRepository moAmbulanciaRepository,
-                                           VehiculosRepository vehiculoRepository,
-                                           UsuarioRepository usuarioRepository,
-                                           SolicitudTrasladoRepository solicitudTrasladoRepository,
-                                           RutasRepository rutasRepository,
-                                           TripulacionRepository tripulacionRepository,
-                                           ViaticosRepository viaticosRepository,
-                                           RutasDestinosRepository destinosRepository) {
+    public ControlRutasForaneasServiceImpl(
+            ControlRutasForaneasRepository controlRutasForaneasRepository,
+            UnidadAdscripcionRepository unidadAdscripcionRepository,
+            ModuloAmbulanciaRepository moAmbulanciaRepository,
+            VehiculosRepository vehiculoRepository,
+            UsuarioRepository usuarioRepository,
+            SolicitudTrasladoRepository solicitudTrasladoRepository,
+            RutasRepository rutasRepository,
+            TripulacionRepository tripulacionRepository,
+            ViaticosRepository viaticosRepository,
+            RutasDestinosRepository destinosRepository) {
         this.controlRutasForaneasRepository = controlRutasForaneasRepository;
         this.unidadAdscripcionRepository = unidadAdscripcionRepository;
         this.moAmbulanciaRepository = moAmbulanciaRepository;
@@ -79,12 +78,15 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
             log.info("los rutas, page size {}", pageable.getPageSize());
             Gson gson = new Gson();
             DatosUsuario datosUsuarios = gson.fromJson(usuario, DatosUsuario.class);
+
             //Validar si es adminsitrador...
-            // todo - aca hay que modificar la consulta para no chocar con el codigo
-            // todo - lo que podemos hacer es que hagamos un repo distinto para foraneas y luego hacer el merge ya en la otra rama, ara ahorita no meter ruido
-            final Page<ControlRutas> result = datosUsuarios.getRol().equals("Administrador") ?
-                    controlRutasForaneasRepository.findAll(pageable) :
-                    controlRutasForaneasRepository.findAll(pageable, datosUsuarios.getIDOOAD());
+            final Page<ControlRutas> result = datosUsuarios.getRol().equals("Administrador")
+                    || datosUsuarios.getRol().equals("Operador de Ruta Centracom")
+                    || datosUsuarios.getRol().equals("Jefe de Centracom")
+                    || datosUsuarios.getRol().equals("Jefe de Modulo de Ambulancias")
+                    || datosUsuarios.getRol().equals("Controlador de Rutas Centracom")
+                    ? controlRutasForaneasRepository.findAll(pageable)
+                    : controlRutasForaneasRepository.findAll(pageable, datosUsuarios.getIDOOAD());
 
             log.info("las rutas, {}", result.getContent().size());
 

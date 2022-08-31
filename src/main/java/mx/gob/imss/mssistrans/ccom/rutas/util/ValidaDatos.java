@@ -124,8 +124,8 @@ public class ValidaDatos {
 			return "ID_RUTA";
 		else if (nameCol.equals("idSolicitud"))
 			return "ID_SOLICITUD";
-		else if (nameCol.equals("CVE_ECCO"))
-			return "cveEcco";
+		else if (nameCol.equals("cveEcco"))
+			return "CVE_ECCO";
 		else if (nameCol.equals("idEstatusSolicitud"))
 			return "DES_ESTATUS_ASIGNA";
 		else
