@@ -35,11 +35,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class BitacoraServiceImpl implements BitacoraService {
 
-	@Value("${msit_logo_imss}")
+	@Value("${logos.msit_logo_imss}")
 	private String LOGO_IMSS;
-	@Value("${msit_logo_sistema}")
+	@Value("${logos.msit_logo_sistema}")
 	private String LOGO_SISTEMA;
-	@Value("${recuperar-imagenes-endpoint}")
+	@Value("${endpoints.recuperar-imagenes-endpoint}")
 	private String RECUPERAR_STREAMS_ENDPOINT;
 	@Autowired
 	private ControlRutasRepository controlRutasRepository;
