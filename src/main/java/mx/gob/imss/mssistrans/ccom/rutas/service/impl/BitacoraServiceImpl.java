@@ -1,31 +1,30 @@
 package mx.gob.imss.mssistrans.ccom.rutas.service.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import lombok.extern.slf4j.Slf4j;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosBitacora;
+import mx.gob.imss.mssistrans.ccom.rutas.dto.RecuperarImagenesRequest;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.Respuesta;
 import mx.gob.imss.mssistrans.ccom.rutas.model.BitacoraServiciosEntity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.ControlRutas;
+import mx.gob.imss.mssistrans.ccom.rutas.repository.BitacoraServiciosRepository;
+import mx.gob.imss.mssistrans.ccom.rutas.repository.ControlRutasRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.service.BitacoraService;
 import mx.gob.imss.mssistrans.ccom.rutas.util.ReporteUtil;
+import mx.gob.imss.mssistrans.ccom.rutas.util.RestTemplateUtil;
 import mx.gob.imss.mssistrans.ccom.rutas.util.TipoServicioEnum;
 import mx.gob.imss.mssistrans.ccom.rutas.util.TipoVehEnum;
+import net.sf.jasperreports.engine.JasperReport;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import lombok.extern.slf4j.Slf4j;
-import mx.gob.imss.mssistrans.ccom.rutas.repository.ControlRutasRepository;
-import net.sf.jasperreports.engine.JasperReport;
-import mx.gob.imss.mssistrans.ccom.rutas.repository.BitacoraServiciosRepository;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Servicio para la Bitacora de servicios
@@ -35,13 +34,23 @@ import mx.gob.imss.mssistrans.ccom.rutas.repository.BitacoraServiciosRepository;
 @Service
 @Slf4j
 public class BitacoraServiceImpl implements BitacoraService {
-	
+
+	@Value("${msit_logo_imss}")
+	private String LOGO_IMSS;
+	@Value("${msit_logo_sistema}")
+	private String LOGO_SISTEMA;
+	@Value("${recuperar-imagenes-endpoint}")
+	private String RECUPERAR_STREAMS_ENDPOINT;
 	@Autowired
 	private ControlRutasRepository controlRutasRepository;
-	
 	@Autowired
 	private BitacoraServiciosRepository bitacoraRepository;
-	
+	private final RestTemplateUtil restTemplateUtil;
+
+	public BitacoraServiceImpl(RestTemplateUtil restTemplateUtil) {
+		this.restTemplateUtil = restTemplateUtil;
+	}
+
 	@Override
 	public Respuesta<DatosBitacora> buscaVehiculo(String ecco, Integer idOoad) {
 		Respuesta<DatosBitacora> response = new Respuesta<DatosBitacora>();
@@ -93,7 +102,6 @@ public class BitacoraServiceImpl implements BitacoraService {
 
 	@Override
 	public Respuesta<byte[]> generaBitacora(Integer idOoad, Integer idControlRuta, String fechaResg, String matricula) throws IOException {
-		Map<String, Object> parameters = new HashMap<>();
         Respuesta<byte[]> response = new Respuesta<>();
 		String numBitacora = getSigBitacora(idOoad);
 		try {
@@ -114,7 +122,15 @@ public class BitacoraServiceImpl implements BitacoraService {
 			} else {
 				bitacoraServiciosEntity = lstBitacoraServiciosEntity.get(0);
 			}
-			
+
+			final HashMap<String, String> rutas = new HashMap<>();
+			rutas.put("logoImss", LOGO_IMSS);
+			rutas.put("logoSistema", LOGO_SISTEMA);
+			final Map<String, byte[]> imagenes = recuperarImagenes(rutas);
+			Map<String, Object> parameters = new HashMap<>();
+			imagenes.forEach((key, value) -> {
+				parameters.put(key, new ByteArrayInputStream(value));
+			});
 			log.info("Armando reporte");
 			parameters.put("numBitacora", numBitacora);
 			parameters.put("fecha", fechaResg);
@@ -130,6 +146,7 @@ public class BitacoraServiceImpl implements BitacoraService {
 			parameters.put("camillero2", bitacoraServiciosEntity.getControlRuta().getTripulacion().getPersonalCamillero2().getDesNombre());
 			parameters.put("tipoServicio", recuperaTipoServicio(bitacoraServiciosEntity.getControlRuta().getRuta().getDesServicio()));
 			parameters.put("idRuta", bitacoraServiciosEntity.getControlRuta().getRuta().getNumFolioRuta());
+
 			InputStream reportStream = ReporteUtil.recuperarInputStream.apply("reportes/formato-bitacora-servicios-ccom.jrxml");
             JasperReport report = ReporteUtil.recuperarJasperReport.apply(reportStream);
             reportStream.close();
@@ -174,6 +191,33 @@ public class BitacoraServiceImpl implements BitacoraService {
 				 .map(Enum::name)
 	                .findFirst()
 	                .orElseThrow(() -> new Exception("No se ha encontrado el tipo vehiculo en la lista"));
+	}
+
+	/**
+	 * Recupera las im&aacute;genes y las convierte en un arreglo de bytes para que pueda
+	 * ser interpretado por jasper report.
+	 *
+	 * @param rutas rutas para que se recuperen del servicio de carga de archivos.
+	 * @return recupera un mapa con las el arreglo de bytes de cada imagen.
+	 */
+	private Map<String, byte[]> recuperarImagenes(Map<String, String> rutas) throws IOException {
+		try {
+			Respuesta<?> respuesta = restTemplateUtil.sendPostRequestByteArray(
+					RECUPERAR_STREAMS_ENDPOINT,
+					new RecuperarImagenesRequest(rutas),
+					Respuesta.class
+			);
+
+			@SuppressWarnings("unchecked") final Map<String, String> datos = (Map<String, String>) respuesta.getDatos();
+			return datos.entrySet().stream()
+					.map(entry ->
+							new AbstractMap.SimpleEntry<String, byte[]>(
+									entry.getKey(), Base64.getDecoder().decode(entry.getValue())))
+					.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y, HashMap::new));
+		} catch (IOException exception) {
+			log.error("Ha ocurrido un error al recuperar las imagenes");
+			throw exception;
+		}
 	}
 
 }

@@ -3,9 +3,6 @@ server:
   servlet:
     contextPath: /mssistrans-ccom-rutas-asig
 
-jwt:
-  secretkey: funcionamuybien
-
 spring:
   mvc:
     pathmatch:
@@ -14,9 +11,9 @@ spring:
   datasource:
     platform: mariadb
     driverClassName: org.mariadb.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/SITCDQA
-    username: pmsoluciones
-    password: Tr1357.*
+    url: ${msit_CONNECTION_DB}
+    username: ${msit_USERNAME_DB}
+    password: ${msit_PASSWORD_DB}
     timeBetweenEvictionRunsMillis: 1000
     testWhileIdle: true
     validationQuery: SELECT 1
@@ -43,3 +40,10 @@ logging:
     root: info
     org.springframework.web: info
     org.hibernate: error
+logos:
+  msit_logo_imss: ${msit_LOGO_IMSS}
+  msit_logo_sistema: ${msit_LOGO_SISTEMA}
+endpoints:
+  recuperar-imagenes-endpoint: ${msit_SINTRANS_RECUPERA}
+jwt:
+  secretkey: ${msit_SECRET_KEY}
