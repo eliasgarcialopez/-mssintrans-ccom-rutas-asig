@@ -46,7 +46,6 @@ import mx.gob.imss.mssistrans.ccom.rutas.util.SolTrasladoMapper;
 import mx.gob.imss.mssistrans.ccom.rutas.util.TripulacionAsigMapper;
 import mx.gob.imss.mssistrans.ccom.rutas.util.ValidaDatos;
 
-
 @SuppressWarnings({ "rawtypes", "unchecked" })
 @Transactional(rollbackOn = SQLException.class)
 @AllArgsConstructor
@@ -70,24 +69,25 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 	@Autowired
 	private SiniestrosRepository siniestrosRepository;
 
-
 	@Override
-	public <T> Response<?> consultaVistaRapida(Integer pagina, Integer tamanio, String orden, String columna, String idRutaAsig, String idSolicitud) {
+	public <T> Response<?> consultaVistaRapida(Integer pagina, Integer tamanio, String orden, String columna,
+			String idRutaAsig, String idSolicitud) {
 		Response<T> respuesta = new Response<>();
 		String nomCol = ValidaDatos.getNameCol(columna);
 		Pageable page = PageRequest.of(pagina, tamanio,
 				Sort.by(Sort.Direction.fromString(orden.toUpperCase()), nomCol));
 		try {
 			Page consultaAsignacionRutas = null;
-			if (!idRutaAsig.equals("") && !idSolicitud.equals(""))
-				consultaAsignacionRutas = asigRutasRepository.getConsultaById(idRutaAsig, idSolicitud, page);
-			else if (idSolicitud.equals("") && !idRutaAsig.equals(""))
+			if (idRutaAsig == null || idRutaAsig.equals(""))
+				if (idSolicitud == null || idSolicitud.equals(""))
+					consultaAsignacionRutas = asigRutasRepository.consultaGeneral(page);
+				else
+					consultaAsignacionRutas = asigRutasRepository.getConsultaByIdSolicitud(idSolicitud, page);
+			else if (idSolicitud == null || idSolicitud.equals(""))
 				consultaAsignacionRutas = asigRutasRepository.getConsultaByIdAsignacion(idRutaAsig, page);
-			else if (idRutaAsig.equals("") && !idSolicitud.equals(""))
-				consultaAsignacionRutas = asigRutasRepository.getConsultaByIdSolicitud(idSolicitud, page);
 			else
-				consultaAsignacionRutas = asigRutasRepository.consultaGeneral(page);
-			
+				consultaAsignacionRutas = asigRutasRepository.getConsultaById(idRutaAsig, idSolicitud, page);
+
 			final List<AsigRutasResponse> content = (List<AsigRutasResponse>) AsigRutasMapper.INSTANCE
 					.formatearListaArrendados(consultaAsignacionRutas.getContent());
 
@@ -138,8 +138,7 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 			return ValidaDatos.errorException(respuesta, e);
 		}
 
-		List<SolTrasladoResponse> listaDeSolicituTraslado = SolTrasladoMapper.INSTANCE
-				.EntityAJson(consultaGeneral);
+		List<SolTrasladoResponse> listaDeSolicituTraslado = SolTrasladoMapper.INSTANCE.EntityAJson(consultaGeneral);
 		return ValidaDatos.respSolTras(respuesta, "Exito", listaDeSolicituTraslado);
 	}
 
@@ -191,15 +190,14 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 	@Override
 	public <T> Response getSiniestro() {
 		Response<T> respuesta = new Response<>();
-		List<SiniestrosEntity>  consultaGeneral = null;
+		List<SiniestrosEntity> consultaGeneral = null;
 		try {
 			consultaGeneral = siniestrosRepository.getSiniestro();
 		} catch (Exception e) {
 			return ValidaDatos.errorException(respuesta, e);
 		}
 
-		List<SiniestrosResponse> listaDeSiniestros = SiniestrosMapper.INSTANCE
-				.EntityAJson(consultaGeneral);
+		List<SiniestrosResponse> listaDeSiniestros = SiniestrosMapper.INSTANCE.EntityAJson(consultaGeneral);
 		return ValidaDatos.respSiniestros(respuesta, "Exito", listaDeSiniestros);
 	}
 
@@ -216,8 +214,9 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 			System.out.println("idSolicitud: " + idSolicitud);
 			System.out.println("idNuevaSolicitud: " + idNuevaSolicitud);
 			System.out.println("desEstatus: " + desEstatus);
-			
-			datosRepository.update(idNuevoVehiculo, idNuevaRuta, idNuevaSolicitud, desEstatus, idVehiculo, idRuta, idSolicitud);
+
+			datosRepository.update(idNuevoVehiculo, idNuevaRuta, idNuevaSolicitud, desEstatus, idVehiculo, idRuta,
+					idSolicitud);
 
 			datosRepository.flush();
 		} catch (Exception e) {
@@ -225,6 +224,5 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 		}
 		return ValidaDatos.respDatosAsig(respuesta, "Exito", null);
 	}
-
 
 }

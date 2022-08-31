@@ -74,22 +74,24 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 	private RegistroRecorridoRepository regRecorridoRepository;
 
 	@Override
-	public <T> Response<?> consultaVistaRapida(Integer pagina, Integer tamanio, String orden, String columna, String idRutaAsig, String idSolicitud) {
+	public <T> Response<?> consultaVistaRapida(Integer pagina, Integer tamanio, String orden, String columna,
+			String idRutaAsig, String idSolicitud) {
 		Response<T> respuesta = new Response<>();
 		String nomCol = ValidaDatos.getNameCol(columna);
 		Pageable page = PageRequest.of(pagina, tamanio,
 				Sort.by(Sort.Direction.fromString(orden.toUpperCase()), nomCol));
 		try {
 			Page consultaAsignacioRutas = null;
-			if (!idRutaAsig.equals("") && !idSolicitud.equals(""))
-				consultaAsignacioRutas = asigRutasRepository.getConsultaById(idRutaAsig, idSolicitud, page);
-			else if (!idRutaAsig.equals("") && idSolicitud.equals("") )
+			if (idRutaAsig == null || idRutaAsig.equals(""))
+				if (idSolicitud == null || idSolicitud.equals(""))
+					consultaAsignacioRutas = asigRutasRepository.consultaGeneral(page);
+				else
+					consultaAsignacioRutas = asigRutasRepository.getConsultaByIdSolicitud(idSolicitud, page);
+			else if (idSolicitud == null || idSolicitud.equals(""))
 				consultaAsignacioRutas = asigRutasRepository.getConsultaByIdAsignacion(idRutaAsig, page);
-			else if (idRutaAsig.equals("") && !idSolicitud.equals(""))
-				consultaAsignacioRutas = asigRutasRepository.getConsultaByIdSolicitud(idSolicitud, page);
-			else 
-				consultaAsignacioRutas = asigRutasRepository.consultaGeneral(page);
-			
+			else
+				consultaAsignacioRutas = asigRutasRepository.getConsultaById(idRutaAsig, idSolicitud, page);
+
 			final List<AsigRutasResponse> content = (List<AsigRutasResponse>) AsigRutasMapper.INSTANCE
 					.formatearListaArrendados(consultaAsignacioRutas.getContent());
 
@@ -140,8 +142,7 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 			return ValidaDatos.errorException(respuesta, e);
 		}
 
-		List<SolTrasladoResponse> listaDeSolicituTraslado = SolTrasladoMapper.INSTANCE
-				.EntityAJson(consultaGeneral);
+		List<SolTrasladoResponse> listaDeSolicituTraslado = SolTrasladoMapper.INSTANCE.EntityAJson(consultaGeneral);
 		return ValidaDatos.respSolTras(respuesta, "Exito", listaDeSolicituTraslado);
 	}
 
@@ -218,8 +219,9 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 			System.out.println("idSolicitud: " + idSolicitud);
 			System.out.println("idNuevaSolicitud: " + idNuevaSolicitud);
 			System.out.println("desEstatus: " + desEstatus);
-			
-			datosRepository.update(idNuevoVehiculo, idNuevaRuta, idNuevaSolicitud, desEstatus, idVehiculo, idRuta, idSolicitud);
+
+			datosRepository.update(idNuevoVehiculo, idNuevaRuta, idNuevaSolicitud, desEstatus, idVehiculo, idRuta,
+					idSolicitud);
 
 			datosRepository.flush();
 		} catch (Exception e) {

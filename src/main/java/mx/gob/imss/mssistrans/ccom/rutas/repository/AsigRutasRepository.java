@@ -36,13 +36,13 @@ public interface AsigRutasRepository extends JpaRepository<AsigRutasEntity, Inte
     		+ " INNER JOIN SINTRANST_CONTROL_RUTAS SCA ON SCA.ID_RUTA = SR.ID_RUTA"
     		+ " INNER JOIN SINTRANST_VEHICULOS SV ON SV.ID_VEHICULO = SCA.ID_VEHICULO"
     		+ " WHERE SCA.IND_ACTIVO = 1 AND SCA.IND_SISTEMA = 1"
-    		+ " AND SCA.ID_RUTA = ? AND SCA.ID_SOLICITUD = ?"
+    		+ " AND SR.NUM_FOLIO_RUTA = ? AND SCA.ID_SOLICITUD = ?"
             , countQuery = "SELECT COUNT(SR.NUM_FOLIO_RUTA)"
             		+ " FROM SINTRANST_RUTAS SR"
             		+ " INNER JOIN SINTRANST_CONTROL_RUTAS SCA ON SCA.ID_RUTA = SR.ID_RUTA"
             		+ " INNER JOIN SINTRANST_VEHICULOS SV ON SV.ID_VEHICULO = SCA.ID_VEHICULO"
             		+ " WHERE SCA.IND_ACTIVO = 1 AND SCA.IND_SISTEMA = 1"
-            + " AND SCA.ID_RUTA = ? AND SCA.ID_SOLICITUD = ?"
+            + " AND SR.NUM_FOLIO_RUTA = ? AND SCA.ID_SOLICITUD = ?"
             , nativeQuery = true)
     Page<List<AsigRutasEntity>> getConsultaById(String idAsignacion, String idSolicitud, Pageable pageable);
 
