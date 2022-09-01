@@ -143,14 +143,14 @@ public class BitacoraServiceImpl implements BitacoraService {
 			parameters.put("inmueble", bitacoraServiciosEntity.getControlRuta().getIdVehiculo().getUnidad().getNomUnidadAdscripcion());
 			parameters.put("marca", bitacoraServiciosEntity.getControlRuta().getIdVehiculo().getDesMarca());
 			parameters.put("placas", bitacoraServiciosEntity.getControlRuta().getIdVehiculo().getNumPlacas());
-			parameters.put("tipo", recuperaTipoVeh(bitacoraServiciosEntity.getControlRuta().getIdVehiculo().getDesTipoVehiculo()));
+			parameters.put("tipo", bitacoraServiciosEntity.getControlRuta().getIdVehiculo().getDesTipoVehiculo());
 			parameters.put("modelo", bitacoraServiciosEntity.getControlRuta().getIdVehiculo().getDesModelo().toString());
 			parameters.put("unidadAdscripcion", bitacoraServiciosEntity.getControlRuta().getIdVehiculo().getUnidad().getNomUnidadAdscripcion());
 			parameters.put("tripulacion", bitacoraServiciosEntity.getControlRuta().getTripulacion().getIdTripulacion().toString());
 			parameters.put("chofer", bitacoraServiciosEntity.getControlRuta().getTripulacion().getPersonalChofer().getChofer().getNombreChofer());
 			parameters.put("camillero1", bitacoraServiciosEntity.getControlRuta().getTripulacion().getPersonalCamillero1().getCamillero().getNomCamillero());
 			parameters.put("camillero2", bitacoraServiciosEntity.getControlRuta().getTripulacion().getPersonalCamillero2().getCamillero().getNomCamillero());
-			parameters.put("tipoServicio", recuperaTipoServicio(bitacoraServiciosEntity.getControlRuta().getRuta().getDesServicio()));
+			parameters.put("tipoServicio", bitacoraServiciosEntity.getControlRuta().getRuta().getDesServicio()==null? "" : recuperaTipoServicio(bitacoraServiciosEntity.getControlRuta().getRuta().getDesServicio()));
 			parameters.put("idRuta", bitacoraServiciosEntity.getControlRuta().getRuta().getNumFolioRuta());
 
 			InputStream reportStream = ReporteUtil.recuperarInputStream.apply("reportes/formato-bitacora-servicios-ccom.jrxml");
@@ -196,7 +196,7 @@ public class BitacoraServiceImpl implements BitacoraService {
 		return Arrays.stream(TipoServicioEnum.values()).filter(tipoServicioValue -> tipoServicioValue.getTipoServicio() == Integer.parseInt(tipoServicioId))
 				 .map(Enum::name)
 	                .findFirst()
-	                .orElseThrow(() -> new Exception("No se ha encontrado el tipo vehiculo en la lista"));
+	                .orElseThrow(() -> new Exception("No se ha encontrado el tipo servicio en la lista"));
 	}
 
 	/**
