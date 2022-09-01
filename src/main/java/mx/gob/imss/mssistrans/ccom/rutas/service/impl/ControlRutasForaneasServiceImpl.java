@@ -376,11 +376,11 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
             // todo - guardar los viaticos
             Viaticos viaticos = new Viaticos();
             viaticos.setControlRutas(controlRutas);
-            viaticos.setViaticosChofer(rutas.getViaticosChofer());
-            viaticos.setViaticosCamillero1(rutas.getViaticosCamillero1());
-            viaticos.setViaticosCamillero2(rutas.getViaticosCamillero2());
+            viaticos.setViaticosChofer(Double.valueOf(rutas.getViaticosChofer()));
+            viaticos.setViaticosCamillero1(Double.valueOf(rutas.getViaticosCamillero1()));
+            viaticos.setViaticosCamillero2(Double.valueOf(rutas.getViaticosCamillero2()));
+            viaticos.setViaticosCaseta(Double.valueOf(rutas.getViaticosCaseta()));
             viaticos.setCveMatricula(rutas.getCveMatricula());
-            viaticos.setViaticosCaseta(rutas.getViaticosCaseta());
             viaticos.setFecAlta(LocalDate.now());
 
             viaticosRepository.save(viaticos);
@@ -511,10 +511,10 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                 Viaticos viaticos = new Viaticos();
                 viaticos.setIdViaticos(viaticosRecuperados.getIdViaticos());
                 viaticos.setControlRutas(controlRuta);
-                viaticos.setViaticosChofer(rutaDTO.getViaticosChofer());
-                viaticos.setViaticosCamillero1(rutaDTO.getViaticosCamillero1());
-                viaticos.setViaticosCamillero2(rutaDTO.getViaticosCamillero2());
-                viaticos.setViaticosCaseta(rutaDTO.getViaticosCaseta());
+                viaticos.setViaticosChofer(Double.valueOf(rutaDTO.getViaticosChofer()));
+                viaticos.setViaticosCamillero1(Double.valueOf(rutaDTO.getViaticosCamillero1()));
+                viaticos.setViaticosCamillero2(Double.valueOf(rutaDTO.getViaticosCamillero2()));
+                viaticos.setViaticosCaseta(Double.valueOf(rutaDTO.getViaticosCaseta()));
                 viaticos.setCveMatricula(rutaDTO.getCveMatricula());
                 viaticos.setFecActualizacion(LocalDate.now());
 

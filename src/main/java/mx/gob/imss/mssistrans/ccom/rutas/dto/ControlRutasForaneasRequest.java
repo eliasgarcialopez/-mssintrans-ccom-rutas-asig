@@ -15,8 +15,8 @@ public class ControlRutasForaneasRequest {
 	    private Integer turno;
 	    private String horaRuta;
 	    private String cveMatricula;
-		private Double viaticosChofer;
-		private Double viaticosCamillero1;
-		private Double viaticosCamillero2;
-		private Double viaticosCaseta;
+		private String viaticosChofer;
+		private String viaticosCamillero1;
+		private String viaticosCamillero2;
+		private String viaticosCaseta;
 	   }
