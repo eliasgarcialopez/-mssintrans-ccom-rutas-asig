@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Table(name = "sintranst_viaticos")
 public class Viaticos {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_VIATICOS")
     private Integer idViaticos;
     @OneToOne
