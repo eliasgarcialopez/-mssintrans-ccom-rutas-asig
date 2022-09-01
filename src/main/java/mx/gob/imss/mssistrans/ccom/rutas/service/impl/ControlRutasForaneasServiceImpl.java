@@ -380,6 +380,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
             viaticos.setViaticosCamillero1(rutas.getViaticosCamillero1());
             viaticos.setViaticosCamillero2(rutas.getViaticosCamillero2());
             viaticos.setCveMatricula(rutas.getCveMatricula());
+            viaticos.setViaticosCaseta(rutas.getViaticosCaseta());
             viaticos.setFecAlta(LocalDate.now());
 
             viaticosRepository.save(viaticos);
@@ -513,6 +514,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                 viaticos.setViaticosChofer(rutaDTO.getViaticosChofer());
                 viaticos.setViaticosCamillero1(rutaDTO.getViaticosCamillero1());
                 viaticos.setViaticosCamillero2(rutaDTO.getViaticosCamillero2());
+                viaticos.setViaticosCaseta(rutaDTO.getViaticosCaseta());
                 viaticos.setCveMatricula(rutaDTO.getCveMatricula());
                 viaticos.setFecActualizacion(LocalDate.now());
 

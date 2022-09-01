@@ -24,6 +24,8 @@ public class Viaticos {
     private Double viaticosCamillero1;
     @Column(name = "VIATICOS_CAMILLERO_2")
     private Double viaticosCamillero2;
+    @Column(name = "NUM_VIATICOS_CASETA")
+    private Double viaticosCaseta;
     @Column(name = "CVE_MATRICULA", unique = false, nullable = true)
     private String cveMatricula;
     @Column(name = "FEC_ALTA", unique = false, nullable = true)

@@ -18,4 +18,5 @@ public class ControlRutasForaneasRequest {
 		private Double viaticosChofer;
 		private Double viaticosCamillero1;
 		private Double viaticosCamillero2;
+		private Double viaticosCaseta;
 	   }
