@@ -15,6 +15,9 @@ import lombok.NoArgsConstructor;
 public class AsigRutasResponse {
 
 	@JsonProperty
+	private String idRuta;
+	
+	@JsonProperty
 	private String idRutaAsignacion;
 	
 	@JsonProperty
@@ -26,7 +29,6 @@ public class AsigRutasResponse {
 	
 	@JsonProperty
 	private String desEstatusSolicitud;
-	
-	
+
 	
 }

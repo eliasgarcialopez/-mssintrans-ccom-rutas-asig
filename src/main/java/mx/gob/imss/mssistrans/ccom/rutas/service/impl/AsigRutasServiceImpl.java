@@ -17,11 +17,15 @@ import lombok.AllArgsConstructor;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.AsigRutasResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosAsigResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosAsigRutasResponse;
+import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosUsuarioDTO;
+import mx.gob.imss.mssistrans.ccom.rutas.dto.EccoResponse;
+import mx.gob.imss.mssistrans.ccom.rutas.dto.RegistroRecorridoDTO;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.RegistroRecorridoResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.Response;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.SolTrasladoResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.TripulacionAsigResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.model.DatosAsigEntity;
+import mx.gob.imss.mssistrans.ccom.rutas.model.EccoEntity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.RegistroRecorridoEntity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.RutasAsigEntity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.SolTrasladoEntity;
@@ -31,6 +35,7 @@ import mx.gob.imss.mssistrans.ccom.rutas.model.TripulacionAsigEntity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.TripulacionAsigGroupEntity;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.AsigRutasRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.DatosAsigRepository;
+import mx.gob.imss.mssistrans.ccom.rutas.repository.EccoRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.RegistroRecorridoRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.RutasAsigRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.SolTrasladoRepository;
@@ -40,6 +45,7 @@ import mx.gob.imss.mssistrans.ccom.rutas.repository.TripulacionAsigRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.service.AsigRutasService;
 import mx.gob.imss.mssistrans.ccom.rutas.util.AsigRutasMapper;
 import mx.gob.imss.mssistrans.ccom.rutas.util.DatosAsigMapper;
+import mx.gob.imss.mssistrans.ccom.rutas.util.EccoMapper;
 import mx.gob.imss.mssistrans.ccom.rutas.util.RegistroRecorridoMapper;
 import mx.gob.imss.mssistrans.ccom.rutas.util.RutasMapper;
 import mx.gob.imss.mssistrans.ccom.rutas.util.SolTrasladoMapper;
@@ -63,6 +69,8 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 	@Autowired
 	private SolTrasladoRepository solicitudTrasladoRepository;
 	@Autowired
+	private EccoRepository eccoRepository;
+	@Autowired
 	private DatosAsigRepository datosRepository;
 	@Autowired
 	private TripulacionAsigRepository choferRepository;
@@ -77,7 +85,7 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 	public <T> Response<?> consultaVistaRapida(Integer pagina, Integer tamanio, String orden, String columna,
 			String idRutaAsig, String idSolicitud) {
 		Response<T> respuesta = new Response<>();
-		String nomCol = ValidaDatos.getNameCol(columna);
+		String nomCol = ValidaDatos.getNameColAsignacion(columna);
 		Pageable page = PageRequest.of(pagina, tamanio,
 				Sort.by(Sort.Direction.fromString(orden.toUpperCase()), nomCol));
 		try {
@@ -119,31 +127,51 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 
 	/****** HU006 - 26 **********/
 	@Override
-	public <T> Response getRutas(Integer idOoad) {
+	public <T> Response getRutas(Integer idOoad, String rol) {
 		Response<T> respuesta = new Response<>();
 		List<RutasAsigEntity> consultaGeneral = null;
 		try {
-			consultaGeneral = rutasRepository.getRutas(idOoad);
+			if (rol.toUpperCase().equals("ADMINISTRADOR"))
+				consultaGeneral = rutasRepository.getRutas();
+			else
+				consultaGeneral = rutasRepository.getRutasByOoad(idOoad);
 		} catch (Exception e) {
 			return ValidaDatos.errorException(respuesta, e);
 		}
 
 		List<DatosAsigRutasResponse> listaDeOoad = RutasMapper.INSTANCE.EntityAJson(consultaGeneral);
-		return ValidaDatos.respRutas(respuesta, "Exito", listaDeOoad);
+		return ValidaDatos.resp(respuesta, "Exito", listaDeOoad);
 	}
 
 	@Override
-	public <T> Response getSolicitudTraslado(Integer idUnidadAdscripcion, Integer idVehiculo) {
+	public <T> Response getSolicitudTraslado(DatosUsuarioDTO datosUsuario, Integer idRuta) {
 		Response<T> respuesta = new Response<>();
 		List<SolTrasladoEntity> consultaGeneral = null;
 		try {
-			consultaGeneral = solicitudTrasladoRepository.getSolicitudTraslado(idUnidadAdscripcion, idVehiculo);
+			if (datosUsuario.getRol().toUpperCase().equals("ADMINISTRADOR"))
+				consultaGeneral = solicitudTrasladoRepository.getSolicitudTraslado(idRuta);
+			else
+				consultaGeneral = solicitudTrasladoRepository.getSolicitudTraslado(datosUsuario.getIDOOAD(), idRuta);
 		} catch (Exception e) {
 			return ValidaDatos.errorException(respuesta, e);
 		}
 
 		List<SolTrasladoResponse> listaDeSolicituTraslado = SolTrasladoMapper.INSTANCE.EntityAJson(consultaGeneral);
 		return ValidaDatos.respSolTras(respuesta, "Exito", listaDeSolicituTraslado);
+	}
+
+	@Override
+	public <T> Response getEcco(DatosUsuarioDTO datosUsuarios, Integer idRuta) {
+		Response<T> respuesta = new Response<>();
+		List<EccoEntity> consultaGeneral = null;
+		try {
+			consultaGeneral = eccoRepository.getEcco(idRuta);
+		} catch (Exception e) {
+			return ValidaDatos.errorException(respuesta, e);
+		}
+
+		List<EccoResponse> listaDeOoad = EccoMapper.INSTANCE.EntityAJson(consultaGeneral);
+		return ValidaDatos.resp(respuesta, "Exito", listaDeOoad);
 	}
 
 	@Override
@@ -207,21 +235,15 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 	}
 
 	@Override
-	public <T> Response update(String idVehiculo, String idNuevoVehiculo, String idRuta, String idNuevaRuta,
-			String idSolicitud, String idNuevaSolicitud, String desEstatus) {
+	public <T> Response update(RegistroRecorridoDTO datosRecorrido) {
 		// TODO Auto-generated method stub
 		Response<T> respuesta = new Response<>();
 		try {
-			System.out.println("idVehiculo: " + idVehiculo);
-			System.out.println("idNuevoVehiculo: " + idNuevoVehiculo);
-			System.out.println("idRuta: " + idRuta);
-			System.out.println("idNuevaRuta: " + idNuevaRuta);
-			System.out.println("idSolicitud: " + idSolicitud);
-			System.out.println("idNuevaSolicitud: " + idNuevaSolicitud);
-			System.out.println("desEstatus: " + desEstatus);
-
-			datosRepository.update(idNuevoVehiculo, idNuevaRuta, idNuevaSolicitud, desEstatus, idVehiculo, idRuta,
-					idSolicitud);
+			regRecorridoRepository.update(datosRecorrido.getHoraInicioAsignacion(), datosRecorrido.getIdRuta1(),
+					datosRecorrido.getHrInicio1(), datosRecorrido.getHrFin1(), datosRecorrido.getIdRuta2(),
+					datosRecorrido.getHrInicio2(), datosRecorrido.getHrFin2(), datosRecorrido.getIdRuta3(),
+					datosRecorrido.getHrInicio3(), datosRecorrido.getHrFin3(), datosRecorrido.getEstatusTraslado(),
+					datosRecorrido.getIdVehiculo(), datosRecorrido.getIdRuta());
 
 			datosRepository.flush();
 		} catch (Exception e) {

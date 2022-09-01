@@ -15,17 +15,19 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "SINTRANST_RUTAS")
-public class RutasAsigEntity {
+@Table(name = "SINTRANST_VEHICULOS")
+public class EccoEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ID_RUTA", unique = false, nullable = true)
-	private String idRuta;
+	@Column(name = "ID_VEHICULO", unique = false, nullable = true)
+	private String idVehiculo;
 
-	@Column(name = "NUM_FOLIO_RUTA", unique = false, nullable = true)
-	private String numFolioRuta;
+	@Column(name = "CVE_ECCO", unique = false, nullable = true)
+	private String cveEcco;
 	
 
+	@Column(name = "NUM_PLACAS", unique = false, nullable = true)
+	private String numPlacas;
 }
 

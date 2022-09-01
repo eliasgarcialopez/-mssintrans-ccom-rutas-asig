@@ -90,7 +90,7 @@ public class SolicitudTraslado implements Serializable {
     
     @Basic
     @Column(name = "DES_AREA_ORIGEN")
-    private String desAreaOrigen;
+    private Integer desAreaOrigen;
     
     @Basic
     @Column(name = "NUM_CAMA_ORIGEN")
@@ -102,7 +102,7 @@ public class SolicitudTraslado implements Serializable {
     
     @Basic
     @Column(name = "DES_AREA_DESTINO")
-    private String desAreaDestino;
+    private Integer desAreaDestino;
     
     
     @Basic
