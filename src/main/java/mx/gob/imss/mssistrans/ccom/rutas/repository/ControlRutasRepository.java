@@ -35,10 +35,10 @@ public interface ControlRutasRepository extends JpaRepository<ControlRutas, Inte
      * @param pageable
      * @return
      */
-    @Query(value = "select a from ControlRutas a " +
-            "where " +
-                  "a.activo = true")
-    Page<ControlRutas> findAll(Pageable pageable);
+	   @Query(value = "select a from ControlRutas a " +
+			   "where a.activo = true " +
+			   "and a.ruta.indRutaForanea = false")
+	   Page<ControlRutas> findAll(Pageable pageable);
     
     
     /**
@@ -48,15 +48,15 @@ public interface ControlRutasRepository extends JpaRepository<ControlRutas, Inte
      * @param pageable
      * @return
      */
-    @Query(value = "select a from ControlRutas a " +
-            "where " +
-    		" a.modulo.idOOAD=?1 and "+    
-                  "a.activo = true")
-    Page<ControlRutas> findAll(Pageable pageable, Integer idOOAD);
+	@Query(value = "select a from ControlRutas a " +
+			"where " +
+			" a.modulo.idOOAD=?1 and " +
+			"a.activo = true " +
+			"and a.ruta.indRutaForanea = false")
+	Page<ControlRutas> findAll(Pageable pageable, Integer idOOAD);
     
     /**
      * Consulta todos los folios asignados   por la bandera de activo y OOAD
-     *
      *
      * @param pageable
      * @return
