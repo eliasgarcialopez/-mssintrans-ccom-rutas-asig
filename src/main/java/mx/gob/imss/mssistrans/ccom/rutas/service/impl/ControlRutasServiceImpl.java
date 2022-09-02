@@ -160,9 +160,9 @@ public class ControlRutasServiceImpl implements ControlRutasService {
             log.info("Consultando la ruta");
             Gson gson = new Gson();
 			DatosUsuario datosUsuarios = gson.fromJson(user, DatosUsuario.class);
-		    Integer idOOAD= datosUsuarios.getIDOOAD();
 		    
-		  Optional<ModuloAmbulancia> opModulo=moAmbulanciaRepository.findByIdOOADAndActivoEquals(idOOAD, true);
+		    
+		//  Optional<ModuloAmbulancia> opModulo=moAmbulanciaRepository.findByIdOOADAndActivoEquals(idOOAD, true);
 		    
 		    
 		     
@@ -189,9 +189,9 @@ public class ControlRutasServiceImpl implements ControlRutasService {
   				
   				//
   				
-  				if(opModulo.isPresent()) {
+  				if(ruta.getModulo()!=null) {
   					
-  					ModuloAmbulancia moduloAmbulancia=opModulo.get();
+  					ModuloAmbulancia moduloAmbulancia=ruta.getModulo();  
   					Integer idZona=moduloAmbulancia.getZona().getIdZona();
   					
   					Integer totalVA=   vehiculoRepository.countTotalVehiculoAsignados(idZona);
