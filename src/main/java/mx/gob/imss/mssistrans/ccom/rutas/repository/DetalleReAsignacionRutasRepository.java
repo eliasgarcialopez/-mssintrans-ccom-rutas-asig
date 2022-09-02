@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import mx.gob.imss.mssistrans.ccom.rutas.dto.ReAsignacionRutasDTO;
+import mx.gob.imss.mssistrans.ccom.rutas.model.DetalleReAsignacionRutasEntity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.ReAsignacionRutasEntity;
 
 import java.util.List;
@@ -14,7 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 @Repository
-public interface ReAsignacionRutasRepository extends JpaRepository<ReAsignacionRutasEntity, Integer> {
+public interface DetalleReAsignacionRutasRepository extends JpaRepository<DetalleReAsignacionRutasEntity, Integer> {
 
     @Query(value = "SELECT SR.NUM_FOLIO_RUTA, SCR.ID_SOLICITUD"
     		+ ", SV.CVE_ECCO, SCR.DES_ESTATUS_ASIGNA AS DES_ESTATUS_ASIGNA, SRR.ID_REASIGNACION AS ID_REASIGNACION"
@@ -30,7 +31,7 @@ public interface ReAsignacionRutasRepository extends JpaRepository<ReAsignacionR
             		+ " INNER JOIN SINTRANST_REASIGNACION_RUTAS SRR ON SRR.ID_RUTA = SCR.ID_RUTA"
             		+ " WHERE SCR.ID_VEHICULO = SRR.ID_VEHICULO  AND  SRR.IND_ACTIVO = 1 AND SRR.IND_SISTEMA = 1 "
             ,nativeQuery = true)
-    Page<List<ReAsignacionRutasEntity>> consultaGeneral(Pageable page);
+    Page<List<DetalleReAsignacionRutasEntity>> consultaGeneral(Pageable page);
 
 
     @Query(value = "SELECT SR.NUM_FOLIO_RUTA, SCR.ID_SOLICITUD"
@@ -49,7 +50,7 @@ public interface ReAsignacionRutasRepository extends JpaRepository<ReAsignacionR
     	    		+ " WHERE SCR.ID_VEHICULO = SRR.ID_VEHICULO  AND  SRR.IND_ACTIVO = 1 AND SRR.IND_SISTEMA = 1 "
             + " AND SR.NUM_FOLIO_RUTA = ? AND SCA.ID_SOLICITUD = ?"
             , nativeQuery = true)
-    Page<List<ReAsignacionRutasEntity>> getConsultaById(String idAsignacion, String idSolicitud, Pageable pageable);
+    Page<List<DetalleReAsignacionRutasEntity>> getConsultaById(String idAsignacion, String idSolicitud, Pageable pageable);
 
     @Query(value = "SELECT SR.NUM_FOLIO_RUTA, SCR.ID_SOLICITUD"
     	    		+ ", SV.CVE_ECCO, SCR.DES_ESTATUS_ASIGNA AS DES_ESTATUS_ASIGNA, SRR.ID_REASIGNACION AS ID_REASIGNACION"
@@ -67,7 +68,7 @@ public interface ReAsignacionRutasRepository extends JpaRepository<ReAsignacionR
     	    		+ " WHERE SCR.ID_VEHICULO = SRR.ID_VEHICULO  AND  SRR.IND_ACTIVO = 1 AND SRR.IND_SISTEMA = 1 "
             + " AND SRR.ID_REASIGNACION  = ? "
             , nativeQuery = true)
-    Page<List<ReAsignacionRutasEntity>> getConsultaByIdAsignacion(String idRutaAsig, Pageable pageable);
+    Page<List<DetalleReAsignacionRutasEntity>> getConsultaByIdAsignacion(String idRutaAsig, Pageable pageable);
 
 
     @Query(value = "SELECT SR.NUM_FOLIO_RUTA, SCR.ID_SOLICITUD"
@@ -86,7 +87,7 @@ public interface ReAsignacionRutasRepository extends JpaRepository<ReAsignacionR
             		+ " WHERE SCR.ID_VEHICULO = SRR.ID_VEHICULO  AND  SRR.IND_ACTIVO = 1 AND SRR.IND_SISTEMA = 1 "
             		+ " AND SCA.ID_SOLICITUD = ? "
             , nativeQuery = true)
-    Page<List<ReAsignacionRutasEntity>> getConsultaByIdSolicitud( String idSolicitud, Pageable pageable);
+    Page<List<DetalleReAsignacionRutasEntity>> getConsultaByIdSolicitud( String idSolicitud, Pageable pageable);
 
 	@Modifying(flushAutomatically = true)
 	@Query(value = "UPDATE SINTRANST_REASIGNACION_RUTAS  SET FEC_BAJA = CURRENT_TIMESTAMP(), IND_ACTIVO = 0"

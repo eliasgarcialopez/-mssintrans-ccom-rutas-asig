@@ -107,8 +107,7 @@ public class ValidaDatos {
 		return respuesta;
 	}
 
-	public static <T> Response<?> respRegistroRecorrido(Response<T> respuesta, String msg,
-			RegistroRecorridoResponse listaDeUnidad) {
+	public static <T> Response<?> resp(Response<T> respuesta, String msg,Object listaDeUnidad) {
 		respuesta.setCodigo(HttpStatus.OK.value());
 		respuesta.setError(false);
 		respuesta.setMensaje(msg);

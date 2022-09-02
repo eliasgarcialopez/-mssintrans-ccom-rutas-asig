@@ -15,20 +15,23 @@ import lombok.NoArgsConstructor;
 public class AsigRutasResponse {
 
 	@JsonProperty
-	private String idRuta;
-	
-	@JsonProperty
-	private String idRutaAsignacion;
+	private String idControlRuta;
 	
 	@JsonProperty
 	private String idSolicitud;
 	
-
 	@JsonProperty
 	private String cveEcco;
 	
 	@JsonProperty
 	private String desEstatusSolicitud;
+	
+	@JsonProperty
+	private String idRutaAsignacion;
 
+	@JsonProperty
+	private String idVehiculo;
+	@JsonProperty
+	private String idRuta;
 	
 }

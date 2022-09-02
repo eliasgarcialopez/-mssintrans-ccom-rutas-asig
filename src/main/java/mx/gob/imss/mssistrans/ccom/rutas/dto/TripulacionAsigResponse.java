@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 public class TripulacionAsigResponse {
 
 	@JsonProperty
-	private String idVehiculo;
+	private String idControlRuta;
 
 	@JsonProperty
 	private String nombreChofer;

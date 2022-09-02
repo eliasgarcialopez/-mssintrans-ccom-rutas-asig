@@ -13,14 +13,13 @@ import mx.gob.imss.mssistrans.ccom.rutas.model.TripulacionAsigEntity;
 @Repository
 public interface TripulacionAsigCamillero02Repository extends JpaRepository<TripulacionAsigCam02Entity, Integer> {
 
-    @Query(value = "SELECT SCA.ID_VEHICULO, SPA.DES_NOMBRE,  SPA.CVE_MATRICULA_PERSONAL, SCA.NUM_FOLIO_TJTA_COMBUSTIBLE"
-    		+ " FROM SINTRANST_CONTROL_RUTAS SCA"
-    		+ " INNER JOIN SINTRANST_TRIPULACION ST ON ST.ID_TRIPULACION = SCA.ID_TRIPULACION"
-    		+ " LEFT OUTER JOIN SINTRANST_CHOFERES SC ON SC.ID_CHOFER = ST.ID_PERSONAL_AMBULANCIA_CHOFER"
+    @Query(value = "SELECT SCR.ID_CONTROL_RUTA,SPA.ID_PERSONAL_AMBULANCIA, SPA.DES_NOMBRE"
+    		+ ", SPA.DES_PUESTO, SPA.CVE_MATRICULA_PERSONAL, SCR.NUM_FOLIO_TJTA_COMBUSTIBLE "
+    		+ " FROM SINTRANST_TRIPULACION ST"
+    		+ " INNER JOIN SINTRANST_CONTROL_RUTAS SCR ON SCR.ID_TRIPULACION = ST.ID_TRIPULACION"
     		+ " INNER JOIN SINTRANST_PERSONAL_AMBULANCIA SPA ON SPA.ID_PERSONAL_AMBULANCIA = ST.ID_PERSONAL_AMBULANCIA_C2"
-    		+ " WHERE SCA.IND_SISTEMA = 1 AND SCA.IND_ACTIVO = 1"
-    		+ " AND SCA.ID_VEHICULO = ? AND SCA.ID_RUTA = ? AND SCA.ID_SOLICITUD = ?"  
+    		+ " WHERE SCR.ID_CONTROL_RUTA = ?" 
             ,nativeQuery = true)
-    TripulacionAsigCam02Entity getDatosCamillero2(Integer idVehiculo, Integer idRuta, Integer idSolicitud);
+    TripulacionAsigCam02Entity getDatosCamillero2(Integer idControlRuta);
 
 }

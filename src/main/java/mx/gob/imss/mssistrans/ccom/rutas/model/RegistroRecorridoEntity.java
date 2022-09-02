@@ -17,34 +17,20 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "SINTRANST_RUTAS_ASIGNACIONES")
 public class RegistroRecorridoEntity {
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID_VEHICULO", unique = false, nullable = true)
 	private String idVehiculo;
-	@Column(name = "TIM_HORA_INICIO_ASIGNACION", unique = false, nullable = true)
+	@Column(name = "TIM_INICIO_ASIGNA", unique = false, nullable = true)
 	private String inicioAsignacion;
-	@Column(name = "ID_RUTA1", unique = false, nullable = true)
-	private String inicioRuta1;
-	@Column(name = "TIM_HORA_INICIO_RUTA_1", unique = false, nullable = true)
-	private String horaInicioRuta1;
-	@Column(name = "TIM_HORA_FIN_RUTA_1", unique = false, nullable = true)
-	private String horaFinRuta1;
-	@Column(name = "ID_RUTA2", unique = false, nullable = true)
-	private String inicioRuta2;
-	@Column(name = "TIM_HORA_INICIO_RUTA_2", unique = false, nullable = true)
-	private String horaInicioRuta2;
-	@Column(name = "TIM_HORA_FIN_RUTA_2", unique = false, nullable = true)
-	private String horaFinRuta2;
-	@Column(name = "ID_RUTA3", unique = false, nullable = true)
-	private String inicioRuta3;
-	@Column(name = "TIM_HORA_INICIO_RUTA_3", unique = false, nullable = true)
-	private String horaInicioRuta3;
-	@Column(name = "TIM_HORA_FIN_RUTA_3", unique = false, nullable = true)
-	private String horaFinRuta3;
-	@Column(name = "ID_RUTA_ASIGNACION", unique = false, nullable = true)
-	private String rutaAsignacion;
-	@Column(name = "DES_TIPO_INCIDENTE", unique = false, nullable = true)
-	private String desTipoIncidente;
+	@Column(name = "DES_ESTATUS_ASIGNA", unique = false, nullable = true)
+	private String estatus;
+	@Column(name = "ID_DESTINO", unique = false, nullable = true)
+	private String inicioRuta;
+	@Column(name = "TIM_HORA_INICIO", unique = false, nullable = true)
+	private String horaInicio;
+	@Column(name = "TIM_HORA_FIN", unique = false, nullable = true)
+	private String horaFinRuta;
+
 }
 
