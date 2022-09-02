@@ -197,25 +197,41 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
 
                 TripulacionResponse tripRes = new TripulacionResponse();
                 if (ruta.getTripulacion() != null) {
-                    tripRes.setCveMatriculaCamillero1(ruta.getTripulacion().getPersonalCamillero1().getCamillero().getCveMatricula());
-                    tripRes.setCveMatriculaCamillero2(ruta.getTripulacion().getPersonalCamillero2().getCamillero().getCveMatricula());
-                    tripRes.setCveMatriculaChofer(ruta.getTripulacion().getPersonalChofer().getChofer().getMatriculaChofer());
+                    TripulacionInterfaceResponse tripOp = tripulacionRepository.findTripulacionIdVehiculo(ruta.getIdVehiculo().getIdVehiculo());
 
-                    Usuario camillero1 = usuarioRepository.getUsuario(ruta.getTripulacion().getPersonalCamillero1().getCamillero().getCveMatricula());
-                    tripRes.setNombreCamillero1(camillero1.getNOM_USUARIO() + " " + camillero1.getNOM_APELLIDO_PATERNO() + " " + camillero1.getNOM_APELLIDO_MATERNO());
-
-                    Usuario camillero2 = usuarioRepository.getUsuario(ruta.getTripulacion().getPersonalCamillero2().getCamillero().getCveMatricula());
-                    tripRes.setNombreCamillero2(camillero2.getNOM_USUARIO() + " " + camillero2.getNOM_APELLIDO_PATERNO() + " " + camillero2.getNOM_APELLIDO_MATERNO());
-
-                    Usuario chofer = usuarioRepository.getUsuario(ruta.getTripulacion().getPersonalChofer().getChofer().getMatriculaChofer());
-                    tripRes.setNombreChofer(chofer.getNOM_USUARIO() + " " + chofer.getNOM_APELLIDO_PATERNO() + " " + chofer.getNOM_APELLIDO_MATERNO());
+                    if (tripOp != null) {
 
 
-                    tripRes.setIdTripulacion(ruta.getTripulacion().getIdTripulacion());
-                    tripRes.setIdVehiculo(ruta.getTripulacion().getIdVehiculo());
-                    tripRes.setFecFecha(ruta.getTripulacion().getFecFecha().toString());
+                        tripRes.setIdTripulacion(tripOp.getidTripulacion());
+                        tripRes.setIdVehiculo(tripOp.getidVehiculo());
 
-                    rutasResponse.setTripulacion(tripRes);
+
+                        tripRes.setCveMatriculaCamillero1(tripOp.getcveMatriculaCamillero1());
+                        tripRes.setCveMatriculaCamillero2(tripOp.getcveMatriculaCamillero2());
+                        tripRes.setCveMatriculaChofer(tripOp.getcveMatriculaChofer());
+
+                        //Usuario camillero1=usuarioRepository.getUsuario(tripulacion.getPersonalCamillero1().getCamillero().getCveMatricula());
+                        tripRes.setNombreCamillero1(tripOp.getnombreCamillero1());
+
+                        //Usuario  camillero2=usuarioRepository.getUsuario(tripulacion.getPersonalCamillero2().getCamillero().getCveMatricula());
+                        tripRes.setNombreCamillero2(tripOp.getnombreCamillero2());
+                        //Usuario  chofer=usuarioRepository.getUsuario(tripulacion.getPersonalChofer().getChofer().getMatriculaChofer());
+                        tripRes.setNombreChofer(tripOp.getnombreChofer());
+
+
+                        tripRes.setIdTripulacion(ruta.getTripulacion().getIdTripulacion());
+                        tripRes.setIdVehiculo(ruta.getTripulacion().getIdVehiculo());
+                        tripRes.setFecFecha(ruta.getTripulacion().getFecFecha().toString());
+                        rutasResponse.setTripulacion(tripRes);
+                    } else {
+                        log.info("No se econtro la tripulacion por id vehiculo " + ruta.getIdVehiculo().getIdVehiculo());
+                        response.setDatos(null);
+                        response.setError(false);
+                        response.setMensaje("Exito");
+                        response.setCodigo(HttpStatus.OK.value());
+                        return response;
+                    }
+
                 }
                 //06.01 a 14:00, vespertino horario del turno 14.01 a 19:00,nocturno o especial horario del turno 19.01 a 06:00
                 if (ruta.getIdSolcitud() != null && ruta.getIdSolcitud().getTimSolicitud() != null) {
@@ -354,7 +370,8 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
             controlRutas.setDesEstatusAsigna("1");
             controlRutas.setIndiceSistema(true);
 
-            Optional<ModuloAmbulancia> moduloOp = moAmbulanciaRepository.findByIdOOADAndActivoEquals(rutas.getIdModulo(), true);
+//            Optional<ModuloAmbulancia> moduloOp = moAmbulanciaRepository.findByIdOOADAndActivoEquals(rutas.getIdModulo(), true);
+            Optional<ModuloAmbulancia> moduloOp = moAmbulanciaRepository.findByIdModuloAndActivoEquals(rutas.getIdModulo(), true);
             if (moduloOp.isPresent())
                 controlRutas.setModulo(moduloOp.get());
             else log.info("modulo no encontrado" + rutas.getIdModulo());
@@ -489,7 +506,8 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                 controlRuta.setFechaInicioAsigna(LocalDate.parse(rutaDTO.getFechaRuta()));
 
 
-                Optional<ModuloAmbulancia> moduloOp = moAmbulanciaRepository.findByIdOOADAndActivoEquals(rutaDTO.getIdModulo(), true);
+//                Optional<ModuloAmbulancia> moduloOp = moAmbulanciaRepository.findByIdOOADAndActivoEquals(rutaDTO.getIdModulo(), true);
+                Optional<ModuloAmbulancia> moduloOp = moAmbulanciaRepository.findByIdModuloAndActivoEquals(rutaDTO.getIdModulo(), true);
                 if (moduloOp.isPresent())
                     controlRuta.setModulo(moduloOp.get());
 
