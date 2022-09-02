@@ -26,7 +26,7 @@ public interface ControlRutasForaneasService {
      * @param idControlRuta
      * @return
      */
-    Respuesta<ControlRutasResponse> consultarRutas(Integer idControlRuta);
+    Respuesta<ControlRutasForaneasResponse> consultarRutas(Integer idControlRuta);
 
     /**
      * Crea un nueva Ruta
