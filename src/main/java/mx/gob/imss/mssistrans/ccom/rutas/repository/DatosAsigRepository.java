@@ -12,18 +12,14 @@ import mx.gob.imss.mssistrans.ccom.rutas.model.DatosAsigEntity;
 @Repository
 public interface DatosAsigRepository extends JpaRepository<DatosAsigEntity, Integer> {
 	
-    @Query(value = "SELECT SCA.ID_VEHICULO, SCA.ID_RUTA, SCA.ID_SOLICITUD, SV.CVE_ECCO, SV.NUM_PLACAS, SCA.DES_ESTATUS_ASIGNA"
-    		+ " FROM SINTRANST_CONTROL_RUTAS SCA"
-    		+ " INNER JOIN SINTRANST_VEHICULOS SV ON SV.ID_VEHICULO = SCA.ID_VEHICULO"
-    		+ " WHERE SCA.IND_SISTEMA = 1 AND SCA.IND_ACTIVO = 1"
-    		+ " AND SCA.ID_VEHICULO = ? AND SCA.ID_RUTA = ? AND SCA.ID_SOLICITUD = ? "
-            , countQuery = "SELECT COUNT(SA.ID_VEHICULO)"
-            + " FROM SINTRANST_CONTROL_RUTAS SCA"
-            + " INNER JOIN SINTRANST_VEHICULOS SV ON SV.ID_VEHICULO = SCA.ID_VEHICULO"
-            + " WHERE SCA.IND_SISTEMA = 1 AND SCA.IND_ACTIVO = 1"
-            + " AND SCA.ID_VEHICULO = ? AND SCA.ID_RUTA = ? AND SCA.ID_SOLICITUD = ? "
+    @Query(value = "SELECT SCR.ID_VEHICULO, SCR.ID_RUTA, SCR.ID_SOLICITUD, SV.CVE_ECCO, SV.NUM_PLACAS, SCR.DES_ESTATUS_ASIGNA"
+    		+ ", SCR.ID_CONTROL_RUTA"
+    		+ " FROM SINTRANST_CONTROL_RUTAS SCR"
+    		+ " INNER JOIN SINTRANST_VEHICULOS SV ON SV.ID_VEHICULO = SCR.ID_VEHICULO"
+    		+ " WHERE SCR.IND_SISTEMA = 1 AND SCR.IND_ACTIVO = 1 AND"
+    		+ " SCR.ID_CONTROL_RUTA = ? "
             ,nativeQuery = true)
-    List<DatosAsigEntity> getDatosAsignacion(Integer idVehiculo, Integer idRuta, Integer idSolicitud );
+    DatosAsigEntity getDatosAsignacion( Integer idControlRuta );
 
 	@Modifying(flushAutomatically = true)
 	@Query(value = "UPDATE SINTRANST_CONTROL_RUTAS"

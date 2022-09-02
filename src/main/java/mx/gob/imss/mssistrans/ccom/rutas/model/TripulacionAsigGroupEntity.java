@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 public class TripulacionAsigGroupEntity {
 
-	private String idVehiculo;
+	private String idControlRuta;
 	private String nombreChofer;
 	private String matriculaChofer;
 	private String nombreCamillero1;
@@ -20,5 +20,6 @@ public class TripulacionAsigGroupEntity {
 	private String nombreCamillero2;
 	private String matriculaCamillero2;
 	private String numTarjetaDig;
+	private String idPersonalAmbulancia;
 }
 

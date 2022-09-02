@@ -18,6 +18,7 @@ import mx.gob.imss.mssistrans.ccom.rutas.dto.AsigRutasResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosAsigResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosAsigRutasResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosUsuarioDTO;
+import mx.gob.imss.mssistrans.ccom.rutas.dto.DetRutasAsignacionesResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.EccoResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.RegistroRecorridoDTO;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.RegistroRecorridoResponse;
@@ -25,6 +26,7 @@ import mx.gob.imss.mssistrans.ccom.rutas.dto.Response;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.SolTrasladoResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.TripulacionAsigResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.model.DatosAsigEntity;
+import mx.gob.imss.mssistrans.ccom.rutas.model.DetRutasAsigEntity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.EccoEntity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.RegistroRecorridoEntity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.RutasAsigEntity;
@@ -79,26 +81,26 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 	@Autowired
 	private TripulacionAsigCamillero02Repository camillero02Repository;
 	@Autowired
-	private RegistroRecorridoRepository regRecorridoRepository;
+	private RegistroRecorridoRepository regRecorrido1Repository;
 
 	@Override
 	public <T> Response<?> consultaVistaRapida(Integer pagina, Integer tamanio, String orden, String columna,
-			String idRutaAsig, String idSolicitud) {
+			String idRuta, String idSolicitud) {
 		Response<T> respuesta = new Response<>();
 		String nomCol = ValidaDatos.getNameColAsignacion(columna);
 		Pageable page = PageRequest.of(pagina, tamanio,
 				Sort.by(Sort.Direction.fromString(orden.toUpperCase()), nomCol));
 		try {
 			Page consultaAsignacioRutas = null;
-			if (idRutaAsig == null || idRutaAsig.equals(""))
+			if (idRuta == null || idRuta.equals(""))
 				if (idSolicitud == null || idSolicitud.equals(""))
 					consultaAsignacioRutas = asigRutasRepository.consultaGeneral(page);
 				else
 					consultaAsignacioRutas = asigRutasRepository.getConsultaByIdSolicitud(idSolicitud, page);
 			else if (idSolicitud == null || idSolicitud.equals(""))
-				consultaAsignacioRutas = asigRutasRepository.getConsultaByIdAsignacion(idRutaAsig, page);
+				consultaAsignacioRutas = asigRutasRepository.getConsultaByIdAsignacion(idRuta, page);
 			else
-				consultaAsignacioRutas = asigRutasRepository.getConsultaById(idRutaAsig, idSolicitud, page);
+				consultaAsignacioRutas = asigRutasRepository.getConsultaById(idRuta, idSolicitud, page);
 
 			final List<AsigRutasResponse> content = (List<AsigRutasResponse>) AsigRutasMapper.INSTANCE
 					.formatearListaArrendados(consultaAsignacioRutas.getContent());
@@ -114,10 +116,10 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 	}
 
 	@Override
-	public Response delete(String idRutaAsignacion) {
+	public Response delete(String idControlRuta) {
 		Response respuesta = new Response<>();
 		try {
-			asigRutasRepository.delete(idRutaAsignacion);
+			asigRutasRepository.delete(idControlRuta);
 			asigRutasRepository.flush();
 			return ValidaDatos.respAsignacionRuta(respuesta, "Exito", null);
 		} catch (Exception e) {
@@ -175,63 +177,49 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 	}
 
 	@Override
-	public <T> Response getDatosAsignacion(Integer idVehiculo, Integer idRuta, Integer idSolicitud) {
+	public <T> Response getDatosAsignacion(Integer idControlRuta) {
 		Response<T> respuesta = new Response<>();
-		List<DatosAsigEntity> consultaGeneral = null;
+		DatosAsigEntity consultaGeneral = null;
 		try {
-			consultaGeneral = datosRepository.getDatosAsignacion(idVehiculo, idRuta, idSolicitud);
+			consultaGeneral = datosRepository.getDatosAsignacion(idControlRuta);
 		} catch (Exception e) {
 			return ValidaDatos.errorException(respuesta, e);
 		}
 
-		List<DatosAsigResponse> listaDeSolicituTraslado = DatosAsigMapper.INSTANCE.EntityAJson(consultaGeneral);
-		return ValidaDatos.respDatosAsig(respuesta, "Exito", listaDeSolicituTraslado);
+		DatosAsigResponse listaDeSolicituTraslado = DatosAsigMapper.INSTANCE.EntityAJson(consultaGeneral);
+		return ValidaDatos.resp(respuesta, "Exito", listaDeSolicituTraslado);
 	}
 
 	@Override
-	public <T> Response getTripulacionAsignada(Integer idRuta, Integer idVehiculo, Integer idSolicitud) {
+	public <T> Response getTripulacionAsignada(Integer idControlRuta) {
 		Response<T> respuesta = new Response<>();
 		List<TripulacionAsigGroupEntity> tripulacionAsigGroupEntity = new ArrayList<TripulacionAsigGroupEntity>();
-		try {
-			TripulacionAsigGroupEntity tripulacionAsigEntity = new TripulacionAsigGroupEntity();
-			TripulacionAsigCam01Entity getTripulante = null;
-			TripulacionAsigCam02Entity getTripulante2 = null;
-			TripulacionAsigEntity getChofer = null;
-			getChofer = choferRepository.getDatosChofer(idRuta, idVehiculo);
-			tripulacionAsigEntity.setIdVehiculo(getChofer.getIdVehiculo());
-			tripulacionAsigEntity.setNombreChofer(getChofer.getNomTripulante());
-			tripulacionAsigEntity.setNumTarjetaDig(getChofer.getNumTarjetaDig());
-			tripulacionAsigEntity.setMatriculaChofer(getChofer.getCveMatricula());
-			getTripulante = camillero01Repository.getCamillero1(idVehiculo, idRuta, idSolicitud);
-			tripulacionAsigEntity.setNombreCamillero1(getTripulante.getNomTripulante());
-			tripulacionAsigEntity.setMatriculaCamillero1(getTripulante.getCveMatricula());
-			getTripulante2 = camillero02Repository.getDatosCamillero2(idVehiculo, idRuta, idSolicitud);
-			tripulacionAsigEntity.setNombreCamillero2(getTripulante2.getNomTripulante());
-			tripulacionAsigEntity.setMatriculaCamillero2(getTripulante2.getCveMatricula());
 
-			tripulacionAsigGroupEntity.add(tripulacionAsigEntity);
+		try {
+			tripulacionAsigGroupEntity = obtenerTripulacion (idControlRuta);
+			
 		} catch (Exception e) {
 			return ValidaDatos.errorException(respuesta, e);
 		}
 
 		List<TripulacionAsigResponse> listaDeTripulacionAsignada = TripulacionAsigMapper.INSTANCE
 				.EntityAJson(tripulacionAsigGroupEntity);
-		return ValidaDatos.respTripulacionAsig(respuesta, "Exito", listaDeTripulacionAsignada);
+		return ValidaDatos.resp(respuesta, "Exito", listaDeTripulacionAsignada);
 	}
 
 	@Override
-	public <T> Response getRegistroRecorrido(Integer idVehiculo, Integer idRuta) {
+	public <T> Response getRegistroRecorrido(Integer idControlRuta) {
 		Response<T> respuesta = new Response<>();
-		RegistroRecorridoEntity consultaGeneral = null;
+		RegistroRecorridoEntity recorrido = null;
 		try {
-			consultaGeneral = regRecorridoRepository.getRegistroRecorrido(idVehiculo, idRuta);
+			recorrido = regRecorrido1Repository.getRegistroRecorrido(idControlRuta);
 		} catch (Exception e) {
 			return ValidaDatos.errorException(respuesta, e);
 		}
 
 		RegistroRecorridoResponse listaDeSolicituTraslado = RegistroRecorridoMapper.INSTANCE
-				.EntityAJson(consultaGeneral);
-		return ValidaDatos.respRegistroRecorrido(respuesta, "Exito", listaDeSolicituTraslado);
+				.EntityAJson(recorrido);
+		return ValidaDatos.resp(respuesta, "Exito", listaDeSolicituTraslado);
 	}
 
 	@Override
@@ -239,7 +227,7 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 		// TODO Auto-generated method stub
 		Response<T> respuesta = new Response<>();
 		try {
-			regRecorridoRepository.update(datosRecorrido.getHoraInicioAsignacion(), datosRecorrido.getIdRuta1(),
+			regRecorrido1Repository.update(datosRecorrido.getHoraInicioAsignacion(), datosRecorrido.getIdRuta1(),
 					datosRecorrido.getHrInicio1(), datosRecorrido.getHrFin1(), datosRecorrido.getIdRuta2(),
 					datosRecorrido.getHrInicio2(), datosRecorrido.getHrFin2(), datosRecorrido.getIdRuta3(),
 					datosRecorrido.getHrInicio3(), datosRecorrido.getHrFin3(), datosRecorrido.getEstatusTraslado(),
@@ -250,6 +238,55 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 			return ValidaDatos.errorException(respuesta, e);
 		}
 		return ValidaDatos.respDatosAsig(respuesta, "Exito", null);
+	}
+
+	@Override
+	public <T> Response getDetalleRutasyAsig(Integer idControlRuta) {
+		Response<T> respuesta = new Response<>();
+		DatosAsigEntity datosAsig = null;
+		List<TripulacionAsigGroupEntity> tripulacionAsigEntity = new ArrayList<TripulacionAsigGroupEntity>();
+		RegistroRecorridoEntity registroRecorrido = null;
+		List<DetRutasAsigEntity> detalleRutasAsignaciones = new ArrayList<DetRutasAsigEntity>();
+		DetRutasAsigEntity detRutasAsignaciones = new DetRutasAsigEntity();
+		try {
+			datosAsig = datosRepository.getDatosAsignacion(idControlRuta);
+			tripulacionAsigEntity = obtenerTripulacion (idControlRuta);
+			registroRecorrido = regRecorrido1Repository.getRegistroRecorrido(idControlRuta);
+			detRutasAsignaciones.setDatosAsigEntity(datosAsig);
+			detRutasAsignaciones.setTripulacionAsigGroupEntity(tripulacionAsigEntity);
+			detRutasAsignaciones.setRegistroRecorridoEntity(registroRecorrido);
+			detalleRutasAsignaciones.add(detRutasAsignaciones);
+		} catch (Exception e) {
+			return ValidaDatos.errorException(respuesta, e);
+		}
+
+		List<DetRutasAsignacionesResponse> listaDeSolicituTraslado = DatosAsigMapper.INSTANCE.EntityAJson(detalleRutasAsignaciones);
+		return ValidaDatos.resp(respuesta, "Exito", listaDeSolicituTraslado);
+	}
+	
+	private List<TripulacionAsigGroupEntity> obtenerTripulacion (Integer idControlRuta) {
+		List<TripulacionAsigGroupEntity> tripulacionAsigGroupEntity = new ArrayList<TripulacionAsigGroupEntity>();
+
+		TripulacionAsigGroupEntity tripulacionAsigEntity = new TripulacionAsigGroupEntity();
+		TripulacionAsigCam01Entity getTripulante = null;
+		TripulacionAsigCam02Entity getTripulante2 = null;
+		TripulacionAsigEntity getChofer = null;
+		getChofer = choferRepository.getDatosChofer(idControlRuta);
+		if (getChofer != null) {
+			tripulacionAsigEntity.setIdControlRuta(getChofer.getIdControlRuta());
+			tripulacionAsigEntity.setIdPersonalAmbulancia(getChofer.getIdPersonalAmbulancia());
+		tripulacionAsigEntity.setNombreChofer(getChofer.getNomTripulante());
+		tripulacionAsigEntity.setNumTarjetaDig(getChofer.getNumTarjetaDig());
+		tripulacionAsigEntity.setMatriculaChofer(getChofer.getCveMatricula());
+		getTripulante = camillero01Repository.getCamillero1(idControlRuta);
+		tripulacionAsigEntity.setNombreCamillero1(getTripulante.getNomTripulante());
+		tripulacionAsigEntity.setMatriculaCamillero1(getTripulante.getCveMatricula());
+		getTripulante2 = camillero02Repository.getDatosCamillero2(idControlRuta);
+		tripulacionAsigEntity.setNombreCamillero2(getTripulante2.getNomTripulante());
+		tripulacionAsigEntity.setMatriculaCamillero2(getTripulante2.getCveMatricula());
+		tripulacionAsigGroupEntity.add(tripulacionAsigEntity);
+		}
+		return tripulacionAsigGroupEntity;
 	}
 
 }

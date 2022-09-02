@@ -21,7 +21,7 @@ public class AsigRutasEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID_CONTROL_RUTA", unique = false, nullable = true)
-	private String idRuta;
+	private String idControlRuta;
 	
 	@Column(name = "ID_SOLICITUD", unique = false, nullable = true)
 	private String idSolicitud;
@@ -34,8 +34,12 @@ public class AsigRutasEntity {
 
 	@Column(name = "DES_ESTATUS_ASIGNA", unique = false, nullable = true)
 	private String desEstatusSolicitud;
+
+	@Column(name = "ID_VEHICULO", unique = false, nullable = true)
+	private String idVehiculo;
 	
-	
+	@Column(name = "ID_RUTA", unique = false, nullable = true)
+	private String idRuta;
 	
 }
 

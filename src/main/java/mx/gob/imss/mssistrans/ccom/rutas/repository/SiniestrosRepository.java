@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import mx.gob.imss.mssistrans.ccom.rutas.model.RegistroRecorridoEntity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.SiniestrosEntity;
 
 @Repository

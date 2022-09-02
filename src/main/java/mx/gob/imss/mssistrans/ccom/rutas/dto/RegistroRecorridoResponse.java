@@ -1,6 +1,8 @@
 package mx.gob.imss.mssistrans.ccom.rutas.dto;
 
 
+import javax.persistence.Column;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
@@ -19,25 +21,11 @@ public class RegistroRecorridoResponse {
 	@JsonProperty
 	private String inicioAsignacion;
 	@JsonProperty
-	private String inicioRuta1;
+	private String estatus;
 	@JsonProperty
-	private String horaInicioRuta1;
+	private String inicioRuta;
 	@JsonProperty
-	private String horaFinRuta1;
+	private String horaInicio;
 	@JsonProperty
-	private String inicioRuta2;
-	@JsonProperty
-	private String horaInicioRuta2;
-	@JsonProperty
-	private String horaFinRuta2;
-	@JsonProperty
-	private String inicioRuta3;
-	@JsonProperty
-	private String horaInicioRuta3;
-	@JsonProperty
-	private String horaFinRuta3;
-	@JsonProperty
-	private String rutaAsignacion;
-	@JsonProperty
-	private String desTipoIncidente;
+	private String horaFinRuta;
 }

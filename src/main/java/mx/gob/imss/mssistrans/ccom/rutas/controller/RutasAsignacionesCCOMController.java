@@ -55,14 +55,14 @@ public class RutasAsignacionesCCOMController {
 		}
 	}
 
-	@DeleteMapping(path = "{idRutaAsignacion}")
-	public <T> ResponseEntity<Response> delete(@PathVariable String idRutaAsignacion) {
+	@DeleteMapping(path = "{idControlRuta}")
+	public <T> ResponseEntity<Response> delete(@PathVariable String idControlRuta) {
 		Response<T> respuesta = new Response<>();
 		if (ValidaDatos.getAccess()) {
 			respuesta = ValidaDatos.noAutorizado(respuesta);
 			return new ResponseEntity<>(respuesta, HttpStatus.OK);
 		} else {
-			Response response = asigRutasServiceImpl.delete(idRutaAsignacion);
+			Response response = asigRutasServiceImpl.delete(idControlRuta);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	}
@@ -110,8 +110,7 @@ public class RutasAsignacionesCCOMController {
 	}
 
 	@GetMapping(path = "/getDatosAsignacion")
-	public <T> ResponseEntity<Response> getDatosAsignacion(@RequestParam Integer idVehiculo,
-			@RequestParam Integer idRuta, @RequestParam Integer idSolicitud) {
+	public <T> ResponseEntity<Response> getDatosAsignacion(@RequestParam Integer idControlRuta) {
 
 		Response<T> respuesta = new Response<>();
 		if (ValidaDatos.getAccess()) {
@@ -119,45 +118,39 @@ public class RutasAsignacionesCCOMController {
 			return new ResponseEntity<>(respuesta, HttpStatus.OK);
 		} else {
 			DatosUsuarioDTO datosUsuarios = ValidaDatos.datosUsuarios();
-			Response response = asigRutasServiceImpl.getDatosAsignacion(idVehiculo, idRuta, idSolicitud);
+			Response response = asigRutasServiceImpl.getDatosAsignacion(idControlRuta);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	}
 
 	@GetMapping(path = "/getTripulacionAsignada")
-	public <T> ResponseEntity<Response> getTripulacionAsignada(@RequestParam Integer idVehiculo,
-			@RequestParam Integer idRuta, @RequestParam Integer idSolicitud) {
+	public <T> ResponseEntity<Response> getTripulacionAsignada(@RequestParam Integer idControlRuta) {
 
 		Response<T> respuesta = new Response<>();
 		if (ValidaDatos.getAccess()) {
 			respuesta = ValidaDatos.noAutorizado(respuesta);
 			return new ResponseEntity<>(respuesta, HttpStatus.OK);
 		} else {
-			Response response = asigRutasServiceImpl.getTripulacionAsignada(idRuta, idVehiculo, idSolicitud);
+			Response response = asigRutasServiceImpl.getTripulacionAsignada(idControlRuta);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	}
 
 	@GetMapping(path = "/getRegRecorrido")
-	public <T> ResponseEntity<Response> getRegRecorrido(@RequestParam Integer idVehiculo,
-			@RequestParam Integer idRuta) {
+	public <T> ResponseEntity<Response> getRegRecorrido(@RequestParam Integer idControlRuta) {
 
 		Response<T> respuesta = new Response<>();
 		if (ValidaDatos.getAccess()) {
 			respuesta = ValidaDatos.noAutorizado(respuesta);
 			return new ResponseEntity<>(respuesta, HttpStatus.OK);
 		} else {
-			Response response = asigRutasServiceImpl.getRegistroRecorrido(idVehiculo, idRuta);
+			Response response = asigRutasServiceImpl.getRegistroRecorrido(idControlRuta);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	}
 
 	@PutMapping(path = "/")
-	public <T> ResponseEntity<Response> update(@RequestBody RegistroRecorridoDTO datosRecorrido)
-	//(@PathVariable String idVehiculo, @RequestParam String idNuevoVehiculo,
-	//		@RequestParam String idRuta, @RequestParam String idNuevaRuta, @RequestParam String idSolicitud,
-	//		@RequestParam String idNuevaSolicitud, @RequestParam String desEstatus) 
-	{
+	public <T> ResponseEntity<Response> update(@RequestBody RegistroRecorridoDTO datosRecorrido) {
 
 		Response<T> respuesta = new Response<>();
 		if (ValidaDatos.getAccess()) {
@@ -165,6 +158,20 @@ public class RutasAsignacionesCCOMController {
 			return new ResponseEntity<>(respuesta, HttpStatus.OK);
 		} else {
 			Response response = asigRutasServiceImpl.update(datosRecorrido);
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		}
+	}
+
+	@GetMapping(path = "/getDetalleRutasyAsig")
+	public <T> ResponseEntity<Response> getDetalleRutasyAsig(@RequestParam Integer idControlRuta) {
+
+		Response<T> respuesta = new Response<>();
+		if (ValidaDatos.getAccess()) {
+			respuesta = ValidaDatos.noAutorizado(respuesta);
+			return new ResponseEntity<>(respuesta, HttpStatus.OK);
+		} else {
+			DatosUsuarioDTO datosUsuarios = ValidaDatos.datosUsuarios();
+			Response response = asigRutasServiceImpl.getDetalleRutasyAsig(idControlRuta);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	}
