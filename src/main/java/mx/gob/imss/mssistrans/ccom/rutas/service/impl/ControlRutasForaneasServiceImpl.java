@@ -101,7 +101,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                 rutasTabla.setModulo(rutas.getModulo().getDesNombre());
 
                 Optional<UnidadAdscripcion> origen = unidadAdscripcionRepository
-                        .findByIdUnidadAdscripcionAndActivoEquals(rutas.getIdSolcitud().getCveOrigen(), true);
+                        .findByIdUnidadAdscripcionAndActivoEquals(rutas.getIdSolcitud().getDesAreaOrigen(), true);
 
                 if (origen.isPresent())
                     rutasTabla.setOrigen(origen.get().getNomUnidadAdscripcion());
