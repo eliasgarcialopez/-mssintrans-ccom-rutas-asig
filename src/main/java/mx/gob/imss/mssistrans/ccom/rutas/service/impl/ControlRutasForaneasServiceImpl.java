@@ -129,9 +129,8 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
     }
 
     @Override
-    public Respuesta<ControlRutasResponse> consultarRutas(Integer idControlRuta) {
-        // todo - la consulta sera por las rutas foraneas
-        Respuesta<ControlRutasResponse> response = new Respuesta<>();
+    public Respuesta<ControlRutasForaneasResponse> consultarRutas(Integer idControlRuta) {
+        Respuesta<ControlRutasForaneasResponse> response = new Respuesta<>();
         try {
             String user = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             log.info("usuario {}", user);
@@ -151,7 +150,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
 
 
             Optional<ControlRutas> result = controlRutasForaneasRepository.findByIdControlRuta(idControlRuta);
-            ControlRutasResponse rutasResponse = new ControlRutasResponse();
+            ControlRutasForaneasResponse rutasResponse = new ControlRutasForaneasResponse();
             if (result.isPresent()) {
                 ControlRutas ruta = result.get();
 
@@ -240,6 +239,14 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                 }
 
                 rutasResponse.setVehiculo(ruta.getIdVehiculo());
+
+                final Viaticos viaticos = viaticosRepository.findByControlRutasIdControlRuta(idControlRuta);
+                if (viaticos != null) {
+                    rutasResponse.setViaticosCasetas(String.valueOf(viaticos.getViaticosCaseta()));
+                    rutasResponse.setViaticosChofer(String.valueOf(viaticos.getViaticosChofer()));
+                    rutasResponse.setViaticosCamillero1(String.valueOf(viaticos.getViaticosCamillero1()));
+                    rutasResponse.setViaticosCamillero2(String.valueOf(viaticos.getViaticosCamillero2()));
+                }
 
                 response.setDatos(rutasResponse);
                 response.setError(false);

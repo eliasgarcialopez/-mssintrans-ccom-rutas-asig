@@ -2,10 +2,7 @@ package mx.gob.imss.mssistrans.ccom.rutas.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.ControlRutasForaneasRequest;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.ControlRutasResponse;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.ControlRutasTotalesResponse;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.Respuesta;
+import mx.gob.imss.mssistrans.ccom.rutas.dto.*;
 import mx.gob.imss.mssistrans.ccom.rutas.service.ControlRutasForaneasService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -57,7 +54,7 @@ public class ControlRutasForaneasController {
      */
     @GetMapping("/id/{idRuta}")
     public ResponseEntity<?> consultarRuta(@PathVariable Integer idRuta) {
-        Respuesta<ControlRutasResponse> response = rutasService.consultarRutas(idRuta);
+        Respuesta<ControlRutasForaneasResponse> response = rutasService.consultarRutas(idRuta);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
