@@ -41,8 +41,8 @@ public class ReasignacionRutasCCOMController {
 	@GetMapping
 	public <T> ResponseEntity<Response> consultaById(@RequestParam Integer pagina,
 			@RequestParam(defaultValue = "10") Integer tamanio,
-			@RequestParam(defaultValue = "asc") String orden,
-			@RequestParam(defaultValue = "idEstatusSolicitud") String ordenCol,
+			@RequestParam(defaultValue = "ASC") String orden,
+			@RequestParam(defaultValue = "") String ordenCol,
 			@RequestParam(required = false) String idRutaAsig,
 			@RequestParam(required = false) String idSolicitud) {
 

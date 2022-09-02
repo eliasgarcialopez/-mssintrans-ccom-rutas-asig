@@ -21,5 +21,7 @@ public class SolTrasladoResponse {
 	@JsonProperty
 	private String idSolicitud;
 	
+	@JsonProperty
+	private String numFolioAceptacion;
 
 }

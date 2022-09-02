@@ -14,9 +14,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import lombok.AllArgsConstructor;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.AsigRutasResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosAsigResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosAsigRutasResponse;
+import mx.gob.imss.mssistrans.ccom.rutas.dto.ReAsignacionRutasResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.Response;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.SiniestrosResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.SolTrasladoResponse;
@@ -29,8 +29,9 @@ import mx.gob.imss.mssistrans.ccom.rutas.model.TripulacionAsigCam01Entity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.TripulacionAsigCam02Entity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.TripulacionAsigEntity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.TripulacionAsigGroupEntity;
-import mx.gob.imss.mssistrans.ccom.rutas.repository.AsigRutasRepository;
+
 import mx.gob.imss.mssistrans.ccom.rutas.repository.DatosAsigRepository;
+import mx.gob.imss.mssistrans.ccom.rutas.repository.ReAsignacionRutasRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.RutasAsigRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.SiniestrosRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.SolTrasladoRepository;
@@ -38,8 +39,8 @@ import mx.gob.imss.mssistrans.ccom.rutas.repository.TripulacionAsigCamillero01Re
 import mx.gob.imss.mssistrans.ccom.rutas.repository.TripulacionAsigCamillero02Repository;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.TripulacionAsigRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.service.ReasignacionRutasService;
-import mx.gob.imss.mssistrans.ccom.rutas.util.AsigRutasMapper;
 import mx.gob.imss.mssistrans.ccom.rutas.util.DatosAsigMapper;
+import mx.gob.imss.mssistrans.ccom.rutas.util.ReAsignacionRutasMapper;
 import mx.gob.imss.mssistrans.ccom.rutas.util.RutasMapper;
 import mx.gob.imss.mssistrans.ccom.rutas.util.SiniestrosMapper;
 import mx.gob.imss.mssistrans.ccom.rutas.util.SolTrasladoMapper;
@@ -53,7 +54,7 @@ import mx.gob.imss.mssistrans.ccom.rutas.util.ValidaDatos;
 public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 
 	@Autowired
-	private AsigRutasRepository asigRutasRepository;
+	private ReAsignacionRutasRepository reAsignacionRutasRepository;
 	@Autowired
 	private RutasAsigRepository rutasRepository;
 	@Autowired
@@ -73,28 +74,28 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 	public <T> Response<?> consultaVistaRapida(Integer pagina, Integer tamanio, String orden, String columna,
 			String idRutaAsig, String idSolicitud) {
 		Response<T> respuesta = new Response<>();
-		String nomCol = ValidaDatos.getNameCol(columna);
+		String nomCol = ValidaDatos.getNameColReasig(columna);
 		Pageable page = PageRequest.of(pagina, tamanio,
 				Sort.by(Sort.Direction.fromString(orden.toUpperCase()), nomCol));
 		try {
 			Page consultaAsignacionRutas = null;
 			if (idRutaAsig == null || idRutaAsig.equals(""))
 				if (idSolicitud == null || idSolicitud.equals(""))
-					consultaAsignacionRutas = asigRutasRepository.consultaGeneral(page);
+					consultaAsignacionRutas = reAsignacionRutasRepository.consultaGeneral(page);
 				else
-					consultaAsignacionRutas = asigRutasRepository.getConsultaByIdSolicitud(idSolicitud, page);
+					consultaAsignacionRutas = reAsignacionRutasRepository.getConsultaByIdSolicitud(idSolicitud, page);
 			else if (idSolicitud == null || idSolicitud.equals(""))
-				consultaAsignacionRutas = asigRutasRepository.getConsultaByIdAsignacion(idRutaAsig, page);
+				consultaAsignacionRutas = reAsignacionRutasRepository.getConsultaByIdAsignacion(idRutaAsig, page);
 			else
-				consultaAsignacionRutas = asigRutasRepository.getConsultaById(idRutaAsig, idSolicitud, page);
+				consultaAsignacionRutas = reAsignacionRutasRepository.getConsultaById(idRutaAsig, idSolicitud, page);
 
-			final List<AsigRutasResponse> content = (List<AsigRutasResponse>) AsigRutasMapper.INSTANCE
+			final List<ReAsignacionRutasResponse> content = (List<ReAsignacionRutasResponse>) ReAsignacionRutasMapper.INSTANCE
 					.formatearListaArrendados(consultaAsignacionRutas.getContent());
 
-			Page<AsigRutasResponse> objetoMapeado = new PageImpl<>(content, page,
+			Page<ReAsignacionRutasResponse> objetoMapeado = new PageImpl<>(content, page,
 					consultaAsignacionRutas.getTotalElements());
 
-			return ValidaDatos.respAsignacionRuta(respuesta, "Exito", objetoMapeado);
+			return ValidaDatos.respReAsignacionRuta(respuesta, "Exito", objetoMapeado);
 		} catch (Exception e) {
 			return ValidaDatos.errorException(respuesta, e);
 		}
@@ -105,8 +106,8 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 	public Response delete(String idRutaAsignacion) {
 		Response respuesta = new Response<>();
 		try {
-			asigRutasRepository.delete(idRutaAsignacion);
-			asigRutasRepository.flush();
+			reAsignacionRutasRepository.delete(idRutaAsignacion);
+			reAsignacionRutasRepository.flush();
 			return ValidaDatos.respAsignacionRuta(respuesta, "Exito", null);
 		} catch (Exception e) {
 			return ValidaDatos.errorException(respuesta, e);
@@ -115,17 +116,20 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 
 	/****** HU006 - 26 **********/
 	@Override
-	public <T> Response getRutas(Integer idOoad) {
+	public <T> Response getRutas(Integer idOoad, String rol) {
 		Response<T> respuesta = new Response<>();
 		List<RutasAsigEntity> consultaGeneral = null;
 		try {
-			consultaGeneral = rutasRepository.getRutas(idOoad);
+			if(rol.toUpperCase().equals("ADMINISTRADOR"))
+				consultaGeneral = rutasRepository.getRutas();
+			else
+				consultaGeneral = rutasRepository.getRutasByOoad(idOoad);
 		} catch (Exception e) {
 			return ValidaDatos.errorException(respuesta, e);
 		}
 
 		List<DatosAsigRutasResponse> listaDeOoad = RutasMapper.INSTANCE.EntityAJson(consultaGeneral);
-		return ValidaDatos.respRutas(respuesta, "Exito", listaDeOoad);
+		return ValidaDatos.resp(respuesta, "Exito", listaDeOoad);
 	}
 
 	@Override

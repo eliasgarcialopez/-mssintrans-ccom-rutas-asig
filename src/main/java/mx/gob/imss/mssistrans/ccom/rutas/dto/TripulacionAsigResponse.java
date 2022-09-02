@@ -28,9 +28,6 @@ public class TripulacionAsigResponse {
 	private String matriculaChofer;
 	
 	@JsonProperty
-	private String numTarjetaDig;
-	
-	@JsonProperty
 	private String nombreCamillero1;
 
 	@JsonProperty
@@ -41,4 +38,7 @@ public class TripulacionAsigResponse {
 	
 	@JsonProperty
 	private String matriculaCamillero2;
+
+	@JsonProperty
+	private String numTarjetaDig;
 }

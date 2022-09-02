@@ -9,7 +9,7 @@ public interface ReasignacionRutasService {
 	Response delete ( String id );
 	
 	
-	<T>Response getRutas(Integer idOoad);
+	<T>Response getRutas(Integer idOoad, String rol);
 	<T>Response getSolicitudTraslado(Integer idUnidadAdscripcion, Integer idVehiculo);
 	<T>Response getDatosAsignacion(Integer idVehiculo, Integer idRuta, Integer idSolicitud);
 	<T>Response getTripulacionAsignada(Integer idRuta, Integer idVehiculo, Integer idSolicitud);

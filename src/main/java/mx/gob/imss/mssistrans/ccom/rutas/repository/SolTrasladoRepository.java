@@ -12,16 +12,31 @@ import mx.gob.imss.mssistrans.ccom.rutas.model.SolTrasladoEntity;
 
 @Repository
 public interface SolTrasladoRepository extends JpaRepository<SolTrasladoEntity, Integer> {
-
-    @Query(value = "SELECT ID_SOLICITUD"
-            + " FROM SINTRANST_SOLICITUD_TRASLADO "
-            + " WHERE  IND_ACTIVO = 1 AND IND_SISTEMA = 1 "
-            + "AND ID_UNIDAD_ADSCRIPCION = ? AND ID_UNIDAD_SOLICITANTE = ?"
-            , countQuery = "SELECT COUNT(ID_SOLICITUD)"
-            + " FROM SINTRANST_SOLICITUD_TRASLADO "
-            + " WHERE  IND_ACTIVO = 1 AND IND_SISTEMA = 1 "
-            + "AND ID_UNIDAD_ADSCRIPCION = ? AND ID_UNIDAD_SOLICITANTE = ?"
+	@Query(value = " SELECT SST.ID_SOLICITUD , SST.NUM_FOLIO_ACEPTACION "
+			+ " FROM SINTRANST_CONTROL_RUTAS SCA"
+			+ " INNER JOIN SINTRANST_SOLICITUD_TRASLADO SST ON SST.ID_SOLICITUD = SCA.ID_SOLICITUD"
+			+ " WHERE SST.IND_ACTIVO = 1 AND  SST.IND_SISTEMA = 1 "
+			+ " AND SCA.ID_RUTA = ?"
+			,countQuery = " SELECT SST.ID_SOLICITUD , SST.NUM_FOLIO_ACEPTACION"
+					+ " FROM SINTRANST_CONTROL_RUTAS SCA"
+					+ " INNER JOIN SINTRANST_SOLICITUD_TRASLADO SST ON SST.ID_SOLICITUD = SCA.ID_SOLICITUD"
+					+ " WHERE SST.IND_ACTIVO = 1 AND  SST.IND_SISTEMA = 1 "
+					+ " AND SCA.ID_RUTA = ?"
+			, nativeQuery = true)
+	List<SolTrasladoEntity> getSolicitudTraslado(Integer idRuta);
+	
+	
+    @Query(value = "SELECT SST.ID_SOLICITUD , SST.NUM_FOLIO_ACEPTACION "
+    		+ " FROM SINTRANST_CONTROL_RUTAS SCA"
+    		+ " INNER JOIN SINTRANST_SOLICITUD_TRASLADO SST ON SST.ID_SOLICITUD = SCA.ID_SOLICITUD"
+    		+ "	WHERE SST.IND_ACTIVO = 1 AND  SST.IND_SISTEMA = 1 "
+    		+ " AND SR.ID_OOAD = ? AND SR.ID_RUTA = ? "
+            , countQuery = "SELECT COUNT(SST.ID_SOLICITUD)"
+            		+ " FROM SINTRANST_CONTROL_RUTAS SCA"
+            		+ " INNER JOIN SINTRANST_SOLICITUD_TRASLADO SST ON SST.ID_SOLICITUD = SCA.ID_SOLICITUD"
+            		+ "	WHERE SST.IND_ACTIVO = 1 AND  SST.IND_SISTEMA = 1 "
+            		+ " AND SR.ID_OOAD = ? AND SR.ID_RUTA = ? "
             ,nativeQuery = true)
-    List<SolTrasladoEntity> getSolicitudTraslado(Integer idUnidadAdscripcion, Integer idVehiculo);
+    List<SolTrasladoEntity> getSolicitudTraslado(Integer idOoad, Integer idRuta);
 
 }

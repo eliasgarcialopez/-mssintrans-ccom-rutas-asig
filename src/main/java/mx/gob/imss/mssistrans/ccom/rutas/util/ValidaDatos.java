@@ -10,8 +10,8 @@ import com.google.gson.Gson;
 
 import mx.gob.imss.mssistrans.ccom.rutas.dto.AsigRutasResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosAsigResponse;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosAsigRutasResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosUsuarioDTO;
+import mx.gob.imss.mssistrans.ccom.rutas.dto.ReAsignacionRutasResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.RegistroRecorridoResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.Response;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.SiniestrosResponse;
@@ -55,15 +55,23 @@ public class ValidaDatos {
 		respuesta.setDatos((T) content);
 		return respuesta;
 	}
-
-	public static <T> Response<?> respRutas(Response<T> respuesta, String msg, List<DatosAsigRutasResponse> listadeRutas) {
+	public static <T> Response<?> respReAsignacionRuta(Response<T> respuesta, String msg,
+			Page<ReAsignacionRutasResponse> content) {
 		respuesta.setCodigo(HttpStatus.OK.value());
 		respuesta.setError(false);
 		respuesta.setMensaje(msg);
-		respuesta.setDatos((T) listadeRutas);
+		respuesta.setDatos((T) content);
 		return respuesta;
 	}
 
+
+	public static <T> Response<?> resp(Response<T> respuesta, String msg, List<?> listadeObjetos) {
+		respuesta.setCodigo(HttpStatus.OK.value());
+		respuesta.setError(false);
+		respuesta.setMensaje(msg);
+		respuesta.setDatos((T) listadeObjetos);
+		return respuesta;
+	}
 	public static <T> Response<?> respSolTras(Response<T> respuesta, String msg,
 			List<SolTrasladoResponse> listadeRutas) {
 		respuesta.setCodigo(HttpStatus.OK.value());
@@ -119,8 +127,8 @@ public class ValidaDatos {
 		respuesta.setDatos((T) listaDeUnidad);
 		return respuesta;
 	}
-	public static String getNameCol(String nameCol) {
-		if (nameCol.equals("idRutaAsignacion"))
+	public static String getNameColAsignacion(String nameCol) {
+		if (nameCol.equals("idRuta"))
 			return "ID_RUTA";
 		else if (nameCol.equals("idSolicitud"))
 			return "ID_SOLICITUD";
@@ -129,6 +137,19 @@ public class ValidaDatos {
 		else if (nameCol.equals("idEstatusSolicitud"))
 			return "DES_ESTATUS_ASIGNA";
 		else
-			return "ID_RUTA";
+			return "ID_CONTROL_RUTA";
+	}
+
+	public static String getNameColReasig(String nameCol) {
+		if (nameCol.equals("idRuta"))
+			return "NUM_FOLIO_RUTA";
+		else if (nameCol.equals("idSolicitud"))
+			return "ID_SOLICITUD";
+		else if (nameCol.equals("cveEcco"))
+			return "CVE_ECCO";
+		else if (nameCol.equals("idEstatusSolicitud"))
+			return "DES_ESTATUS_ASIGNA";
+		else
+			return "ID_REASIGNACION";
 	}
 }

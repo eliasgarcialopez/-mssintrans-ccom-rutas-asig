@@ -22,5 +22,8 @@ public class SolTrasladoEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID_SOLICITUD", unique = false, nullable = true)
 	private String idSolicitud;
+	
+	@Column(name = "NUM_FOLIO_ACEPTACION", unique = false, nullable = true)
+	private String numFolioAceptacion;
 }
 

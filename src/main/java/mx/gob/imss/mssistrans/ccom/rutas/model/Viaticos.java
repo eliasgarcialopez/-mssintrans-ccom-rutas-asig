@@ -9,10 +9,10 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Entity
-@Table(name = "sintranst_viaticos")
+@Table(name = "SINTRANST_VIATICOS")
 public class Viaticos {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_VIATICOS")
     private Integer idViaticos;
     @OneToOne
@@ -24,6 +24,8 @@ public class Viaticos {
     private Double viaticosCamillero1;
     @Column(name = "VIATICOS_CAMILLERO_2")
     private Double viaticosCamillero2;
+    @Column(name = "NUM_VIATICOS_CASETA")
+    private Double viaticosCaseta;
     @Column(name = "CVE_MATRICULA", unique = false, nullable = true)
     private String cveMatricula;
     @Column(name = "FEC_ALTA", unique = false, nullable = true)
