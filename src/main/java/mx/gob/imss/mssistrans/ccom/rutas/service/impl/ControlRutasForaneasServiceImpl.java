@@ -232,7 +232,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                     }
 
                 }
-                //06.01 a 14:00, vespertino horario del turno 14.01 a 19:00,nocturno o especial horario del turno 19.01 a 06:00
+                //06.01 a 14:00, vespertino horario del turno 14:01 a 19:00,nocturno o especial horario del turno 19.01 a 06:00
                 if (ruta.getIdSolcitud() != null && ruta.getIdSolcitud().getTimSolicitud() != null) {
                     String turno = Utility.getTurnoByHr(ruta.getIdSolcitud().getTimSolicitud());
                     rutasResponse.setTurno(turno);
@@ -249,15 +249,12 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                 }
 
                 response.setDatos(rutasResponse);
-                response.setError(false);
-                response.setMensaje("Exito");
-                response.setCodigo(HttpStatus.OK.value());
             } else {
                 response.setDatos(null);
-                response.setError(false);
-                response.setMensaje("Exito");
-                response.setCodigo(HttpStatus.OK.value());
             }
+            response.setError(false);
+            response.setMensaje("Exito");
+            response.setCodigo(HttpStatus.OK.value());
 
         } catch (Exception exception) {
             log.info("Ha ocurrido un error al consultar la ruta con Id {}, error: {}", idControlRuta, ExceptionUtils.getStackTrace(exception));

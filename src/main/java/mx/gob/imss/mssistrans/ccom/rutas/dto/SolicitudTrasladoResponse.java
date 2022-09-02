@@ -47,9 +47,9 @@ private String desCalle;
 private String numExterior;
 private String numInterior;
 private String desReferenia;
-private Integer numTelDestino;
+private String numTelDestino;
 private String nomFamiliar;
-private Integer telFamiliar;
+private String telFamiliar;
 private String cveMatriculaRecibe;
 
 //@Basic

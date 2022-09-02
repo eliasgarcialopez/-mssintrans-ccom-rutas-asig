@@ -146,7 +146,7 @@ public class SolicitudTraslado implements Serializable {
     
     @Basic
     @Column(name = "NUM_TEL_DESTINO")
-    private Integer numTelDestino;
+    private String numTelDestino;
     
     
     
@@ -158,7 +158,7 @@ public class SolicitudTraslado implements Serializable {
     
     @Basic
     @Column(name = "TEL_FAMILIAR")
-    private Integer telFamiliar;
+    private String telFamiliar;
     
     
     @Basic
