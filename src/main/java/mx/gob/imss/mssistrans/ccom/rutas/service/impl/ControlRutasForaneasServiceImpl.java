@@ -155,13 +155,14 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
             if (result.isPresent()) {
                 ControlRutas ruta = result.get();
 
-
                 Optional<UnidadAdscripcion> origen = unidadAdscripcionRepository
-                        .findByIdUnidadAdscripcionAndActivoEquals(ruta.getIdSolcitud().getCveOrigen(), true);
+//                        .findByIdUnidadAdscripcionAndActivoEquals(ruta.getIdSolcitud().getCveOrigen(), true);
+                        .findByIdUnidadAdscripcionAndActivoEquals(ruta.getIdSolcitud().getDesAreaOrigen(), true);
                 if (origen.isPresent()) rutasResponse.setOrigen(origen.get());
 
                 Optional<UnidadAdscripcion> destino = unidadAdscripcionRepository
-                        .findByIdUnidadAdscripcionAndActivoEquals(ruta.getIdSolcitud().getCveDestino(), true);
+//                        .findByIdUnidadAdscripcionAndActivoEquals(ruta.getIdSolcitud().getCveDestino(), true);
+                        .findByIdUnidadAdscripcionAndActivoEquals(ruta.getIdSolcitud().getDesAreaDestino(), true);
                 if (destino.isPresent()) rutasResponse.setDestino(destino.get());
 
                 rutasResponse.setFechaRuta(ruta.getFechaInicioAsigna().toString());
