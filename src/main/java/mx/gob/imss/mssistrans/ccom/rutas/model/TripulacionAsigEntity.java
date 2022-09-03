@@ -22,9 +22,9 @@ public class TripulacionAsigEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID_CONTROL_RUTA", unique = false, nullable = true)
 	private String idControlRuta;
-	@Column(name = "DES_NOMBRE", unique = false, nullable = true)
+	@Column(name = "NOM_CHOFER", unique = false, nullable = true)
 	private String nomTripulante;
-	@Column(name = "CVE_MATRICULA_PERSONAL", unique = false, nullable = true)
+	@Column(name = "CVE_MATRICULA_CHOFER", unique = false, nullable = true)
 	private String cveMatricula;
 	@Column(name = "NUM_FOLIO_TJTA_COMBUSTIBLE", unique = false, nullable = true)
 	private String numTarjetaDig;
