@@ -71,7 +71,20 @@ public class ReasignacionRutasCCOMController {
 	}
 
 	/****** HU006 - 28 **********/
-	
+
+	@GetMapping(path = "/getDetalleReAsignacion")
+	public <T> ResponseEntity<Response> getDetalleReAsignacion(@RequestParam Integer idControlRuta) {
+
+		Response<T> respuesta = new Response<>();
+		if (ValidaDatos.getAccess()) {
+			respuesta = ValidaDatos.noAutorizado(respuesta);
+			return new ResponseEntity<>(respuesta, HttpStatus.OK);
+		} else {
+			DatosUsuarioDTO datosUsuarios = ValidaDatos.datosUsuarios();
+			Response response = reasignacionRutasServiceImpl.getDetalleReAsignacion(idControlRuta);
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		}
+	}
 	@GetMapping(path = "/ecco/{idRuta}")
 	public <T> ResponseEntity<Response> getEcco(@PathVariable Integer idRuta) {
 		Response<T> respuesta = new Response<>();
@@ -121,23 +134,16 @@ public class ReasignacionRutasCCOMController {
 	}
 	
 	
-	@GetMapping(path = "/getDetalleRutasyAsig")
-	public <T> ResponseEntity<Response> getDetalleRutasyAsig(@RequestParam Integer idControlRuta) {
-
-		Response<T> respuesta = new Response<>();
-		if (ValidaDatos.getAccess()) {
-			respuesta = ValidaDatos.noAutorizado(respuesta);
-			return new ResponseEntity<>(respuesta, HttpStatus.OK);
-		} else {
-			DatosUsuarioDTO datosUsuarios = ValidaDatos.datosUsuarios();
-			Response response = reasignacionRutasServiceImpl.getDetalleRutasyAsig(idControlRuta);
-			return new ResponseEntity<>(response, HttpStatus.OK);
-		}
-	}
-
 	@PostMapping(path = "/")
-	public ResponseEntity<Response> save(@RequestBody ReAsignacionRutasDTO reAsignacionRutas){
-		Response response = reasignacionRutasServiceImpl.save(reAsignacionRutas);
+	public ResponseEntity<Response> save(@RequestParam Integer idVehiculo, @RequestParam Integer idRuta
+			, @RequestParam Integer idChofer, @RequestParam String desMotivoReasig
+			, @RequestParam String desSiniestro, @RequestParam Integer idVehiculoSust
+			, @RequestParam Integer idChoferSust, @RequestParam Integer idAsignacion
+			, @RequestParam String cveMatricula){
+		
+		Response response = reasignacionRutasServiceImpl.save(idVehiculo, idRuta, idChofer, desMotivoReasig
+				, desSiniestro, idVehiculoSust, idChoferSust, idAsignacion
+				, cveMatricula);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 

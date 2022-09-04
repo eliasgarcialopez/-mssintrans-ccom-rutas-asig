@@ -14,21 +14,26 @@ import lombok.NoArgsConstructor;
 @JsonRootName(value = "ReAsignacionRutas")
 public class ReAsignacionRutasResponse {
 
+
 	@JsonProperty
-	private String idReasignacion;
-	
-	@JsonProperty
-	private String idRutaAsignacion;
+	private String idControlRuta;
 	
 	@JsonProperty
 	private String idSolicitud;
 	
-
 	@JsonProperty
 	private String cveEcco;
 	
 	@JsonProperty
 	private String desEstatusSolicitud;
+	
+	@JsonProperty
+	private String idRutaAsignacion;
 
+	@JsonProperty
+	private String idVehiculo;
+	@JsonProperty
+	private String idRuta;
+	
 	
 }

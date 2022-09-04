@@ -110,7 +110,9 @@ public class RutasAsignacionesCCOMController {
 	}
 
 	@GetMapping(path = "/getDatosAsignacion")
-	public <T> ResponseEntity<Response> getDatosAsignacion(@RequestParam Integer idControlRuta) {
+	public <T> ResponseEntity<Response> getDatosAsignacion(@RequestParam(required = false) Integer idControlRuta
+			, @RequestParam(required = false) Integer idRuta, @RequestParam(required = false) Integer idSolicitud
+			, @RequestParam(required = false) Integer idVehiculo) {
 
 		Response<T> respuesta = new Response<>();
 		if (ValidaDatos.getAccess()) {
@@ -118,7 +120,7 @@ public class RutasAsignacionesCCOMController {
 			return new ResponseEntity<>(respuesta, HttpStatus.OK);
 		} else {
 			DatosUsuarioDTO datosUsuarios = ValidaDatos.datosUsuarios();
-			Response response = asigRutasServiceImpl.getDatosAsignacion(idControlRuta);
+			Response response = asigRutasServiceImpl.getDatosAsignacion(idControlRuta, idRuta, idSolicitud, idVehiculo);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	}

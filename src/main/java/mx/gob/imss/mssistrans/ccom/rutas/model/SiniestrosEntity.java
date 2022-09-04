@@ -20,6 +20,8 @@ public class SiniestrosEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "ID_SINIESTRO", unique = false, nullable = true)
+	private String idSiniestro;
 	@Column(name = "NUM_FOLIO", unique = false, nullable = true)
 	private String numFolio;
 

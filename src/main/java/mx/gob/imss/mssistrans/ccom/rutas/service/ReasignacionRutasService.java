@@ -19,8 +19,10 @@ public interface ReasignacionRutasService {
 	<T>Response getSiniestro();
 	<T>Response update(String idVehiculo, String idNuevoVehiculo, String idRuta, String idNuevaRuta, String idSolicitud, String idNuevaSolicitud, String desEstatus);
 
-	<T>Response save(ReAsignacionRutasDTO reAsignacionRutas);
+	<T>Response save(Integer idVehiculo, Integer idRuta, Integer idChofer, String desMotivoReasig,
+			String desSiniestro, Integer idVehiculoSust, Integer idChoferSust, Integer idAsignacion
+			, String cveMatricula);
 	
-	<T>Response getDetalleRutasyAsig(Integer idControlRuta);
+	<T>Response getDetalleReAsignacion(Integer idControlRuta);
 
 }

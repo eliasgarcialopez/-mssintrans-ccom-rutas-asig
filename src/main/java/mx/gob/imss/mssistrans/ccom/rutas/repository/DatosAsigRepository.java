@@ -19,8 +19,17 @@ public interface DatosAsigRepository extends JpaRepository<DatosAsigEntity, Inte
     		+ " WHERE SCR.IND_SISTEMA = 1 AND SCR.IND_ACTIVO = 1 AND"
     		+ " SCR.ID_CONTROL_RUTA = ? "
             ,nativeQuery = true)
-    DatosAsigEntity getDatosAsignacion( Integer idControlRuta );
+    DatosAsigEntity getDatosAsigByIdCtrlRuta( Integer idControlRuta );
 
+    @Query(value = "SELECT SCR.ID_VEHICULO, SCR.ID_RUTA, SCR.ID_SOLICITUD, SV.CVE_ECCO, SV.NUM_PLACAS, SCR.DES_ESTATUS_ASIGNA"
+    		+ ", SCR.ID_CONTROL_RUTA"
+    		+ " FROM SINTRANST_CONTROL_RUTAS SCR"
+    		+ " INNER JOIN SINTRANST_VEHICULOS SV ON SV.ID_VEHICULO = SCR.ID_VEHICULO"
+    		+ " WHERE SCR.IND_SISTEMA = 1 AND SCR.IND_ACTIVO = 1 AND"
+    		+ " SCR.ID_RUTA = ? AND SCR.ID_SOLICITUD = ? AND SCR.ID_VEHICULO = ? "
+            ,nativeQuery = true)
+    DatosAsigEntity getDatosAsigByidVehiculo(Integer idRuta, Integer idSolicitud, Integer idVehiculo );
+    
 	@Modifying(flushAutomatically = true)
 	@Query(value = "UPDATE SINTRANST_CONTROL_RUTAS"
 			+ " SET ID_VEHICULO = ?, ID_RUTA = ?, ID_SOLICITUD = ?, DES_ESTATUS_ASIGNA = ?"
