@@ -99,14 +99,16 @@ public class ReasignacionRutasCCOMController {
 	}
 	
 	@GetMapping(path = "/getTripulacionAsignada")
-	public <T> ResponseEntity<Response> getTripulacionAsignada(@RequestParam Integer idControlRuta) {
+	public <T> ResponseEntity<Response> getTripulacionAsignada(@RequestParam(required = false) Integer idControlRuta
+			, @RequestParam(required = false) Integer idRuta, @RequestParam(required = false) Integer idSolicitud
+			, @RequestParam(required = false) Integer idVehiculo)  {
 
 		Response<T> respuesta = new Response<>();
 		if (ValidaDatos.getAccess()) {
 			respuesta = ValidaDatos.noAutorizado(respuesta);
 			return new ResponseEntity<>(respuesta, HttpStatus.OK);
 		} else {
-			Response response = reasignacionRutasServiceImpl.getTripulacionAsignada(idControlRuta);
+			Response response = reasignacionRutasServiceImpl.getTripulacionAsignada(idControlRuta, idRuta, idSolicitud, idVehiculo);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	}

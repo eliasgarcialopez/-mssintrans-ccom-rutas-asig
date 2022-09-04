@@ -1,11 +1,7 @@
 package mx.gob.imss.mssistrans.ccom.rutas.service.impl;
 
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -20,47 +16,33 @@ import org.springframework.stereotype.Service;
 import lombok.AllArgsConstructor;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.AsigRutasResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosUsuarioDTO;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.DetRutasAsignacionesResponse;
+import mx.gob.imss.mssistrans.ccom.rutas.dto.DetReasignacionesRutasResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.EccoResponse;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.ReAsignacionRutasDTO;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.ReAsignacionRutasResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.ReasignacionTripulacionResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.Response;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.SiniestrosResponse;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.TripulacionAsigResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.model.DatosAsigEntity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.DetReasignacionRutasEntity;
-import mx.gob.imss.mssistrans.ccom.rutas.model.DetRutasAsigEntity;
-import mx.gob.imss.mssistrans.ccom.rutas.model.DetalleReAsignacionRutasEntity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.EccoEntity;
-import mx.gob.imss.mssistrans.ccom.rutas.model.ReAsignacionRutasEntity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.ReasignacionTripulacionEntity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.ReasignacionTripulacionGroupEntity;
-import mx.gob.imss.mssistrans.ccom.rutas.model.RegistroRecorridoEntity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.SiniestrosEntity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.TripulacionAsigCam01Entity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.TripulacionAsigCam02Entity;
-import mx.gob.imss.mssistrans.ccom.rutas.model.TripulacionAsigEntity;
-import mx.gob.imss.mssistrans.ccom.rutas.model.TripulacionAsigGroupEntity;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.AsigRutasRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.DatosAsigRepository;
-import mx.gob.imss.mssistrans.ccom.rutas.repository.DetalleReAsignacionRutasRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.EccoRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.ReAsignacionRutasRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.ReasignacionTripulacionRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.SiniestrosRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.TripulacionAsigCamillero01Repository;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.TripulacionAsigCamillero02Repository;
-import mx.gob.imss.mssistrans.ccom.rutas.repository.TripulacionAsigRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.service.ReasignacionRutasService;
 import mx.gob.imss.mssistrans.ccom.rutas.util.AsigRutasMapper;
-import mx.gob.imss.mssistrans.ccom.rutas.util.DatosAsigMapper;
 import mx.gob.imss.mssistrans.ccom.rutas.util.DatosReasignacionMapper;
 import mx.gob.imss.mssistrans.ccom.rutas.util.EccoMapper;
-import mx.gob.imss.mssistrans.ccom.rutas.util.ReAsignacionRutasMapper;
 import mx.gob.imss.mssistrans.ccom.rutas.util.ReasignacionTripulacionMapper;
 import mx.gob.imss.mssistrans.ccom.rutas.util.SiniestrosMapper;
-import mx.gob.imss.mssistrans.ccom.rutas.util.TripulacionAsigMapper;
 import mx.gob.imss.mssistrans.ccom.rutas.util.ValidaDatos;
 
 /**
@@ -88,8 +70,6 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 	@Autowired
 	private SiniestrosRepository siniestrosRepository;
 
-	@Autowired
-	private DetalleReAsignacionRutasRepository detReAsignacionRutasRepository;
 	@Autowired
 	private ReAsignacionRutasRepository reAsignacionRutasRepository;
 	
@@ -131,7 +111,7 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 		try {
 			asigRutasRepository.delete(idReAsignacion);
 			asigRutasRepository.flush();
-			return ValidaDatos.respAsignacionRuta(respuesta, "Exito", null);
+			return ValidaDatos.resp(respuesta, "Exito", null);
 		} catch (Exception e) {
 			return ValidaDatos.errorException(respuesta, e);
 		}
@@ -143,22 +123,22 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 	public <T> Response getDetalleReAsignacion(Integer idControlRuta) {
 		Response<T> respuesta = new Response<>();
 		DatosAsigEntity datosAsig = null;
-		List<ReasignacionTripulacionGroupEntity> tripulacionAsigEntity = new ArrayList<ReasignacionTripulacionGroupEntity>();
+		ReasignacionTripulacionGroupEntity tripulacionAsigEntity = new ReasignacionTripulacionGroupEntity();
 		
-		List<DetReasignacionRutasEntity> detalleRutasAsignaciones = new ArrayList<DetReasignacionRutasEntity>();
+		List<DetReasignacionRutasEntity> detalleReAsignaciones = new ArrayList<DetReasignacionRutasEntity>();
 		DetReasignacionRutasEntity detRutasAsignaciones = new DetReasignacionRutasEntity();
 		try {
 			datosAsig = datosRepository.getDatosAsigByIdCtrlRuta(idControlRuta);
-			tripulacionAsigEntity = obtenerTripulacion (idControlRuta);
+			tripulacionAsigEntity = obtenerTripulacion (idControlRuta, null, null, null);
 
-			detRutasAsignaciones.setDatosAsigEntity(datosAsig);
-			detRutasAsignaciones.setReasignacionTripulacionGroupEntity(tripulacionAsigEntity);
-			detalleRutasAsignaciones.add(detRutasAsignaciones);
+			detRutasAsignaciones.setDatosReasignacion(datosAsig);
+			detRutasAsignaciones.setTripulacion(tripulacionAsigEntity);
+			detalleReAsignaciones.add(detRutasAsignaciones);
 		} catch (Exception e) {
 			return ValidaDatos.errorException(respuesta, e);
 		}
 
-		List<DetRutasAsignacionesResponse> listaDeSolicituTraslado = DatosReasignacionMapper.INSTANCE.EntityAJson(detalleRutasAsignaciones);
+		List<DetReasignacionesRutasResponse> listaDeSolicituTraslado = DatosReasignacionMapper.INSTANCE.EntityAJson(detalleReAsignaciones);
 		return ValidaDatos.resp(respuesta, "Exito", listaDeSolicituTraslado);
 	}
 	
@@ -200,24 +180,14 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 		return ValidaDatos.resp(respuesta, "Exito", listaDeOoad);
 	}
 
-	/*
-	 * @Override public <T> Response getDatosReAsignacion(Integer idVehiculo,
-	 * Integer idRuta, Integer idSolicitud) { Response<T> respuesta = new
-	 * Response<>(); DatosAsigEntity consultaGeneral = null; try { consultaGeneral =
-	 * datosRepository.getDatosAsignacion(idVehiculo, idRuta, idSolicitud); } catch
-	 * (Exception e) { return ValidaDatos.errorException(respuesta, e); }
-	 * 
-	 * DatosAsigResponse listaDeSolicituTraslado =
-	 * DatosAsigMapper.INSTANCE.EntityAJson(consultaGeneral); return
-	 * ValidaDatos.resp(respuesta, "Exito", listaDeSolicituTraslado); }
-	 */
 	@Override
-	public <T> Response getTripulacionAsignada(Integer idControlRuta) {
+	public <T> Response getTripulacionAsignada(Integer idControlRuta, Integer idRuta, Integer idSolicitud,
+			Integer idVehiculo){
 		Response<T> respuesta = new Response<>();
 		List<ReasignacionTripulacionGroupEntity> tripulacionAsigGroupEntity = new ArrayList<ReasignacionTripulacionGroupEntity>();
 
 		try {
-			tripulacionAsigGroupEntity = obtenerTripulacion(idControlRuta);
+			tripulacionAsigGroupEntity.add(obtenerTripulacion(idControlRuta, idRuta, idSolicitud, idVehiculo));
 
 		} catch (Exception e) {
 			return ValidaDatos.errorException(respuesta, e);
@@ -227,50 +197,31 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 				.EntityAJson(tripulacionAsigGroupEntity);
 		return ValidaDatos.resp(respuesta, "Exito", listaDeTripulacionAsignada);
 	}
-/*
-	@Override
-	public <T> Response save(ReAsignacionRutasDTO reAsignacionRutas) {
-		// TODO Auto-generated method stub
-		Response<T> respuesta = new Response<>();
-		try {
-			LocalDate hoy = LocalDate.now();
-			LocalTime ahora = LocalTime.now();
 
-			LocalDateTime fecha = LocalDateTime.of(hoy, ahora);
-			DetalleReAsignacionRutasEntity reasignacionData = DatosAsigMapper.INSTANCE.JsonAEntity(reAsignacionRutas);
 
-			reasignacionData.setFecAlta(fecha);
-			detReAsignacionRutasRepository.save(reasignacionData);
-		} catch (Exception e) {
-			return ValidaDatos.errorException(respuesta, e);
-		}
-		return ValidaDatos.respDatosAsig(respuesta, "Exito", null);
-	}
-*/
-	/*
-	 * @Override public <T> Response update(RegistroRecorridoDTO datosRecorrido) {
-	 * // TODO Auto-generated method stub Response<T> respuesta = new Response<>();
-	 * try { regRecorridoRepository.update(datosRecorrido.getHoraInicioAsignacion(),
-	 * datosRecorrido.getIdRuta1(), datosRecorrido.getHrInicio1(),
-	 * datosRecorrido.getHrFin1(), datosRecorrido.getIdRuta2(),
-	 * datosRecorrido.getHrInicio2(), datosRecorrido.getHrFin2(),
-	 * datosRecorrido.getIdRuta3(), datosRecorrido.getHrInicio3(),
-	 * datosRecorrido.getHrFin3(), datosRecorrido.getEstatusTraslado(),
-	 * datosRecorrido.getIdVehiculo(), datosRecorrido.getIdRuta());
-	 * 
-	 * datosRepository.flush(); } catch (Exception e) { return
-	 * ValidaDatos.errorException(respuesta, e); } return
-	 * ValidaDatos.respDatosAsig(respuesta, "Exito", null); }
-	 */
-
-	private List<ReasignacionTripulacionGroupEntity> obtenerTripulacion(Integer idControlRuta) {
-		List<ReasignacionTripulacionGroupEntity> tripulacionAsigGroupEntity = new ArrayList<ReasignacionTripulacionGroupEntity>();
-
+	private ReasignacionTripulacionGroupEntity obtenerTripulacion(Integer idControlRuta, Integer idRuta, Integer idSolicitud,
+			Integer idVehiculo){
 		ReasignacionTripulacionGroupEntity tripulacionAsigEntity = new ReasignacionTripulacionGroupEntity();
 		TripulacionAsigCam01Entity getTripulante = null;
 		TripulacionAsigCam02Entity getTripulante2 = null;
 		ReasignacionTripulacionEntity getChofer = null;
-		getChofer = choferRepository.getDatosChofer(idControlRuta);
+
+		if (idRuta != null && idSolicitud != null && idVehiculo != null) {
+			if (!idRuta.equals("") && !idSolicitud.equals("") && !idVehiculo.equals("")) {
+				getChofer = choferRepository.getDatosChoferByidVehiculo(idRuta, idSolicitud, idVehiculo);
+				getTripulante = camillero01Repository.getCamillero1ByIdVehiculo(idRuta, idSolicitud, idVehiculo);
+				getTripulante2 = camillero02Repository.getCamillero2ByIdVehiculo(idRuta, idSolicitud, idVehiculo);
+			} else if (!idControlRuta.equals("")) {
+				getChofer = choferRepository.getDatosChofer(idControlRuta);
+				getTripulante = camillero01Repository.getCamillero1(idControlRuta);
+				getTripulante2 = camillero02Repository.getCamillero2(idControlRuta);
+			}
+		} else if (idControlRuta != null)
+			if (!idControlRuta.equals("")) {
+				getChofer = choferRepository.getDatosChofer(idControlRuta);
+				getTripulante = camillero01Repository.getCamillero1(idControlRuta);
+				getTripulante2 = camillero02Repository.getCamillero2(idControlRuta);
+			}
 		if (getChofer != null) {
 			tripulacionAsigEntity.setIdControlRuta(getChofer.getIdControlRuta());
 			tripulacionAsigEntity.setIdPersonalAmbulancia(getChofer.getIdPersonalAmbulancia());
@@ -278,15 +229,13 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 			tripulacionAsigEntity.setNumTarjetaDig(getChofer.getNumTarjetaDig());
 			tripulacionAsigEntity.setMatriculaChofer(getChofer.getCveMatricula());
 			tripulacionAsigEntity.setDesMotivoReasig(getChofer.getDesMotivoReasig());
-			getTripulante = camillero01Repository.getCamillero1(idControlRuta);
 			tripulacionAsigEntity.setNombreCamillero1(getTripulante.getNomTripulante());
 			tripulacionAsigEntity.setMatriculaCamillero1(getTripulante.getCveMatricula());
-			getTripulante2 = camillero02Repository.getDatosCamillero2(idControlRuta);
 			tripulacionAsigEntity.setNombreCamillero2(getTripulante2.getNomTripulante());
 			tripulacionAsigEntity.setMatriculaCamillero2(getTripulante2.getCveMatricula());
-			tripulacionAsigGroupEntity.add(tripulacionAsigEntity);
+			//tripulacionAsigGroupEntity.add(tripulacionAsigEntity);
 		}
-		return tripulacionAsigGroupEntity;
+		return tripulacionAsigEntity;
 	}
 
 	@Override
@@ -324,7 +273,7 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 		} catch (Exception e) {
 			return ValidaDatos.errorException(respuesta, e);
 		}
-		return ValidaDatos.respDatosAsig(respuesta, "Exito", null);
+		return ValidaDatos.resp(respuesta, "Exito", null);
 	}
 	@Override
 	public <T> Response save(Integer idVehiculo, Integer idRuta, Integer idChofer, String desMotivoReasig,
@@ -340,7 +289,7 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 		} catch (Exception e) {
 			return ValidaDatos.errorException(respuesta, e);
 		}
-		return ValidaDatos.respDatosAsig(respuesta, "Exito", null);
+		return ValidaDatos.resp(respuesta, "Exito", null);
 	}
 	
 

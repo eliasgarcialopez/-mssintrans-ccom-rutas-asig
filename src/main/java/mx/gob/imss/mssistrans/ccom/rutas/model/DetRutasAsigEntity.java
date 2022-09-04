@@ -15,10 +15,10 @@ import lombok.Setter;
 public class DetRutasAsigEntity {
 
 	/************ Datos de la Asignacion *********************/
-	private DatosAsigEntity datosAsigEntity;
+	private DatosAsigEntity datosAsignacion;
 	/************ Tripulacion Asignada *********************/
-	private List<TripulacionAsigGroupEntity> tripulacionAsigGroupEntity;
+	private List<TripulacionAsigGroupEntity> tripulacion;
 	/************ Registro del Recorrido *********************/
-	private RegistroRecorridoEntity registroRecorridoEntity;
+	private RegistroRecorridoEntity registroRecorrido;
 }
 

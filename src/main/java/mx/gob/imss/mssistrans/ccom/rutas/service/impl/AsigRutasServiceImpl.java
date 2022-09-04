@@ -108,7 +108,7 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 			Page<AsigRutasResponse> objetoMapeado = new PageImpl<>(content, page,
 					consultaAsignacioRutas.getTotalElements());
 
-			return ValidaDatos.respAsignacionRuta(respuesta, "Exito", objetoMapeado);
+			return ValidaDatos.resp(respuesta, "Exito", objetoMapeado);
 		} catch (Exception e) {
 			return ValidaDatos.errorException(respuesta, e);
 		}
@@ -121,7 +121,7 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 		try {
 			asigRutasRepository.delete(idControlRuta);
 			asigRutasRepository.flush();
-			return ValidaDatos.respAsignacionRuta(respuesta, "Exito", null);
+			return ValidaDatos.resp(respuesta, "Exito", null);
 		} catch (Exception e) {
 			return ValidaDatos.errorException(respuesta, e);
 		}
@@ -159,7 +159,7 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 		}
 
 		List<SolTrasladoResponse> listaDeSolicituTraslado = SolTrasladoMapper.INSTANCE.EntityAJson(consultaGeneral);
-		return ValidaDatos.respSolTras(respuesta, "Exito", listaDeSolicituTraslado);
+		return ValidaDatos.resp(respuesta, "Exito", listaDeSolicituTraslado);
 	}
 
 	@Override
@@ -201,12 +201,13 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 	}
 
 	@Override
-	public <T> Response getTripulacionAsignada(Integer idControlRuta) {
+	public <T> Response getTripulacionAsignada(Integer idControlRuta, Integer idRuta, Integer idSolicitud,
+			Integer idVehiculo)  {
 		Response<T> respuesta = new Response<>();
 		List<TripulacionAsigGroupEntity> tripulacionAsigGroupEntity = new ArrayList<TripulacionAsigGroupEntity>();
 
 		try {
-			tripulacionAsigGroupEntity = obtenerTripulacion(idControlRuta);
+			tripulacionAsigGroupEntity = obtenerTripulacion(idControlRuta, idRuta, idSolicitud, idVehiculo);
 
 		} catch (Exception e) {
 			return ValidaDatos.errorException(respuesta, e);
@@ -218,7 +219,8 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 	}
 
 	@Override
-	public <T> Response getRegistroRecorrido(Integer idControlRuta) {
+	public <T> Response getRegistroRecorrido(Integer idControlRuta, Integer idRuta, Integer idSolicitud,
+			Integer idVehiculo){
 		Response<T> respuesta = new Response<>();
 		RegistroRecorridoEntity recorrido = null;
 		try {
@@ -246,7 +248,7 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 		} catch (Exception e) {
 			return ValidaDatos.errorException(respuesta, e);
 		}
-		return ValidaDatos.respDatosAsig(respuesta, "Exito", null);
+		return ValidaDatos.resp(respuesta, "Exito", null);
 	}
 
 	@Override
@@ -259,11 +261,11 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 		DetRutasAsigEntity detRutasAsignaciones = new DetRutasAsigEntity();
 		try {
 			datosAsig = datosRepository.getDatosAsigByIdCtrlRuta(idControlRuta);
-			tripulacionAsigEntity = obtenerTripulacion(idControlRuta);
+			tripulacionAsigEntity = obtenerTripulacion(idControlRuta,null,null,null);
 			registroRecorrido = regRecorrido1Repository.getRegistroRecorrido(idControlRuta);
-			detRutasAsignaciones.setDatosAsigEntity(datosAsig);
-			detRutasAsignaciones.setTripulacionAsigGroupEntity(tripulacionAsigEntity);
-			detRutasAsignaciones.setRegistroRecorridoEntity(registroRecorrido);
+			detRutasAsignaciones.setDatosAsignacion(datosAsig);
+			detRutasAsignaciones.setTripulacion(tripulacionAsigEntity);
+			detRutasAsignaciones.setRegistroRecorrido(registroRecorrido);
 			detalleRutasAsignaciones.add(detRutasAsignaciones);
 		} catch (Exception e) {
 			return ValidaDatos.errorException(respuesta, e);
@@ -274,24 +276,41 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 		return ValidaDatos.resp(respuesta, "Exito", listaDeSolicituTraslado);
 	}
 
-	private List<TripulacionAsigGroupEntity> obtenerTripulacion(Integer idControlRuta) {
+	private List<TripulacionAsigGroupEntity> obtenerTripulacion(Integer idControlRuta, Integer idRuta, Integer idSolicitud,
+			Integer idVehiculo) {
 		List<TripulacionAsigGroupEntity> tripulacionAsigGroupEntity = new ArrayList<TripulacionAsigGroupEntity>();
 
 		TripulacionAsigGroupEntity tripulacionAsigEntity = new TripulacionAsigGroupEntity();
 		TripulacionAsigCam01Entity getTripulante = null;
 		TripulacionAsigCam02Entity getTripulante2 = null;
 		TripulacionAsigEntity getChofer = null;
-		getChofer = choferRepository.getDatosChofer(idControlRuta);
+		
+
+		if (idRuta != null && idSolicitud != null && idVehiculo != null) {
+			if (!idRuta.equals("") && !idSolicitud.equals("") && !idVehiculo.equals("")) {
+				getChofer = choferRepository.getDatosChoferByidVehiculo(idRuta, idSolicitud, idVehiculo);
+				getTripulante = camillero01Repository.getCamillero1ByIdVehiculo(idRuta, idSolicitud, idVehiculo);
+				getTripulante2 = camillero02Repository.getCamillero2ByIdVehiculo(idRuta, idSolicitud, idVehiculo);
+			} else if (!idControlRuta.equals("")) {
+				getChofer = choferRepository.getDatosChofer(idControlRuta);
+				getTripulante = camillero01Repository.getCamillero1(idControlRuta);
+				getTripulante2 = camillero02Repository.getCamillero2(idControlRuta);
+			}
+		} else if (idControlRuta != null)
+			if (!idControlRuta.equals("")) {
+				getChofer = choferRepository.getDatosChofer(idControlRuta);
+				getTripulante = camillero01Repository.getCamillero1(idControlRuta);
+				getTripulante2 = camillero02Repository.getCamillero2(idControlRuta);
+			}
+		
 		if (getChofer != null) {
 			tripulacionAsigEntity.setIdControlRuta(getChofer.getIdControlRuta());
 			tripulacionAsigEntity.setIdPersonalAmbulancia(getChofer.getIdPersonalAmbulancia());
 			tripulacionAsigEntity.setNombreChofer(getChofer.getNomTripulante());
 			tripulacionAsigEntity.setNumTarjetaDig(getChofer.getNumTarjetaDig());
 			tripulacionAsigEntity.setMatriculaChofer(getChofer.getCveMatricula());
-			getTripulante = camillero01Repository.getCamillero1(idControlRuta);
 			tripulacionAsigEntity.setNombreCamillero1(getTripulante.getNomTripulante());
 			tripulacionAsigEntity.setMatriculaCamillero1(getTripulante.getCveMatricula());
-			getTripulante2 = camillero02Repository.getDatosCamillero2(idControlRuta);
 			tripulacionAsigEntity.setNombreCamillero2(getTripulante2.getNomTripulante());
 			tripulacionAsigEntity.setMatriculaCamillero2(getTripulante2.getCveMatricula());
 			tripulacionAsigGroupEntity.add(tripulacionAsigEntity);
