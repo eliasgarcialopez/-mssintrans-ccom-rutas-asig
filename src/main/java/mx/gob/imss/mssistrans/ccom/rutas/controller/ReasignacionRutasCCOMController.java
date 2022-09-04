@@ -85,15 +85,15 @@ public class ReasignacionRutasCCOMController {
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	}
-	@GetMapping(path = "/ecco/{idRuta}")
-	public <T> ResponseEntity<Response> getEcco(@PathVariable Integer idRuta) {
+	@GetMapping(path = "/ecco")
+	public <T> ResponseEntity<Response> getEcco() {
 		Response<T> respuesta = new Response<>();
 		if (ValidaDatos.getAccess()) {
 			respuesta = ValidaDatos.noAutorizado(respuesta);
 			return new ResponseEntity<>(respuesta, HttpStatus.OK);
 		} else {
-			DatosUsuarioDTO datosUsuario = ValidaDatos.datosUsuarios();
-			Response response = reasignacionRutasServiceImpl.getEcco(datosUsuario, idRuta);
+			//DatosUsuarioDTO datosUsuario = ValidaDatos.datosUsuarios();
+			Response response = reasignacionRutasServiceImpl.getEcco();
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	}

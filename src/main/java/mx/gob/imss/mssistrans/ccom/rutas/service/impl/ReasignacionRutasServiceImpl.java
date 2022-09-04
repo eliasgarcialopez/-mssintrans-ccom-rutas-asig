@@ -15,7 +15,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import lombok.AllArgsConstructor;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.AsigRutasResponse;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosUsuarioDTO;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.DetReasignacionesRutasResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.EccoResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.ReasignacionTripulacionResponse;
@@ -31,8 +30,8 @@ import mx.gob.imss.mssistrans.ccom.rutas.model.TripulacionAsigCam01Entity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.TripulacionAsigCam02Entity;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.AsigRutasRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.DatosAsigRepository;
-import mx.gob.imss.mssistrans.ccom.rutas.repository.EccoRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.ReAsignacionRutasRepository;
+import mx.gob.imss.mssistrans.ccom.rutas.repository.ReasignacionEccoRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.ReasignacionTripulacionRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.SiniestrosRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.TripulacionAsigCamillero01Repository;
@@ -58,7 +57,7 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 	@Autowired
 	private AsigRutasRepository asigRutasRepository;
 	@Autowired
-	private EccoRepository eccoRepository;
+	private ReasignacionEccoRepository eccoRepository;
 	@Autowired
 	private DatosAsigRepository datosRepository;
 	@Autowired
@@ -144,11 +143,11 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 
 
 	@Override
-	public <T> Response getEcco(DatosUsuarioDTO datosUsuarios, Integer idRuta) {
+	public <T> Response getEcco() {
 		Response<T> respuesta = new Response<>();
 		List<EccoEntity> consultaGeneral = null;
 		try {
-			consultaGeneral = eccoRepository.getEcco(idRuta);
+			consultaGeneral = eccoRepository.getEcco();
 		} catch (Exception e) {
 			return ValidaDatos.errorException(respuesta, e);
 		}
