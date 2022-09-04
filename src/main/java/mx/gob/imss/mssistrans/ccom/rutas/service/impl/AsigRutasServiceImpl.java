@@ -224,7 +224,18 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 		Response<T> respuesta = new Response<>();
 		RegistroRecorridoEntity recorrido = null;
 		try {
-			recorrido = regRecorrido1Repository.getRegistroRecorrido(idControlRuta);
+
+			if (idRuta != null && idSolicitud != null && idVehiculo != null) {
+				if (!idRuta.equals("") && !idSolicitud.equals("") && !idVehiculo.equals("")) {
+					recorrido = regRecorrido1Repository.getRegistroRecorridoByIdRuta(idRuta, idSolicitud, idVehiculo);
+				} else if (!idControlRuta.equals("")) {
+					recorrido = regRecorrido1Repository.getRegistroRecorrido(idControlRuta);
+				}
+			} else if (idControlRuta != null)
+				if (!idControlRuta.equals("")) {
+					recorrido = regRecorrido1Repository.getRegistroRecorrido(idControlRuta);
+				}
+		
 		} catch (Exception e) {
 			return ValidaDatos.errorException(respuesta, e);
 		}

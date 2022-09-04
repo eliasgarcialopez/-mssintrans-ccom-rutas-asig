@@ -141,31 +141,8 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 		List<DetReasignacionesRutasResponse> listaDeSolicituTraslado = DatosReasignacionMapper.INSTANCE.EntityAJson(detalleReAsignaciones);
 		return ValidaDatos.resp(respuesta, "Exito", listaDeSolicituTraslado);
 	}
-	
-	/*
-	 * @Override public <T> Response getRutas(Integer idOoad, String rol) {
-	 * Response<T> respuesta = new Response<>(); List<RutasAsigEntity>
-	 * consultaGeneral = null; try { if(rol.toUpperCase().equals("ADMINISTRADOR"))
-	 * consultaGeneral = rutasRepository.getRutas(); else consultaGeneral =
-	 * rutasRepository.getRutasByOoad(idOoad); } catch (Exception e) { return
-	 * ValidaDatos.errorException(respuesta, e); }
-	 * 
-	 * List<DatosAsigRutasResponse> listaDeOoad =
-	 * RutasMapper.INSTANCE.EntityAJson(consultaGeneral); return
-	 * ValidaDatos.resp(respuesta, "Exito", listaDeOoad); }
-	 * 
-	 * @Override public <T> Response getSolicitudTraslado(DatosUsuarioDTO
-	 * datosUsuario, Integer idRuta) { Response<T> respuesta = new Response<>();
-	 * List<SolTrasladoEntity> consultaGeneral = null; try { if
-	 * (datosUsuario.getRol().toUpperCase().equals("ADMINISTRADOR")) consultaGeneral
-	 * = solTrasladoRepository.getSolicitudTraslado(idRuta); else consultaGeneral =
-	 * solTrasladoRepository.getSolicitudTraslado(datosUsuario.getIDOOAD(), idRuta);
-	 * } catch (Exception e) { return ValidaDatos.errorException(respuesta, e); }
-	 * 
-	 * List<SolTrasladoResponse> listaDeSolicituTraslado =
-	 * SolTrasladoMapper.INSTANCE.EntityAJson(consultaGeneral); return
-	 * ValidaDatos.respSolTras(respuesta, "Exito", listaDeSolicituTraslado); }
-	 */
+
+
 	@Override
 	public <T> Response getEcco(DatosUsuarioDTO datosUsuarios, Integer idRuta) {
 		Response<T> respuesta = new Response<>();
