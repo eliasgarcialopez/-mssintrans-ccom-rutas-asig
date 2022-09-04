@@ -16,13 +16,13 @@ import org.springframework.stereotype.Service;
 import lombok.AllArgsConstructor;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.AsigRutasResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.DetReasignacionesRutasResponse;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.EccoResponse;
+import mx.gob.imss.mssistrans.ccom.rutas.dto.ReasignacionEccoResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.ReasignacionTripulacionResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.Response;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.SiniestrosResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.model.DatosAsigEntity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.DetReasignacionRutasEntity;
-import mx.gob.imss.mssistrans.ccom.rutas.model.EccoEntity;
+import mx.gob.imss.mssistrans.ccom.rutas.model.ReasignacionEccoEntity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.ReasignacionTripulacionEntity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.ReasignacionTripulacionGroupEntity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.SiniestrosEntity;
@@ -145,15 +145,15 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 	@Override
 	public <T> Response getEcco() {
 		Response<T> respuesta = new Response<>();
-		List<EccoEntity> consultaGeneral = null;
+		List<ReasignacionEccoEntity> consultaGeneral = null;
 		try {
 			consultaGeneral = eccoRepository.getEcco();
 		} catch (Exception e) {
 			return ValidaDatos.errorException(respuesta, e);
 		}
 
-		List<EccoResponse> listaDeOoad = EccoMapper.INSTANCE.EntityAJson(consultaGeneral);
-		return ValidaDatos.resp(respuesta, "Exito", listaDeOoad);
+		List<ReasignacionEccoResponse> listaDeEccos = EccoMapper.INSTANCE.EntityToJson(consultaGeneral);
+		return ValidaDatos.resp(respuesta, "Exito", listaDeEccos);
 	}
 
 	@Override

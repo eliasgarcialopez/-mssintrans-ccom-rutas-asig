@@ -6,14 +6,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import mx.gob.imss.mssistrans.ccom.rutas.model.EccoEntity;
+
+import mx.gob.imss.mssistrans.ccom.rutas.model.ReasignacionEccoEntity;
 
 
 @Repository
-public interface ReasignacionEccoRepository extends JpaRepository<EccoEntity, Integer> {
+public interface ReasignacionEccoRepository extends JpaRepository<ReasignacionEccoEntity, Integer> {
 
     @Query(value = "SELECT SV.ID_VEHICULO, SV.CVE_ECCO, SV.NUM_PLACAS,SCR.ID_RUTA,SCR.ID_SOLICITUD"
-    		+ " ,SCR.FEC_INICIO_ASIGNA"
     		+ " FROM SINTRANST_RUTAS SR"
     		+ " INNER JOIN SINTRANST_CONTROL_RUTAS SCR ON SCR.ID_RUTA = SR.ID_RUTA"
     		+ " INNER JOIN SINTRANST_VEHICULOS SV ON SCR.ID_VEHICULO = SV.ID_VEHICULO"
@@ -30,6 +30,6 @@ public interface ReasignacionEccoRepository extends JpaRepository<EccoEntity, In
             		+ " SR.IND_ACTIVO = 1 AND SR.IND_SISTEMA = 1"
             		+ " AND SCR.FEC_INICIO_ASIGNA = CURRENT_DATE()"
             ,nativeQuery = true)
-    List<EccoEntity> getEcco();
+    List<ReasignacionEccoEntity> getEcco();
 
 }
