@@ -31,9 +31,12 @@ public class ReasignacionEccoEntity {
 
 	@Column(name = "ID_RUTA", unique = false, nullable = true)
 	private String idRuta;
-	
+
 	@Column(name = "ID_SOLICITUD", unique = false, nullable = true)
 	private String IdSolicitud;
+	
+	@Column(name = "ID_ASIGNACION", unique = false, nullable = true)
+	private String IdAsignacion;
 
 }
 

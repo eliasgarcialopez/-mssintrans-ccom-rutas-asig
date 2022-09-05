@@ -30,4 +30,6 @@ public class ReasignacionEccoResponse {
 	@JsonProperty
 	private String IdSolicitud;
 
+	@JsonProperty
+	private String IdAsignacion;
 }
