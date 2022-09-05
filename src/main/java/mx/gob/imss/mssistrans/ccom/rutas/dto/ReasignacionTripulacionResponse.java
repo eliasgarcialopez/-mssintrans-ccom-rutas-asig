@@ -20,6 +20,9 @@ public class ReasignacionTripulacionResponse {
 
 	@JsonProperty
 	private String idControlRuta;
+	
+	@JsonProperty
+	private String idChofer;
 
 	@JsonProperty
 	private String nombreChofer;

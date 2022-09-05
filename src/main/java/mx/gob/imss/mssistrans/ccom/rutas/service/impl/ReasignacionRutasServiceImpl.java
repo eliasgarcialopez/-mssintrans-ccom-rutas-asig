@@ -201,6 +201,7 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 		if (getChofer != null) {
 			tripulacionAsigEntity.setIdControlRuta(getChofer.getIdControlRuta());
 			tripulacionAsigEntity.setIdPersonalAmbulancia(getChofer.getIdPersonalAmbulancia());
+			tripulacionAsigEntity.setIdChofer(getChofer.getIdChofer());
 			tripulacionAsigEntity.setNombreChofer(getChofer.getNomTripulante());
 			tripulacionAsigEntity.setNumTarjetaDig(getChofer.getNumTarjetaDig());
 			tripulacionAsigEntity.setMatriculaChofer(getChofer.getCveMatricula());
@@ -258,7 +259,10 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 		// TODO Auto-generated method stub
 		Response<T> respuesta = new Response<>();
 		try {
-
+			if(idVehiculoSust == null || idVehiculoSust.equals(""))
+				idVehiculoSust = idVehiculo;
+			if(idChoferSust == null || idChoferSust.equals(""))
+				idChoferSust = idChofer;
 			reAsignacionRutasRepository.save(idVehiculo, idRuta, idChofer, desMotivoReasig, desSiniestro
 					, idVehiculoSust, idChoferSust, idAsignacion, cveMatricula);
 			datosRepository.flush();

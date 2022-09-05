@@ -139,8 +139,8 @@ public class ReasignacionRutasCCOMController {
 	@PostMapping(path = "/")
 	public ResponseEntity<Response> save(@RequestParam Integer idVehiculo, @RequestParam Integer idRuta
 			, @RequestParam Integer idChofer, @RequestParam String desMotivoReasig
-			, @RequestParam String desSiniestro, @RequestParam Integer idVehiculoSust
-			, @RequestParam Integer idChoferSust, @RequestParam Integer idAsignacion
+			, @RequestParam String desSiniestro, @RequestParam(required = false) Integer idVehiculoSust
+			, @RequestParam(required = false) Integer idChoferSust, @RequestParam Integer idAsignacion
 			, @RequestParam String cveMatricula){
 		
 		Response response = reasignacionRutasServiceImpl.save(idVehiculo, idRuta, idChofer, desMotivoReasig

@@ -13,6 +13,7 @@ import lombok.Setter;
 public class ReasignacionTripulacionGroupEntity {
 
 	private String idControlRuta;
+	private String idChofer;
 	private String nombreChofer;
 	private String matriculaChofer;
 	private String nombreCamillero1;
