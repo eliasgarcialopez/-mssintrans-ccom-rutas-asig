@@ -206,6 +206,7 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 			tripulacionAsigEntity.setNumTarjetaDig(getChofer.getNumTarjetaDig());
 			tripulacionAsigEntity.setMatriculaChofer(getChofer.getCveMatricula());
 			tripulacionAsigEntity.setDesMotivoReasig(getChofer.getDesMotivoReasig());
+			tripulacionAsigEntity.setDesSiniestro(getChofer.getDesSiniestro());
 			tripulacionAsigEntity.setNombreCamillero1(getTripulante.getNomTripulante());
 			tripulacionAsigEntity.setMatriculaCamillero1(getTripulante.getCveMatricula());
 			tripulacionAsigEntity.setNombreCamillero2(getTripulante2.getNomTripulante());

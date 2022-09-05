@@ -23,5 +23,6 @@ public class ReasignacionTripulacionGroupEntity {
 	private String numTarjetaDig;
 	private String idPersonalAmbulancia;
 	private String desMotivoReasig;
+	private String desSiniestro;
 }
 

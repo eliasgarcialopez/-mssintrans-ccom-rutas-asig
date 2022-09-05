@@ -9,7 +9,7 @@ import mx.gob.imss.mssistrans.ccom.rutas.model.ReasignacionTripulacionEntity;
 @Repository
 public interface ReasignacionTripulacionRepository extends JpaRepository<ReasignacionTripulacionEntity, Integer> {
 	
-	    @Query(value = "SELECT  SCR.ID_SOLICITUD, SCR.ID_CONTROL_RUTA,SPA.ID_PERSONAL_AMBULANCIA,SC.ID_CHOFER,  SC.NOM_CHOFER, SPA.DES_PUESTO"
+	    @Query(value = "SELECT SRR.DES_SINIESTRO, SCR.ID_SOLICITUD, SCR.ID_CONTROL_RUTA,SPA.ID_PERSONAL_AMBULANCIA,SC.ID_CHOFER,  SC.NOM_CHOFER, SPA.DES_PUESTO"
 	    		+ " , SC.CVE_MATRICULA_CHOFER, SCR.NUM_FOLIO_TJTA_COMBUSTIBLE, SCR.ID_RUTA"
 	    		+ " , SRR.DES_MOTIVO_REASIGNACION"
 	    		+ " FROM SINTRANST_CONTROL_RUTAS SCR"
@@ -23,7 +23,7 @@ public interface ReasignacionTripulacionRepository extends JpaRepository<Reasign
 	    ReasignacionTripulacionEntity getDatosChofer(Integer idControlRuta);
     
 
-	    @Query(value = "SELECT  SCR.ID_SOLICITUD, SCR.ID_CONTROL_RUTA,SPA.ID_PERSONAL_AMBULANCIA,SC.ID_CHOFER,  SC.NOM_CHOFER, SPA.DES_PUESTO"
+	    @Query(value = "SELECT  SRR.DES_SINIESTRO, SCR.ID_SOLICITUD, SCR.ID_CONTROL_RUTA,SPA.ID_PERSONAL_AMBULANCIA,SC.ID_CHOFER,  SC.NOM_CHOFER, SPA.DES_PUESTO"
 	    		+ " , SC.CVE_MATRICULA_CHOFER, SCR.NUM_FOLIO_TJTA_COMBUSTIBLE, SCR.ID_RUTA"
 	    		+ " , SRR.DES_MOTIVO_REASIGNACION"
 	    		+ " FROM SINTRANST_CONTROL_RUTAS SCR"

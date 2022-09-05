@@ -40,6 +40,9 @@ public class ReasignacionTripulacionEntity {
 	
 	@Column(name = "DES_MOTIVO_REASIGNACION", unique = false, nullable = true)
 	private String desMotivoReasig;
-	
+
+	@Column(name = "DES_SINIESTRO", unique = false, nullable = true)
+	private String desSiniestro;
+
 }
 

@@ -44,7 +44,10 @@ public class ReasignacionTripulacionResponse {
 
 	@JsonProperty
 	private String numTarjetaDig;
-	
+
 	@JsonProperty
 	private String desMotivoReasig;
+	
+	@JsonProperty
+	private String desSiniestro;
 }

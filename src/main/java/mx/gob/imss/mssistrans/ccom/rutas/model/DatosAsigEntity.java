@@ -32,5 +32,8 @@ public class DatosAsigEntity {
 	private String idSolicitud;
 	@Column(name = "DES_ESTATUS_ASIGNA", unique = false, nullable = true)
 	private String desEstatus;
+
+	@Column(name = "ID_ASIGNACION", unique = false, nullable = true)
+	private String idAsignacion;
 }
 
