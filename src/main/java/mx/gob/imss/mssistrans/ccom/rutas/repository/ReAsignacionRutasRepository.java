@@ -118,6 +118,46 @@ public interface ReAsignacionRutasRepository extends JpaRepository<ReAsignacionR
 		,nativeQuery = true)
 	void save (Integer idVehiculo, Integer idRuta, Integer idChofer, String desMotivoReasig, String desSiniestro, Integer idVehiculoSust, Integer idChoferSust, Integer idAsignacion, String cveMatricula);
 
+	@Modifying(flushAutomatically = true)
+	@Query( value = "UPDATE SINTRANST_REASIGNACION_RUTAS SET DES_SINIESTRO = ?, ID_VEHICULO_SUST = ?"
+			+ " , DES_MOTIVO_REASIGNACION = ?, FEC_ACTUALIZACION = CURRENT_TIMESTAMP()"
+			+ " WHERE ID_VEHICULO = ? AND ID_RUTA = ? AND ID_CHOFER = ? AND DATE(FEC_ALTA) = CURRENT_DATE()"
+		,nativeQuery = true)
+	void update (String desSiniestro, Integer idVehoculoSust, String desMotivoReasignacion, Integer idVehiculo, Integer idRuta, Integer idChofer);
+	@Modifying(flushAutomatically = true)
+	@Query( value = "UPDATE SINTRANST_REASIGNACION_RUTAS SET ID_VEHICULO_SUST = ?"
+			+ " , DES_MOTIVO_REASIGNACION = ?, FEC_ACTUALIZACION = CURRENT_TIMESTAMP()"
+			+ " WHERE ID_VEHICULO = ? AND ID_RUTA = ? AND ID_CHOFER = ? AND DATE(FEC_ALTA) = CURRENT_DATE()"
+		,nativeQuery = true)
+	void update ( Integer idVehoculoSust, String desMotivoReasignacion, Integer idVehiculo, Integer idRuta, Integer idChofer);
+	@Modifying(flushAutomatically = true)
+	@Query( value = "UPDATE SINTRANST_REASIGNACION_RUTAS SET ID_VEHICULO_SUST = ?"
+			+ " , DES_MOTIVO_REASIGNACION = ?, FEC_ACTUALIZACION = CURRENT_TIMESTAMP()"
+			+ " WHERE ID_VEHICULO = ? AND ID_RUTA = ? AND ID_CHOFER = ? AND DATE(FEC_ALTA) = CURRENT_DATE()"
+		,nativeQuery = true)
+	void update (String desSiniestro, String desMotivoReasignacion, Integer idVehiculo, Integer idRuta, Integer idChofer);
+	@Modifying(flushAutomatically = true)
+	@Query( value = "UPDATE SINTRANST_REASIGNACION_RUTAS SET DES_SINIESTRO = ?, ID_VEHICULO_SUST = ?"
+			+ " , FEC_ACTUALIZACION = CURRENT_TIMESTAMP()"
+			+ " WHERE ID_VEHICULO = ? AND ID_RUTA = ? AND ID_CHOFER = ? AND DATE(FEC_ALTA) = CURRENT_DATE()"
+		,nativeQuery = true)
+	void update (String desSiniestro, Integer idVehoculoSust, Integer idVehiculo, Integer idRuta, Integer idChofer);
+	@Modifying(flushAutomatically = true)
+	@Query( value = "UPDATE SINTRANST_REASIGNACION_RUTAS SET DES_SINIESTRO = ?, FEC_ACTUALIZACION = CURRENT_TIMESTAMP()"
+			+ " WHERE ID_VEHICULO = ? AND ID_RUTA = ? AND ID_CHOFER = ? AND DATE(FEC_ALTA) = CURRENT_DATE()"
+		,nativeQuery = true)
+	void update (String desSiniestro, Integer idVehiculo, Integer idRuta, Integer idChofer);
+	@Modifying(flushAutomatically = true)
+	@Query( value = "UPDATE SINTRANST_REASIGNACION_RUTAS SET ID_VEHICULO_SUST = ?"
+			+ " , FEC_ACTUALIZACION = CURRENT_TIMESTAMP()"
+			+ " WHERE ID_VEHICULO = ? AND ID_RUTA = ? AND ID_CHOFER = ? AND DATE(FEC_ALTA) = CURRENT_DATE()"
+		,nativeQuery = true)
+	void update (Integer idVehoculoSust, Integer idVehiculo, Integer idRuta, Integer idChofer);
+	@Modifying(flushAutomatically = true)
+	@Query( value = "UPDATE SINTRANST_REASIGNACION_RUTAS SET DES_MOTIVO_REASIGNACION = ?, FEC_ACTUALIZACION = CURRENT_TIMESTAMP()"
+			+ " WHERE ID_VEHICULO = ? AND ID_RUTA = ? AND ID_CHOFER = ? AND DATE(FEC_ALTA) = CURRENT_DATE()"
+		,nativeQuery = true)
+	void updateReasig ( String desMotivoReasignacion, Integer idVehiculo, Integer idRuta, Integer idChofer);
 
 	
 }

@@ -126,15 +126,6 @@ public class ReasignacionRutasCCOMController {
 		}
 	}
 	
-
-	@PutMapping(path = "{idVehiculo}")
-	public ResponseEntity<Response> update ( @PathVariable String idVehiculo, @RequestParam String idNuevoVehiculo
-			, @RequestParam String idRuta, @RequestParam String idNuevaRuta, @RequestParam String idSolicitud
-			, @RequestParam String idNuevaSolicitud, @RequestParam String desEstatus ){
-		Response response = reasignacionRutasServiceImpl.update(idVehiculo, idNuevoVehiculo, idRuta, idNuevaRuta, idSolicitud, idNuevaSolicitud, desEstatus);
-		return new ResponseEntity<>(response, HttpStatus.OK);
-	}
-	
 	
 	@PostMapping(path = "/")
 	public ResponseEntity<Response> save(@RequestParam Integer idVehiculo, @RequestParam Integer idRuta
@@ -149,4 +140,17 @@ public class ReasignacionRutasCCOMController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
+
+	@PutMapping(path = "/")
+	public ResponseEntity<Response> update(@RequestParam(required = false) String desSiniestro
+			,@RequestParam(required = false) Integer idVehiculoSust
+			, @RequestParam(required = false) String desMotivoReasignacion
+			,@RequestParam Integer idVehiculo, @RequestParam Integer idRuta
+			,@RequestParam Integer idChofer){
+		
+		Response response = reasignacionRutasServiceImpl.update(desSiniestro, idVehiculoSust, desMotivoReasignacion, idVehiculo, idRuta, idChofer);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	
 }

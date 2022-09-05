@@ -231,29 +231,6 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 	}
 
 	@Override
-	public <T> Response update(String idVehiculo, String idNuevoVehiculo, String idRuta, String idNuevaRuta,
-			String idSolicitud, String idNuevaSolicitud, String desEstatus) {
-		// TODO Auto-generated method stub
-		Response<T> respuesta = new Response<>();
-		try {
-			System.out.println("idVehiculo: " + idVehiculo);
-			System.out.println("idNuevoVehiculo: " + idNuevoVehiculo);
-			System.out.println("idRuta: " + idRuta);
-			System.out.println("idNuevaRuta: " + idNuevaRuta);
-			System.out.println("idSolicitud: " + idSolicitud);
-			System.out.println("idNuevaSolicitud: " + idNuevaSolicitud);
-			System.out.println("desEstatus: " + desEstatus);
-
-			datosRepository.update(idNuevoVehiculo, idNuevaRuta, idNuevaSolicitud, desEstatus, idVehiculo, idRuta,
-					idSolicitud);
-
-			datosRepository.flush();
-		} catch (Exception e) {
-			return ValidaDatos.errorException(respuesta, e);
-		}
-		return ValidaDatos.resp(respuesta, "Exito", null);
-	}
-	@Override
 	public <T> Response save(Integer idVehiculo, Integer idRuta, Integer idChofer, String desMotivoReasig,
 			String desSiniestro, Integer idVehiculoSust, Integer idChoferSust, Integer idAsignacion
 			, String cveMatricula) {
@@ -272,6 +249,39 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 		}
 		return ValidaDatos.resp(respuesta, "Exito", null);
 	}
-	
+
+	@Override
+	public <T> Response update(String desSiniestro, Integer idVehiculoSust, String desMotivoReasignacion, Integer idVehiculo, Integer idRuta, Integer idChofer) {
+		// TODO Auto-generated method stub
+		Response<T> respuesta = new Response<>();
+		try {
+				if(desSiniestro != null && idVehiculoSust != null && desMotivoReasignacion != null)
+					if(!desSiniestro.equals("") && !idVehiculoSust.equals("") && !desMotivoReasignacion.equals(""))
+						reAsignacionRutasRepository.update(desSiniestro, idVehiculoSust, desMotivoReasignacion, idVehiculo, idRuta, idChofer);
+				else if(idVehiculoSust != null && desMotivoReasignacion != null)
+					if(!idVehiculoSust.equals("") && !desMotivoReasignacion.equals(""))
+						reAsignacionRutasRepository.update(idVehiculoSust, desMotivoReasignacion, idVehiculo, idRuta, idChofer);
+				if(desSiniestro != null && desMotivoReasignacion != null)
+					if(!desSiniestro.equals("") && !desMotivoReasignacion.equals(""))
+						reAsignacionRutasRepository.update(desSiniestro, desMotivoReasignacion, idVehiculo, idRuta, idChofer);
+				if(desSiniestro != null && idVehiculoSust != null )
+					if(!desSiniestro.equals("") && !idVehiculoSust.equals(""))
+						reAsignacionRutasRepository.update(desSiniestro, idVehiculoSust, idVehiculo, idRuta, idChofer);
+				if(desSiniestro != null )
+					if(!desSiniestro.equals(""))
+						reAsignacionRutasRepository.update(desSiniestro, idVehiculo, idRuta, idChofer);
+				if( idVehiculoSust != null)
+					if(!idVehiculoSust.equals("") )
+						reAsignacionRutasRepository.update(idVehiculoSust, idVehiculo, idRuta, idChofer);
+				if(desMotivoReasignacion != null)
+					if( !desMotivoReasignacion.equals(""))
+						reAsignacionRutasRepository.updateReasig(desMotivoReasignacion, idVehiculo, idRuta, idChofer);
+			datosRepository.flush();
+		} catch (Exception e) {
+			return ValidaDatos.errorException(respuesta, e);
+		}
+		return ValidaDatos.resp(respuesta, "Exito", null);
+	}
+		
 
 }
