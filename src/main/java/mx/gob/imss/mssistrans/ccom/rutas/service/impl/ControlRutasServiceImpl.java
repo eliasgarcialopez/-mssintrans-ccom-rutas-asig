@@ -40,7 +40,6 @@ import mx.gob.imss.mssistrans.ccom.rutas.model.RutasDestinos;
 import mx.gob.imss.mssistrans.ccom.rutas.model.SolicitudTraslado;
 import mx.gob.imss.mssistrans.ccom.rutas.model.Tripulacion;
 import mx.gob.imss.mssistrans.ccom.rutas.model.UnidadAdscripcion;
-import mx.gob.imss.mssistrans.ccom.rutas.model.Usuario;
 import mx.gob.imss.mssistrans.ccom.rutas.model.Vehiculos;
 import mx.gob.imss.mssistrans.ccom.rutas.model.ZonaAtencion;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.ControlRutasRepository;
@@ -349,7 +348,8 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 			
 			Gson gson = new Gson();
 			DatosUsuario datosUsuarios = gson.fromJson(user, DatosUsuario.class);
-			Optional<UnidadAdscripcion> unidadAds=unidadAdscripcionRepository.findByIdUnidadAdscripcionAndActivoEquals(datosUsuarios.getIdUnidadAdscripcion(), true);
+			Optional<UnidadAdscripcion> unidadAds = unidadAdscripcionRepository
+					.findByOoadIdOoadAndActivoEquals(datosUsuarios.getIDOOAD(), true);
 			
 			Ooad ooad= unidadAds.get().getOoad();
 			//Asignadmos el OOAD ala que pertence el ususario

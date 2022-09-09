@@ -330,7 +330,9 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
             Gson gson = new Gson();
             DatosUsuario datosUsuarios = gson.fromJson(user, DatosUsuario.class);
             Optional<UnidadAdscripcion> unidadAds = unidadAdscripcionRepository
-                    .findByIdUnidadAdscripcionAndActivoEquals(datosUsuarios.getIdUnidadAdscripcion(), true);
+                    .findByOoadIdOoadAndActivoEquals(
+                            datosUsuarios.getIDOOAD(),
+                            true);
 
             // todo - no se esta usando la variable ooad
             Ooad ooad = unidadAds.get().getOoad();

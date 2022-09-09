@@ -13,12 +13,13 @@ public interface UnidadAdscripcionRepository  extends JpaRepository<UnidadAdscri
     /**
      * Recupera una UnidadAdscripcion activa por su Id.
      *
-     * @param idUnidadAdscripcion
+     * @param idOoad
      * @param activo
      * @return
      */
     Optional<UnidadAdscripcion> findByIdUnidadAdscripcionAndActivoEquals(Integer idUnidadAdscripcion, boolean activo);
-    
+    Optional<UnidadAdscripcion> findByOoadIdOoadAndActivoEquals(Integer idOoad, boolean activo);
+
     /**
      * Recupera las UnidadAdscripcion activa, que sean pernocta y pertenezcan a la OOAD.
      *

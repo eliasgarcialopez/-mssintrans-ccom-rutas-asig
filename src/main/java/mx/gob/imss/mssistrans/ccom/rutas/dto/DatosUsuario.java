@@ -22,7 +22,7 @@ public class DatosUsuario {
 	
 	@JsonProperty
 	public Integer IDOOAD;
-	
+
 	@JsonProperty
-	public Integer idUnidadAdscripcion;
+	public String CVEDEPARTAMENTO;
 }
