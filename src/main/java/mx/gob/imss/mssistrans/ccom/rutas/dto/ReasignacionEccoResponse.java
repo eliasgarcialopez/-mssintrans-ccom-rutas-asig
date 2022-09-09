@@ -1,6 +1,7 @@
 package mx.gob.imss.mssistrans.ccom.rutas.dto;
 
 
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
@@ -11,29 +12,24 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonRootName(value = "ReAsignacionRutas")
-public class ReAsignacionRutasResponse {
-
-
-	@JsonProperty
-	private String idControlRuta;
-	
-	@JsonProperty
-	private String idSolicitud;
-	
-	@JsonProperty
-	private String cveEcco;
-	
-	@JsonProperty
-	private String desEstatusSolicitud;
-	
-	@JsonProperty
-	private String idRutaAsignacion;
+@JsonRootName(value = "ReasignacionEccos")
+public class ReasignacionEccoResponse {
 
 	@JsonProperty
 	private String idVehiculo;
+	
+	@JsonProperty
+	private String cveEcco;
+
+	@JsonProperty
+	private String numPlacas;
+
 	@JsonProperty
 	private String idRuta;
-	
-	
+
+	@JsonProperty
+	private String IdSolicitud;
+
+	@JsonProperty
+	private String IdAsignacion;
 }

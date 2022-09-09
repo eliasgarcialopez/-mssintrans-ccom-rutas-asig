@@ -15,9 +15,9 @@ public interface AsigRutasService {
 	<T>Response getRutas(Integer idOoad, String rol);
 	<T>Response getSolicitudTraslado(DatosUsuarioDTO datosUsuario, Integer idRuta);
 	<T>Response getEcco(DatosUsuarioDTO datosUsuarios, Integer idRuta);
-	<T>Response getDatosAsignacion(Integer idControlRuta);
-	<T>Response getTripulacionAsignada(Integer idControlRuta);
-	<T>Response getRegistroRecorrido(Integer idControlRuta);
+	<T>Response getDatosAsignacion(Integer idControlRuta, Integer idRuta, Integer idSolicitud, Integer idVehiculo);
+	<T>Response getTripulacionAsignada(Integer idControlRuta, Integer idRuta, Integer idSolicitud, Integer idVehiculo);
+	<T>Response getRegistroRecorrido(Integer idControlRuta, Integer idRuta, Integer idSolicitud, Integer idVehiculo);
 	<T>Response update(RegistroRecorridoDTO datosRecorrido);
 	
 	<T>Response getDetalleRutasyAsig(Integer idControlRuta);

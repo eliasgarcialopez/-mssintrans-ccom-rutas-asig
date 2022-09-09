@@ -12,7 +12,7 @@ import mx.gob.imss.mssistrans.ccom.rutas.model.SiniestrosEntity;
 @Repository
 public interface SiniestrosRepository extends JpaRepository<SiniestrosEntity, Integer> {
   
-    @Query(value = "SELECT NUM_FOLIO FROM SINTRANST_SINIESTROS "
+    @Query(value = "SELECT ID_SINIESTRO,NUM_FOLIO FROM SINTRANST_SINIESTROS "
            ,nativeQuery = true)
     List<SiniestrosEntity> getSiniestro();
 

@@ -71,29 +71,44 @@ public class ReasignacionRutasCCOMController {
 	}
 
 	/****** HU006 - 28 **********/
-	
-	@GetMapping(path = "/ecco/{idRuta}")
-	public <T> ResponseEntity<Response> getEcco(@PathVariable Integer idRuta) {
-		Response<T> respuesta = new Response<>();
-		if (ValidaDatos.getAccess()) {
-			respuesta = ValidaDatos.noAutorizado(respuesta);
-			return new ResponseEntity<>(respuesta, HttpStatus.OK);
-		} else {
-			DatosUsuarioDTO datosUsuario = ValidaDatos.datosUsuarios();
-			Response response = reasignacionRutasServiceImpl.getEcco(datosUsuario, idRuta);
-			return new ResponseEntity<>(response, HttpStatus.OK);
-		}
-	}
-	
-	@GetMapping(path = "/getTripulacionAsignada")
-	public <T> ResponseEntity<Response> getTripulacionAsignada(@RequestParam Integer idControlRuta) {
+
+	@GetMapping(path = "/getDetalleReAsignacion")
+	public <T> ResponseEntity<Response> getDetalleReAsignacion(@RequestParam Integer idControlRuta) {
 
 		Response<T> respuesta = new Response<>();
 		if (ValidaDatos.getAccess()) {
 			respuesta = ValidaDatos.noAutorizado(respuesta);
 			return new ResponseEntity<>(respuesta, HttpStatus.OK);
 		} else {
-			Response response = reasignacionRutasServiceImpl.getTripulacionAsignada(idControlRuta);
+			DatosUsuarioDTO datosUsuarios = ValidaDatos.datosUsuarios();
+			Response response = reasignacionRutasServiceImpl.getDetalleReAsignacion(idControlRuta);
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		}
+	}
+	@GetMapping(path = "/ecco")
+	public <T> ResponseEntity<Response> getEcco() {
+		Response<T> respuesta = new Response<>();
+		if (ValidaDatos.getAccess()) {
+			respuesta = ValidaDatos.noAutorizado(respuesta);
+			return new ResponseEntity<>(respuesta, HttpStatus.OK);
+		} else {
+			//DatosUsuarioDTO datosUsuario = ValidaDatos.datosUsuarios();
+			Response response = reasignacionRutasServiceImpl.getEcco();
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		}
+	}
+	
+	@GetMapping(path = "/getTripulacionAsignada")
+	public <T> ResponseEntity<Response> getTripulacionAsignada(@RequestParam(required = false) Integer idControlRuta
+			, @RequestParam(required = false) Integer idRuta, @RequestParam(required = false) Integer idSolicitud
+			, @RequestParam(required = false) Integer idVehiculo)  {
+
+		Response<T> respuesta = new Response<>();
+		if (ValidaDatos.getAccess()) {
+			respuesta = ValidaDatos.noAutorizado(respuesta);
+			return new ResponseEntity<>(respuesta, HttpStatus.OK);
+		} else {
+			Response response = reasignacionRutasServiceImpl.getTripulacionAsignada(idControlRuta, idRuta, idSolicitud, idVehiculo);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	}
@@ -111,34 +126,31 @@ public class ReasignacionRutasCCOMController {
 		}
 	}
 	
-
-	@PutMapping(path = "{idVehiculo}")
-	public ResponseEntity<Response> update ( @PathVariable String idVehiculo, @RequestParam String idNuevoVehiculo
-			, @RequestParam String idRuta, @RequestParam String idNuevaRuta, @RequestParam String idSolicitud
-			, @RequestParam String idNuevaSolicitud, @RequestParam String desEstatus ){
-		Response response = reasignacionRutasServiceImpl.update(idVehiculo, idNuevoVehiculo, idRuta, idNuevaRuta, idSolicitud, idNuevaSolicitud, desEstatus);
-		return new ResponseEntity<>(response, HttpStatus.OK);
-	}
 	
-	
-	@GetMapping(path = "/getDetalleRutasyAsig")
-	public <T> ResponseEntity<Response> getDetalleRutasyAsig(@RequestParam Integer idControlRuta) {
-
-		Response<T> respuesta = new Response<>();
-		if (ValidaDatos.getAccess()) {
-			respuesta = ValidaDatos.noAutorizado(respuesta);
-			return new ResponseEntity<>(respuesta, HttpStatus.OK);
-		} else {
-			DatosUsuarioDTO datosUsuarios = ValidaDatos.datosUsuarios();
-			Response response = reasignacionRutasServiceImpl.getDetalleRutasyAsig(idControlRuta);
-			return new ResponseEntity<>(response, HttpStatus.OK);
-		}
-	}
-
 	@PostMapping(path = "/")
-	public ResponseEntity<Response> save(@RequestBody ReAsignacionRutasDTO reAsignacionRutas){
-		Response response = reasignacionRutasServiceImpl.save(reAsignacionRutas);
+	public ResponseEntity<Response> save(@RequestParam Integer idVehiculo, @RequestParam Integer idRuta
+			, @RequestParam Integer idChofer, @RequestParam String desMotivoReasig
+			, @RequestParam String desSiniestro, @RequestParam(required = false) Integer idVehiculoSust
+			, @RequestParam(required = false) Integer idChoferSust, @RequestParam Integer idAsignacion
+			, @RequestParam String cveMatricula){
+		
+		Response response = reasignacionRutasServiceImpl.save(idVehiculo, idRuta, idChofer, desMotivoReasig
+				, desSiniestro, idVehiculoSust, idChoferSust, idAsignacion
+				, cveMatricula);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
+
+	@PutMapping(path = "/")
+	public ResponseEntity<Response> update(@RequestParam(required = false) String desSiniestro
+			,@RequestParam(required = false) Integer idVehiculoSust
+			, @RequestParam(required = false) String desMotivoReasignacion
+			,@RequestParam Integer idVehiculo, @RequestParam Integer idRuta
+			,@RequestParam Integer idChofer){
+		
+		Response response = reasignacionRutasServiceImpl.update(desSiniestro, idVehiculoSust, desMotivoReasignacion, idVehiculo, idRuta, idChofer);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	
 }

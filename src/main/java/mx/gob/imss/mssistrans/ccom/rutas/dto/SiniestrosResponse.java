@@ -19,6 +19,8 @@ import lombok.NoArgsConstructor;
 public class SiniestrosResponse {
 
 	@JsonProperty
+	private String idSiniestro;
+	@JsonProperty
 	private String numFolio;
 
 }
