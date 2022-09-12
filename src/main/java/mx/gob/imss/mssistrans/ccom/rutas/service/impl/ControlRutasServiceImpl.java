@@ -348,10 +348,7 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 			
 			Gson gson = new Gson();
 			DatosUsuario datosUsuarios = gson.fromJson(user, DatosUsuario.class);
-			Optional<UnidadAdscripcion> unidadAds = unidadAdscripcionRepository
-					.findByOoadIdOoadAndActivoEquals(datosUsuarios.getIDOOAD(), true);
-			
-			Ooad ooad= unidadAds.get().getOoad();
+
 			//Asignadmos el OOAD ala que pertence el ususario
 			
 			ruta.setIdOOADFiltro(datosUsuarios.getIDOOAD());
