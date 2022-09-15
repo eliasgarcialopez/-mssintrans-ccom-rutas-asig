@@ -40,7 +40,7 @@ public class ModuloAmbulancia implements Serializable {
     private String cveMatriculaJefe;
     @Basic
     @Column(name = "NUM_TELEFONO_MODULO")
-    private Integer numTelefono;
+    private String numTelefono;
     @Basic
     @Column(name = "DES_PLANTA_LAVADO")
     private String desPlantaLavado;
