@@ -76,11 +76,16 @@ private ZonaAtencionRepository zonaAtencionRepository;
 		             result.addAll(result2);
 
 		            log.info("vehiculos obtenidos , {}", result.size());
+		            List<VehiculoResponse> content = null;
 		            
-		            final List<VehiculoResponse> content = result
-		                    .stream()
-		                    .map(VehiculoMapper.INSTANCE::vehiculoEntityToJsonTo)
-		                    .collect(Collectors.toList());
+		            if(!result.isEmpty()) {
+		            	content = result
+			                    .stream()
+			                    .map(VehiculoMapper.INSTANCE::vehiculoEntityToJsonTo)
+			                    .collect(Collectors.toList());
+		            }
+		            
+
 
 		            response.setDatos(content);
 		            response.setMensaje("Exito");
