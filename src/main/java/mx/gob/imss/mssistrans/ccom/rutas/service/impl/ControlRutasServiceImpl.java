@@ -247,9 +247,9 @@ public class ControlRutasServiceImpl implements ControlRutasService {
   				rutasResponse.setTripulacion(tripRes);
   					}else {
   						
-  						Log.info("No se econtro la tripulacion por id vehiculo "+ruta.getIdVehiculo().getIdVehiculo());
+  						Log.info("No se econtro la tripulacion por id vehiculo " + ruta.getIdVehiculo().getIdVehiculo());
   		            	 
-  		            	response.setDatos(null);
+  		            	response.setDatos(rutasResponse);
   		 	            response.setError(false);
   		 	            response.setMensaje("Exito");
   		 	            response.setCodigo(HttpStatus.OK.value());
@@ -271,7 +271,7 @@ public class ControlRutasServiceImpl implements ControlRutasService {
  	            response.setMensaje("Exito");
  	            response.setCodigo(HttpStatus.OK.value());
              }else {
-            	 response.setDatos(null);
+            	 response.setDatos(rutasResponse);
 	 	            response.setError(false);
 	 	            response.setMensaje("Exito");
 	 	            response.setCodigo(HttpStatus.OK.value()); 
@@ -542,7 +542,7 @@ Respuesta<Integer> response = new Respuesta<>();
 			
 				
 			}else {
-				response.setDatos(null);
+				response.setDatos(0);
 				response.setError(false);
 				response.setMensaje("Exito");
 				response.setCodigo(HttpStatus.OK.value());
@@ -661,7 +661,7 @@ public Respuesta<ControlRutasTotalesResponse> consultarTotalesVehiculos() {
 			
 		}
 	    else {
-        	 response.setDatos(null);
+        	 response.setDatos(rutasResponse);
  	            response.setError(false);
  	            response.setMensaje("Exito");
  	            response.setCodigo(HttpStatus.OK.value()); 

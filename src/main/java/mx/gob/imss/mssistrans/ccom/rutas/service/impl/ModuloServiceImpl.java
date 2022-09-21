@@ -48,9 +48,8 @@ public class ModuloServiceImpl implements ModuloService {
 	 			
 	 			 log.info("consultando modulo  de ambulancia , {}", datosUsuarios.getIDOOAD());
 	 			 Optional<ModuloAmbulancia>modOpt= moAmbulanciaRepository.findByIdOOADAndActivoEquals(datosUsuarios.getIDOOAD(), true);
-	        if(modOpt.isPresent()) {
-	        	
-	        	ModuloResponse mod=new ModuloResponse();
+	 	   ModuloResponse mod=new ModuloResponse(); 
+	 	   if(modOpt.isPresent()) {
 	        	mod.setDesNombre(modOpt.get().getDesNombre());
 	        	mod.setIdModulo(modOpt.get().getIdModulo());
 	        	mod.setDesTipoModulo(modOpt.get().getDesTipoModulo());
@@ -60,7 +59,7 @@ public class ModuloServiceImpl implements ModuloService {
 	            response.setCodigo(HttpStatus.OK.value());
 	        	
 	        }else {
-	        	response.setDatos(null);
+	        	response.setDatos(mod);
 				response.setError(false);
 				response.setMensaje("Exito");
 				response.setCodigo(HttpStatus.OK.value());

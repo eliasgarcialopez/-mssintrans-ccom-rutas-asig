@@ -74,7 +74,7 @@ public class TarjetasElectronicasServiceImpl implements TarjetasElectronicasServ
             response.setError(false);
         	
             }else {
-            	 response.setDatos(null);
+            	 response.setDatos(lstTarjetas);
                  response.setCodigo(HttpStatus.OK.value());
                  response.setMensaje("Exito");
                  response.setError(false);
