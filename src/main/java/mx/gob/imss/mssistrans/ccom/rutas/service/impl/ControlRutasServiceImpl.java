@@ -190,8 +190,10 @@ public class ControlRutasServiceImpl implements ControlRutasService {
   				
   				if(ruta.getModulo()!=null) {
   					
-  					ModuloAmbulancia moduloAmbulancia=ruta.getModulo();  
-  					Integer idZona=moduloAmbulancia.getZona().getIdZona();
+  					ModuloAmbulancia moduloAmbulancia=ruta.getModulo();
+  					
+  					Optional<ZonaAtencion> zonaAtencion = zonaAtencionRepository.findByIdModuloAndActivoEquals(moduloAmbulancia.getIdModulo(), true);
+  					Integer idZona = zonaAtencion.get().getIdZona();
   					
   					Integer totalVA=   vehiculoRepository.countTotalVehiculoAsignados(idZona);
   					
