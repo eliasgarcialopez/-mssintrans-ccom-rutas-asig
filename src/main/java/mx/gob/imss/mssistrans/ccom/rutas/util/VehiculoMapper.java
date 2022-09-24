@@ -19,7 +19,6 @@ public interface VehiculoMapper {
      *
      * @param entityList
      * @return
-     * @deprecated
      */
 	Vehiculos jsonToVehiculoEntity(VehiculoResponse vehiculoResp);
 	 /**
@@ -27,7 +26,6 @@ public interface VehiculoMapper {
      *
      * @param entityList
      * @return
-     * @deprecated
      */
 	VehiculoResponse vehiculoEntityToJsonTo(Vehiculos vehiculo);
     /**
@@ -35,7 +33,6 @@ public interface VehiculoMapper {
      *se transforma las solicitudes de traslado a un dto en lista
      * @param entityList
      * @return
-     * @deprecated
      */
     List<VehiculoResponse> entityListToDto(List<Vehiculos> entityList);
 	

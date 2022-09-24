@@ -18,13 +18,14 @@ public interface VehiculosRepository extends JpaRepository<Vehiculos, Integer> {
      * @return
      */
 
-	@Query(value = "select v.* from SINTRANST_VEHICULOS v INNER JOIN SINTRANST_ZONAS_DETALLE zd ON zd.ID_VEHICULO=v.ID_VEHICULO "
-			+ " INNER JOIN  SINTRANST_ARRENDATARIOS a on a.ID_ARRENDATARIO =v.ID_ARRENDATARIO "
-			+ "where zd.ID_ZONAS_ATENCION = ?1 and v.IND_ACTIVO = 1 "
-			+ "and v.IND_SISTEMA=1 and v.DES_ESTATUS_VEHICULO in ('8') "
+	@Query(value = "select v.* from SINTRANST_VEHICULOS v "
+			+ "INNER JOIN SINTRANST_ZONAS_DETALLE zd ON zd.ID_VEHICULO=v.ID_VEHICULO "
+			+ "INNER JOIN  SINTRANST_ARRENDATARIOS a on a.ID_ARRENDATARIO =v.ID_ARRENDATARIO "
+			+ "where zd.ID_ZONAS_ATENCION = ?1 "
+			+ "and v.IND_ACTIVO = 1 "
+			+ "and v.DES_ESTATUS_VEHICULO in ('8') "
 			+ "and v.DES_TIPO_SERVICIO IN ('9', '10', '11') " 
 	        + "and (v.IND_ARRENDADO = 1 and a.FEC_FIN_CONTRATO > curdate()) ",nativeQuery =true)
-	
 	List<Vehiculos> findVehiculoArrendadosAsignables(Integer idZona);
 	
 
@@ -37,13 +38,13 @@ public interface VehiculosRepository extends JpaRepository<Vehiculos, Integer> {
      * @return
      */
 
-	@Query(value = "select v.* from SINTRANST_VEHICULOS v INNER JOIN SINTRANST_ZONAS_DETALLE zd ON zd.ID_VEHICULO=v.ID_VEHICULO "
-			
-			+ "where zd.ID_ZONAS_ATENCION = ?1 and v.IND_ACTIVO = 1 "
-			+ "and v.IND_SISTEMA=1 and v.DES_ESTATUS_VEHICULO in ('8') "
+	@Query(value = "select v.* from SINTRANST_VEHICULOS v " +
+			"INNER JOIN SINTRANST_ZONAS_DETALLE zd ON zd.ID_VEHICULO=v.ID_VEHICULO "
+			+ "where zd.ID_ZONAS_ATENCION = ?1 "
+			+ "and v.IND_ACTIVO = 1 "
+			+ "and v.DES_ESTATUS_VEHICULO in ('8') "
 			+ "and v.DES_TIPO_SERVICIO IN ('9', '10', '11') " 
 	        + "and (v.IND_ARRENDADO = 0 ) ",nativeQuery =true)
-	
 	List<Vehiculos> findVehiculoAsignables(Integer idZona);
 
 	 /**
@@ -53,13 +54,13 @@ public interface VehiculosRepository extends JpaRepository<Vehiculos, Integer> {
      * @param activo
      * @return
      */
-	
-	@Query(value = "select count(v.ID_VEHICULO) from SINTRANST_VEHICULOS v INNER JOIN SINTRANST_ZONAS_DETALLE zd ON zd.ID_VEHICULO=v.ID_VEHICULO "
-			
-			+ "where zd.ID_ZONAS_ATENCION = ?1 and v.IND_ACTIVO = 1 "
-			+ "and v.IND_SISTEMA=1 "
-	        ,nativeQuery =true)
-	
+
+	 @Query(value = "select count(v.ID_VEHICULO) from SINTRANST_VEHICULOS v "
+			 + "INNER JOIN SINTRANST_ZONAS_DETALLE zd ON zd.ID_VEHICULO=v.ID_VEHICULO "
+			 + "where zd.ID_ZONAS_ATENCION = ?1 "
+			 + "and v.IND_ACTIVO = 1 "
+			 + "and zd.IND_ACTIVO = 1 "
+			 , nativeQuery = true)
 	Integer countTotalVehiculoAsignados(Integer idZona);
 	
 	 /**
@@ -70,13 +71,14 @@ public interface VehiculosRepository extends JpaRepository<Vehiculos, Integer> {
      * @param activo
      * @return
      */
-	
-@Query(value = "select count(v.ID_VEHICULO) from SINTRANST_VEHICULOS v INNER JOIN SINTRANST_ZONAS_DETALLE zd ON zd.ID_VEHICULO=v.ID_VEHICULO "
-			
-			+ "where zd.ID_ZONAS_ATENCION = ?1 and v.IND_ACTIVO = 1 and v.DES_ESTATUS_VEHICULO in ('2') "
-			+ "and v.IND_SISTEMA=1 "
-	        ,nativeQuery =true)
 
+	 @Query(value = "select count(v.ID_VEHICULO) from SINTRANST_VEHICULOS v "
+			 + "INNER JOIN SINTRANST_ZONAS_DETALLE zd ON zd.ID_VEHICULO=v.ID_VEHICULO "
+			 + "where zd.ID_ZONAS_ATENCION = ?1 "
+			 + "and v.IND_ACTIVO = 1 "
+			 + "and zd.IND_ACTIVO = 1 "
+			 + "and v.DES_ESTATUS_VEHICULO in ('2') "
+			 , nativeQuery = true)
 	Integer countTotalVehiculoSiniestrados(Integer idZona);
 	
 	 /**
@@ -87,14 +89,14 @@ public interface VehiculosRepository extends JpaRepository<Vehiculos, Integer> {
      * @return
      */
 
-@Query(value = "select count(v.ID_VEHICULO) from SINTRANST_VEHICULOS v INNER JOIN SINTRANST_ZONAS_DETALLE zd ON zd.ID_VEHICULO=v.ID_VEHICULO "
-
-			+ "where zd.ID_ZONAS_ATENCION = ?1 and v.IND_ACTIVO = 1 and v.DES_ESTATUS_VEHICULO in ('4') "
-			+ "and v.IND_SISTEMA=1 "
-	        ,nativeQuery =true)
-
-
-	Integer countTotalVehiculoMantenimiento(Integer idZona);
+	 @Query(value = "select count(v.ID_VEHICULO) from SINTRANST_VEHICULOS v "
+			 + "INNER JOIN SINTRANST_ZONAS_DETALLE zd ON zd.ID_VEHICULO=v.ID_VEHICULO "
+			 + "where zd.ID_ZONAS_ATENCION = ?1 "
+			 + "and v.IND_ACTIVO = 1 "
+			 + "and zd.IND_ACTIVO = 1 "
+			 + "and v.DES_ESTATUS_VEHICULO in ('4') "
+			 , nativeQuery = true)
+	 Integer countTotalVehiculoMantenimiento(Integer idZona);
 	
 	 /**
      * los vehiculos con esatus en Operacion  asignados al mismo centracom o modulo de la misma OOAD PENDIENTE
@@ -103,11 +105,12 @@ public interface VehiculosRepository extends JpaRepository<Vehiculos, Integer> {
      * @param activo
      * @return
      */
-@Query(value = "select count(v.ID_VEHICULO) from SINTRANST_VEHICULOS v INNER JOIN SINTRANST_ZONAS_DETALLE zd ON zd.ID_VEHICULO=v.ID_VEHICULO "
-
-			+ "where zd.ID_ZONAS_ATENCION = ?1 and v.IND_ACTIVO = 1 and v.DES_ESTATUS_VEHICULO in ('8') "
-			+ "and v.IND_SISTEMA=1 "
-	        ,nativeQuery =true)
-
-	Integer countTotalVehiculoDisponibles(Integer idZona);
+	 @Query(value = "select count(v.ID_VEHICULO) from SINTRANST_VEHICULOS v "
+			 + "INNER JOIN SINTRANST_ZONAS_DETALLE zd ON zd.ID_VEHICULO=v.ID_VEHICULO "
+			 + "where zd.ID_ZONAS_ATENCION = ?1 "
+			 + "and v.IND_ACTIVO = 1 "
+			 + "and zd.IND_ACTIVO = 1 "
+			 + "and v.DES_ESTATUS_VEHICULO in ('8') "
+			 , nativeQuery = true)
+	 Integer countTotalVehiculoDisponibles(Integer idZona);
 }

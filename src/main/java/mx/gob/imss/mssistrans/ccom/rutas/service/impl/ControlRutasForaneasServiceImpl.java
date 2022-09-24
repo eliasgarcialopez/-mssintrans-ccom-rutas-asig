@@ -178,7 +178,9 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
 
                     ModuloAmbulancia moduloAmbulancia = opModulo.get();
 
-                    Optional<ZonaAtencion> zonaAtencion = zonaAtencionRepository.findByIdModuloAndActivoEquals(moduloAmbulancia.getIdModulo(), true);
+                    Optional<ZonaAtencion> zonaAtencion = zonaAtencionRepository
+                            .findByIdModuloAndActivoEquals(moduloAmbulancia.getIdModulo(), true);
+
                     Integer idZona = zonaAtencion.get().getIdZona();
 
                     Integer totalVA = vehiculoRepository.countTotalVehiculoAsignados(idZona);
