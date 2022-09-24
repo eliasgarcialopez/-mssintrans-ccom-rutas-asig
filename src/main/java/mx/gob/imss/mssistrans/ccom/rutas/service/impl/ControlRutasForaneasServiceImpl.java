@@ -35,6 +35,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
     private final TripulacionRepository tripulacionRepository;
     private final ViaticosRepository viaticosRepository;
     private final RutasDestinosRepository destinosRepository;
+    private final ZonaAtencionRepository zonaAtencionRepository;
 
     public ControlRutasForaneasServiceImpl(
             ControlRutasForaneasRepository controlRutasForaneasRepository,
@@ -46,7 +47,8 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
             RutasRepository rutasRepository,
             TripulacionRepository tripulacionRepository,
             ViaticosRepository viaticosRepository,
-            RutasDestinosRepository destinosRepository) {
+            RutasDestinosRepository destinosRepository,
+            ZonaAtencionRepository zonaAtencionRepository) {
         this.controlRutasForaneasRepository = controlRutasForaneasRepository;
         this.unidadAdscripcionRepository = unidadAdscripcionRepository;
         this.moAmbulanciaRepository = moAmbulanciaRepository;
@@ -57,6 +59,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
         this.tripulacionRepository = tripulacionRepository;
         this.viaticosRepository = viaticosRepository;
         this.destinosRepository = destinosRepository;
+        this.zonaAtencionRepository = zonaAtencionRepository;
     }
 
     @Override
@@ -174,7 +177,9 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                 if (opModulo.isPresent()) {
 
                     ModuloAmbulancia moduloAmbulancia = opModulo.get();
-                    Integer idZona = moduloAmbulancia.getZona().getIdZona();
+
+                    Optional<ZonaAtencion> zonaAtencion = zonaAtencionRepository.findByIdModuloAndActivoEquals(moduloAmbulancia.getIdModulo(), true);
+                    Integer idZona = zonaAtencion.get().getIdZona();
 
                     Integer totalVA = vehiculoRepository.countTotalVehiculoAsignados(idZona);
 
