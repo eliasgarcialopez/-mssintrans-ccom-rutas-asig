@@ -190,8 +190,10 @@ public class ControlRutasServiceImpl implements ControlRutasService {
   				
   				if(ruta.getModulo()!=null) {
   					
-  					ModuloAmbulancia moduloAmbulancia=ruta.getModulo();  
-  					Integer idZona=moduloAmbulancia.getZona().getIdZona();
+  					ModuloAmbulancia moduloAmbulancia=ruta.getModulo();
+  					
+  					Optional<ZonaAtencion> zonaAtencion = zonaAtencionRepository.findByIdModuloAndActivoEquals(moduloAmbulancia.getIdModulo(), true);
+  					Integer idZona = zonaAtencion.get().getIdZona();
   					
   					Integer totalVA=   vehiculoRepository.countTotalVehiculoAsignados(idZona);
   					
@@ -247,9 +249,9 @@ public class ControlRutasServiceImpl implements ControlRutasService {
   				rutasResponse.setTripulacion(tripRes);
   					}else {
   						
-  						Log.info("No se econtro la tripulacion por id vehiculo "+ruta.getIdVehiculo().getIdVehiculo());
+  						Log.info("No se econtro la tripulacion por id vehiculo " + ruta.getIdVehiculo().getIdVehiculo());
   		            	 
-  		            	response.setDatos(null);
+  		            	response.setDatos(rutasResponse);
   		 	            response.setError(false);
   		 	            response.setMensaje("Exito");
   		 	            response.setCodigo(HttpStatus.OK.value());
@@ -271,7 +273,7 @@ public class ControlRutasServiceImpl implements ControlRutasService {
  	            response.setMensaje("Exito");
  	            response.setCodigo(HttpStatus.OK.value());
              }else {
-            	 response.setDatos(null);
+            	 response.setDatos(rutasResponse);
 	 	            response.setError(false);
 	 	            response.setMensaje("Exito");
 	 	            response.setCodigo(HttpStatus.OK.value()); 
@@ -542,7 +544,7 @@ Respuesta<Integer> response = new Respuesta<>();
 			
 				
 			}else {
-				response.setDatos(null);
+				response.setDatos(0);
 				response.setError(false);
 				response.setMensaje("Exito");
 				response.setCodigo(HttpStatus.OK.value());
@@ -661,7 +663,7 @@ public Respuesta<ControlRutasTotalesResponse> consultarTotalesVehiculos() {
 			
 		}
 	    else {
-        	 response.setDatos(null);
+        	 response.setDatos(rutasResponse);
  	            response.setError(false);
  	            response.setMensaje("Exito");
  	            response.setCodigo(HttpStatus.OK.value()); 

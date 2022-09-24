@@ -71,30 +71,31 @@ private ZonaAtencionRepository zonaAtencionRepository;
 		             List<Vehiculos> result1 = vehiculosRepository.findVehiculoAsignables(zona.getIdZona());
 		             List<Vehiculos> result2 = vehiculosRepository.findVehiculoArrendadosAsignables(zona.getIdZona());
 
-		             List<Vehiculos> result =new ArrayList<>();
+		             List<Vehiculos> result = new ArrayList<>();
 		             result.addAll(result1);
 		             result.addAll(result2);
 
 		            log.info("vehiculos obtenidos , {}", result.size());
+		            List<VehiculoResponse> content = new ArrayList<VehiculoResponse>();
 		            
-		            final List<VehiculoResponse> content = result
-		                    .stream()
-		                    .map(VehiculoMapper.INSTANCE::vehiculoEntityToJsonTo)
-		                    .collect(Collectors.toList());
-
+		            if(!result.isEmpty()) {
+		            	content = result
+			                    .stream()
+			                    .map(VehiculoMapper.INSTANCE::vehiculoEntityToJsonTo)
+			                    .collect(Collectors.toList());
+		            }
+		            
 		            response.setDatos(content);
 		            response.setMensaje("Exito");
 		            response.setCodigo(HttpStatus.OK.value());
 				}
-	        	
-	        	   
 		         
 	        		   
 	        	}else {
-	        		 response.setDatos(null);
-		 	            response.setError(false);
-		 	            response.setMensaje("Exito");
-		 	            response.setCodigo(HttpStatus.OK.value()); 
+	        		   response.setDatos(new ArrayList<>());
+		 	           response.setError(false);
+		 	           response.setMensaje("Exito");
+		 	           response.setCodigo(HttpStatus.OK.value()); 
 	        	}
 	        } catch (Exception exception) {
 	               

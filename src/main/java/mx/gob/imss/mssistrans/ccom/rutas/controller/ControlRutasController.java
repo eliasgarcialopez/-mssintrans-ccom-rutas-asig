@@ -61,7 +61,12 @@ public class ControlRutasController {
 		if(columna.equals("idRuta")) columna="idControlRuta";
 		Pageable pageable = PageRequest.of(pagina, tamanio,Sort.by(new Sort.Order(Sort.Direction.fromString(sort), columna)));
 		Respuesta<?> response =rutasService.consultarRutas(pageable);
-		return new ResponseEntity<>(response, HttpStatus.OK);
+		if(response.isError()) {
+			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}else {
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		}
+		
 	}
 
 	
@@ -74,7 +79,11 @@ public class ControlRutasController {
 	@GetMapping("/id/{idRuta}")
 	public ResponseEntity<?> consultarRuta(@PathVariable Integer idRuta) {
 		Respuesta<ControlRutasResponse> response = rutasService.consultarRutas(idRuta);
-		return new ResponseEntity<>(response, HttpStatus.OK);
+		if(response.isError()) {
+			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}else {
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		}
 	}
 	
 	/**
@@ -86,7 +95,12 @@ public class ControlRutasController {
 	@GetMapping("/totales/")
 	public ResponseEntity<?> consultarTotalesVehiculos() {
 		Respuesta<ControlRutasTotalesResponse> response = rutasService.consultarTotalesVehiculos();
-		return new ResponseEntity<>(response, HttpStatus.OK);
+
+		if(response.isError()) {
+			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}else {
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		}
 	}
 	
 	/**
@@ -98,7 +112,12 @@ public class ControlRutasController {
 	@PostMapping
 	public ResponseEntity<Respuesta<?>> crearRuta(@RequestBody ControlRutasRequest rutaRequest) {
 		Respuesta<?> response = rutasService.crearRuta(rutaRequest);
-		return new ResponseEntity<>(response, HttpStatus.OK);
+		
+		if(response.isError()) {
+			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}else {
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		}
 	}
 	/**
 	 * Endpoint para editar una Ruta
@@ -110,7 +129,12 @@ public class ControlRutasController {
 	@PutMapping("/{idRuta}")
 	public ResponseEntity<?> editarRuta(@PathVariable Integer idRuta, @RequestBody ControlRutasRequest rutasRequest) {
 		Respuesta<?> response = rutasService.editarRuta(idRuta, rutasRequest);
-		return new ResponseEntity<>(response, HttpStatus.OK);
+		
+		if(response.isError()) {
+			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}else {
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		}
 	}
 
 	/**
@@ -122,7 +146,12 @@ public class ControlRutasController {
 	@DeleteMapping("/{idRuta}")
 	public ResponseEntity<?> eliminarRuta(@PathVariable Integer idRuta) {
 		Respuesta<?> response = rutasService.eliminarRutas(idRuta);
-		return new ResponseEntity<>(response, HttpStatus.OK);
+
+		if(response.isError()) {
+			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}else {
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		}
 	}
 
 	@ResponseStatus(HttpStatus.BAD_REQUEST)

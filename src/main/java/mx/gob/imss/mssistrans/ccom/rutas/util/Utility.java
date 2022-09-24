@@ -32,10 +32,10 @@ public class Utility {
 		Date nocIni2=dateFormat.parse("00:00:00");
 		Date nocFin2=dateFormat.parse("06:00:00");
 		
-		if(d.after(matIni) &&  d.before(matFin)) return "Matutino";
-		if(d.after(vesIni) &&  d.before(vesFin)) return "Vespertino";
-		if(d.after(nocIni2) &&  d.before(nocFin2)) return "Nocturno o Especial";
-		if(d.after(nocIni) &&  d.before(nocFin)) return "Nocturno o Especial";
+		if(d.after(matIni) &&  d.before(matFin)) return "1";
+		if(d.after(vesIni) &&  d.before(vesFin)) return "2";
+		if(d.after(nocIni2) &&  d.before(nocFin2)) return "3";
+		if(d.after(nocIni) &&  d.before(nocFin)) return "3";
 		return "";
 		
 	}

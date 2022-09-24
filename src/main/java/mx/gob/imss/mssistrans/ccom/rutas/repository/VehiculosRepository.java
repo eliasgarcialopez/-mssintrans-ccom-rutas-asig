@@ -22,6 +22,7 @@ public interface VehiculosRepository extends JpaRepository<Vehiculos, Integer> {
 			+ " INNER JOIN  SINTRANST_ARRENDATARIOS a on a.ID_ARRENDATARIO =v.ID_ARRENDATARIO "
 			+ "where zd.ID_ZONAS_ATENCION = ?1 and v.IND_ACTIVO = 1 "
 			+ "and v.IND_SISTEMA=1 and v.DES_ESTATUS_VEHICULO in ('8') "
+			+ "and v.DES_TIPO_SERVICIO IN ('9', '10', '11') " 
 	        + "and (v.IND_ARRENDADO = 1 and a.FEC_FIN_CONTRATO > curdate()) ",nativeQuery =true)
 	
 	List<Vehiculos> findVehiculoArrendadosAsignables(Integer idZona);
@@ -40,6 +41,7 @@ public interface VehiculosRepository extends JpaRepository<Vehiculos, Integer> {
 			
 			+ "where zd.ID_ZONAS_ATENCION = ?1 and v.IND_ACTIVO = 1 "
 			+ "and v.IND_SISTEMA=1 and v.DES_ESTATUS_VEHICULO in ('8') "
+			+ "and v.DES_TIPO_SERVICIO IN ('9', '10', '11') " 
 	        + "and (v.IND_ARRENDADO = 0 ) ",nativeQuery =true)
 	
 	List<Vehiculos> findVehiculoAsignables(Integer idZona);
