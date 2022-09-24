@@ -69,10 +69,8 @@ public class ControlRutas implements Serializable {
     private Rutas ruta;
     
     
-    @Basic
     @OneToOne
 	@JoinColumn( name="ID_MODULO_AMBULANCIA", unique = false, nullable = true)
-    
     private ModuloAmbulancia modulo;
     
     @Basic

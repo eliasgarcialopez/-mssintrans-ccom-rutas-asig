@@ -172,7 +172,7 @@ public class SolicitudTraslado implements Serializable {
     
     @Basic
     @Column(name = "NUM_FOLIO_ACEPTACION")
-    private Integer nomFolioAceptacion;
+    private String nomFolioAceptacion;
     
     
     @Basic
