@@ -1,5 +1,6 @@
 package mx.gob.imss.mssistrans.ccom.rutas.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import mx.gob.imss.mssistrans.ccom.rutas.model.SolicitudTraslado;
@@ -35,7 +36,14 @@ public interface SolicitudTrasladoRepository extends JpaRepository<SolicitudTras
 			+ "WHERE SO.activo = 1 and SO.indiceSistema = 1"
 			+ " AND  SO.timSolicitud between ?1 and ?2 "
 			+ "AND SO.desEstatusSolicitud IN ('1') ")
-	List<SolicitudTraslado> findSolicitudTrasladoAceptadas(String hrInicio,String hrfin );
+	List<SolicitudTraslado> findSolicitudTrasladoAceptadas(String hrInicio, String hrfin);
+
+	@Query(value = "SELECT SO FROM SolicitudTraslado SO "
+			+ "WHERE SO.activo = true "
+			+ "and SO.fecSolicitud = ?3"
+			+ " AND  SO.timSolicitud between ?1 and ?2 "
+			+ "AND SO.desEstatusSolicitud IN ('1') ")
+	List<SolicitudTraslado> findSolicitudTrasladoAceptadas(String hrInicio, String hrfin, LocalDate fechaActual);
 
 	
 }

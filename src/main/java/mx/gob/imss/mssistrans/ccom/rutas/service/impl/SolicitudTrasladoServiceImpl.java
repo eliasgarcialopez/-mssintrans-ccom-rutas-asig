@@ -1,13 +1,14 @@
 package mx.gob.imss.mssistrans.ccom.rutas.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.Respuesta;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.SolicitudTrasladoResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.model.SolicitudTraslado;
 import mx.gob.imss.mssistrans.ccom.rutas.model.UnidadAdscripcion;
+import mx.gob.imss.mssistrans.ccom.rutas.repository.SolicitudTrasladoRepository;
+import mx.gob.imss.mssistrans.ccom.rutas.repository.UnidadAdscripcionRepository;
+import mx.gob.imss.mssistrans.ccom.rutas.service.SolicitudTrasladoService;
 import mx.gob.imss.mssistrans.ccom.rutas.util.Utility;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +16,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import mx.gob.imss.mssistrans.ccom.rutas.repository.SolicitudTrasladoRepository;
-import mx.gob.imss.mssistrans.ccom.rutas.repository.UnidadAdscripcionRepository;
-import mx.gob.imss.mssistrans.ccom.rutas.service.SolicitudTrasladoService;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -46,25 +48,25 @@ public class SolicitudTrasladoServiceImpl implements SolicitudTrasladoService {
 					return response;
 				}
 	        	 log.info("consultando solicitudes de traslado aceptadas, {}", turno);
-	        	 
-	        	 
-	        
-	        	 
-	        	  List<SolicitudTraslado> result =new ArrayList<SolicitudTraslado>();
-	        	if(turno ==3) {
-	        		ArrayList<String> hours= Utility.getHorarioStringByTurno(turno);
-	        		log.info("horario, {}", hours.size());
-	        		List<SolicitudTraslado> result1= solicitudTrasladoRepository.findSolicitudTrasladoAceptadas(hours.get(0),hours.get(1));
-	        		List<SolicitudTraslado> result2=solicitudTrasladoRepository.findSolicitudTrasladoAceptadas(hours.get(2),hours.get(3));
-	        	    result.addAll(result1);
-	        	    result.addAll(result2);
-	        	}else {
-	        		ArrayList<String> hours= Utility.getHorarioStringByTurno(turno);
-	        		log.info("horario, {}", hours.size());
-	           result = solicitudTrasladoRepository.findSolicitudTrasladoAceptadas(hours.get(0),hours.get(1)
-	                    ); 
-	        
-	        	}
+
+
+				List<SolicitudTraslado> result = new ArrayList<SolicitudTraslado>();
+				final LocalDate fechaActual = LocalDate.now();
+				if (turno == 3) {
+					ArrayList<String> hours = Utility.getHorarioStringByTurno(turno);
+					log.info("horario, {}", hours.size());
+
+					List<SolicitudTraslado> result1 = solicitudTrasladoRepository.findSolicitudTrasladoAceptadas(hours.get(0), hours.get(1), fechaActual);
+					List<SolicitudTraslado> result2 = solicitudTrasladoRepository.findSolicitudTrasladoAceptadas(hours.get(2), hours.get(3), fechaActual);
+					result.addAll(result1);
+					result.addAll(result2);
+				} else {
+					ArrayList<String> hours = Utility.getHorarioStringByTurno(turno);
+					log.info("horario, {}", hours.size());
+					result = solicitudTrasladoRepository.findSolicitudTrasladoAceptadas(hours.get(0), hours.get(1), fechaActual);
+
+				}
+
 	            log.info("solicitudes, {}", result.size());
 	            List<SolicitudTrasladoResponse> content = new ArrayList<>();
 	            for (SolicitudTraslado solicitudTraslado : result) {
