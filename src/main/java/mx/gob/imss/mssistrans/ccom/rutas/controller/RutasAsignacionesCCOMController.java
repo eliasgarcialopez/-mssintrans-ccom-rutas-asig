@@ -181,5 +181,40 @@ public class RutasAsignacionesCCOMController {
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	}
+	
+	@GetMapping(path = "/getControlRutas")
+	public <T> ResponseEntity<Response> getControlRutas(
+			@RequestParam(defaultValue = "0") Integer pagina,
+			@RequestParam(defaultValue = "10") Integer tamanio, 
+			@RequestParam(defaultValue = "") String ordenCol,
+			@RequestParam(defaultValue = "ASC") String orden, 
+			@RequestParam(required = false) String idAsignacion,
+			@RequestParam(required = false) String idSolicitud) {
+
+		Response<T> respuesta = new Response<>();
+		if (ValidaDatos.getAccess()) {
+			respuesta = ValidaDatos.noAutorizado(respuesta);
+			return new ResponseEntity<>(respuesta, HttpStatus.NOT_ACCEPTABLE);
+		} else {
+			Response response = asigRutasServiceImpl.getControlRutas(pagina, tamanio, orden, ordenCol, idAsignacion,
+					idSolicitud);
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		}
+	}
+	
+	@GetMapping(path = "/getDatosControlRutaById")
+	public <T> ResponseEntity<Response> getDatosControlRutaById(
+			@RequestParam(required = false) Integer idControlRuta) {
+
+		Response<T> respuesta = new Response<>();
+		if (ValidaDatos.getAccess()) {
+			respuesta = ValidaDatos.noAutorizado(respuesta);
+			return new ResponseEntity<>(respuesta, HttpStatus.OK);
+		} else {
+			DatosUsuarioDTO datosUsuarios = ValidaDatos.datosUsuarios();
+			Response response = asigRutasServiceImpl.getDatosControlRutaById(idControlRuta);
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		}
+	}
 
 }
