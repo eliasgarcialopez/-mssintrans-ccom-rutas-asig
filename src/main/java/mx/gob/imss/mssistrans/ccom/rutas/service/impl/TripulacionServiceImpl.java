@@ -48,9 +48,10 @@ public class TripulacionServiceImpl implements TripulacionService {
 	        	TripulacionInterfaceResponse tripOp= triRepository.findTripulacionIdVehiculo(idVehiculo);
 	        	if(tripOp!=null) {
 	        		//Tripulacion tripulacion=	tripOp;
-	        	TripulacionResponse tripRes=new TripulacionResponse();
-	        	//if(tripOp.getFecFecha()!=null)
-	        	//tripRes.setFecFecha(tripulacion.getFecFecha().toString());
+	        	   TripulacionResponse tripRes=new TripulacionResponse();
+	        	log.info(tripOp.getFecFecha());
+	        	if (tripOp.getFecFecha()!=null)
+	        	   tripRes.setFecFecha(tripOp.getFecFecha().toString());
 	        	
 	        	tripRes.setIdTripulacion(tripOp.getidTripulacion());
 	        	tripRes.setIdVehiculo(tripOp.getidVehiculo());
