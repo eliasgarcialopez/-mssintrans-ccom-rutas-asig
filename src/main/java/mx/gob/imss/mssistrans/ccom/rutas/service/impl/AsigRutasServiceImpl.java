@@ -328,5 +328,51 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 		}
 		return tripulacionAsigGroupEntity;
 	}
+	
+	@Override
+	public <T> Response<?> getControlRutas(Integer pagina, Integer tamanio, String orden, String columna,
+			String idAsignacion, String idSolicitud) {
+		Response<T> respuesta = new Response<>();
+		String nomCol = ValidaDatos.getNameColAsignacion(columna);
+		Pageable page = PageRequest.of(pagina, tamanio,
+				Sort.by(Sort.Direction.fromString(orden.toUpperCase()), nomCol));
+		try {
+			Page consultaAsignacioRutas = null;
+			if (idAsignacion != null && !idAsignacion.equals("") && (idSolicitud == null || idSolicitud.equals(""))) {
+				consultaAsignacioRutas = asigRutasRepository.getConsultaByIdControlRuta(idAsignacion,page);
+			}else if ((idAsignacion == null || idAsignacion.equals("")) && (idSolicitud != null && !idSolicitud.equals(""))) {
+				consultaAsignacioRutas = asigRutasRepository.getConsultaByIdSolicitud(idSolicitud, page);
+			}else if((idAsignacion != null && !idAsignacion.equals("")) && (idSolicitud != null && !idSolicitud.equals(""))) {
+				consultaAsignacioRutas = asigRutasRepository.getConsultaByIdControlRutaAndIdSolicitud(idAsignacion,idSolicitud, page);
+			}else {
+				consultaAsignacioRutas = asigRutasRepository.consultaGeneral(page);
+			}
+			final List<AsigRutasResponse> content = (List<AsigRutasResponse>) AsigRutasMapper.INSTANCE
+					.formatearListaArrendados(consultaAsignacioRutas.getContent());
+
+			Page<AsigRutasResponse> objetoMapeado = new PageImpl<>(content, page,
+					consultaAsignacioRutas.getTotalElements());
+
+			return ValidaDatos.resp(respuesta, "Exito", objetoMapeado);
+		} catch (Exception e) {
+			return ValidaDatos.errorException(respuesta, e);
+		}
+
+	}
+	
+	@SuppressWarnings("unlikely-arg-type")
+	@Override
+	public <T> Response getDatosControlRutaById(Integer idControlRuta) {
+		Response<T> respuesta = new Response<>();
+		DatosAsigEntity consultaGeneral = null;
+		try {
+			consultaGeneral = datosRepository.getDatosByIdCtrlRuta(idControlRuta);
+		} catch (Exception e) {
+			return ValidaDatos.errorException(respuesta, e);
+		}
+
+		DatosAsigResponse listaDeSolicituTraslado = DatosAsigMapper.INSTANCE.EntityAJson(consultaGeneral);
+		return ValidaDatos.resp(respuesta, "Exito", listaDeSolicituTraslado);
+	}
 
 }

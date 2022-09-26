@@ -8,7 +8,7 @@ import mx.gob.imss.mssistrans.ccom.rutas.dto.Response;
 @SuppressWarnings("rawtypes")
 public interface AsigRutasService {
 
-	<T>Response<?> consultaVistaRapida (Integer pagina, Integer tamanio, String orden, String columna, String idAsignacion, String idSolicitud);
+	<T>Response<?> getControlRutas (Integer pagina, Integer tamanio, String orden, String columna, String idAsignacion, String idSolicitud);
 	Response delete ( String id );
 	
 	
@@ -21,4 +21,7 @@ public interface AsigRutasService {
 	<T>Response update(RegistroRecorridoDTO datosRecorrido);
 	
 	<T>Response getDetalleRutasyAsig(Integer idControlRuta);
+	
+	<T>Response<?> consultaVistaRapida (Integer pagina, Integer tamanio, String orden, String columna, String idAsignacion, String idSolicitud);
+	<T>Response getDatosControlRutaById(Integer idControlRuta);
 }
