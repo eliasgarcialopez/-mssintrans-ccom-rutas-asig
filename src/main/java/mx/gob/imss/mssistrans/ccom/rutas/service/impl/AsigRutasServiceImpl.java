@@ -320,10 +320,10 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 			tripulacionAsigEntity.setNombreChofer(getChofer.getNomTripulante());
 			tripulacionAsigEntity.setNumTarjetaDig(getChofer.getNumTarjetaDig());
 			tripulacionAsigEntity.setMatriculaChofer(getChofer.getCveMatricula());
-			tripulacionAsigEntity.setNombreCamillero1(getTripulante.getNomTripulante());
-			tripulacionAsigEntity.setMatriculaCamillero1(getTripulante.getCveMatricula());
-			tripulacionAsigEntity.setNombreCamillero2(getTripulante2.getNomTripulante());
-			tripulacionAsigEntity.setMatriculaCamillero2(getTripulante2.getCveMatricula());
+			tripulacionAsigEntity.setNombreCamillero1(getTripulante==null? "" :getTripulante.getNomTripulante());
+			tripulacionAsigEntity.setMatriculaCamillero1(getTripulante==null? "" : getTripulante.getCveMatricula());
+			tripulacionAsigEntity.setNombreCamillero2(getTripulante2==null? "" : getTripulante2.getNomTripulante());
+			tripulacionAsigEntity.setMatriculaCamillero2(getTripulante2==null? "" : getTripulante2.getCveMatricula());
 			tripulacionAsigGroupEntity.add(tripulacionAsigEntity);
 		}
 		return tripulacionAsigGroupEntity;
