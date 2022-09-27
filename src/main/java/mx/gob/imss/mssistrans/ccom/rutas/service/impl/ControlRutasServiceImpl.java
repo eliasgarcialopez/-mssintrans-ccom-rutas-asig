@@ -583,6 +583,22 @@ Respuesta<Integer> response = new Respuesta<>();
 			DatosUsuario datosUsuarios = gson.fromJson(user, DatosUsuario.class);
 			rutas.setCveMatricula(datosUsuarios.getMatricula());
 			
+            Optional<Vehiculos> veOp = vehiculoRepository.findById(rutas.getIdVehiculo().getIdVehiculo());
+            if (veOp.isPresent()) {
+                Vehiculos ve = veOp.get();
+                ve.setDesEstatusVehiculo("8");
+                vehiculoRepository.save(ve);
+                log.info(" Se cambio estatus de vehiculo a 8");
+
+            } else log.info("Vehiculo no encontrado" + rutas.getIdVehiculo());
+            
+            Optional<SolicitudTraslado> solicitud = solRepository.findById(rutas.getIdSolcitud().getIdSolicitud());
+            if (solicitud.isPresent()) {
+                SolicitudTraslado solicitudTraslado = solicitud.get();
+                solicitudTraslado.setDesEstatusSolicitud("1");
+                solRepository.save(solicitudTraslado);
+            } else log.info("Solicitud no encontrado" + rutas.getIdSolcitud().getIdSolicitud());
+			
 			
 			controlRutasRepository.save(rutas);
 			
