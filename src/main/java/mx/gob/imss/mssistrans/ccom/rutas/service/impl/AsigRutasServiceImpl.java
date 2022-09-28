@@ -6,6 +6,9 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import mx.gob.imss.mssistrans.ccom.rutas.dto.*;
+import mx.gob.imss.mssistrans.ccom.rutas.model.*;
+import mx.gob.imss.mssistrans.ccom.rutas.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -14,36 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import lombok.AllArgsConstructor;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.AsigRutasResponse;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosAsigResponse;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosAsigRutasResponse;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosUsuarioDTO;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.DetRutasAsignacionesResponse;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.EccoResponse;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.RegistroRecorridoDTO;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.RegistroRecorridoResponse;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.Response;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.SolTrasladoResponse;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.TripulacionAsigResponse;
-import mx.gob.imss.mssistrans.ccom.rutas.model.DatosAsigEntity;
-import mx.gob.imss.mssistrans.ccom.rutas.model.DetRutasAsigEntity;
-import mx.gob.imss.mssistrans.ccom.rutas.model.EccoEntity;
-import mx.gob.imss.mssistrans.ccom.rutas.model.RegistroRecorridoEntity;
-import mx.gob.imss.mssistrans.ccom.rutas.model.RutasAsigEntity;
-import mx.gob.imss.mssistrans.ccom.rutas.model.SolTrasladoEntity;
-import mx.gob.imss.mssistrans.ccom.rutas.model.TripulacionAsigCam01Entity;
-import mx.gob.imss.mssistrans.ccom.rutas.model.TripulacionAsigCam02Entity;
-import mx.gob.imss.mssistrans.ccom.rutas.model.TripulacionAsigEntity;
-import mx.gob.imss.mssistrans.ccom.rutas.model.TripulacionAsigGroupEntity;
-import mx.gob.imss.mssistrans.ccom.rutas.repository.AsigRutasRepository;
-import mx.gob.imss.mssistrans.ccom.rutas.repository.DatosAsigRepository;
-import mx.gob.imss.mssistrans.ccom.rutas.repository.EccoRepository;
-import mx.gob.imss.mssistrans.ccom.rutas.repository.RegistroRecorridoRepository;
-import mx.gob.imss.mssistrans.ccom.rutas.repository.RutasAsigRepository;
-import mx.gob.imss.mssistrans.ccom.rutas.repository.SolTrasladoRepository;
-import mx.gob.imss.mssistrans.ccom.rutas.repository.TripulacionAsigCamillero01Repository;
-import mx.gob.imss.mssistrans.ccom.rutas.repository.TripulacionAsigCamillero02Repository;
-import mx.gob.imss.mssistrans.ccom.rutas.repository.TripulacionAsigRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.service.AsigRutasService;
 import mx.gob.imss.mssistrans.ccom.rutas.util.AsigRutasMapper;
 import mx.gob.imss.mssistrans.ccom.rutas.util.DatosAsigMapper;
@@ -82,6 +55,7 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 	private TripulacionAsigCamillero02Repository camillero02Repository;
 	@Autowired
 	private RegistroRecorridoRepository regRecorrido1Repository;
+	private final RutasDestinosRepository rutasDestinoRepository;
 
 	@Override
 	public <T> Response<?> consultaVistaRapida(Integer pagina, Integer tamanio, String orden, String columna,
@@ -196,6 +170,7 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 			return ValidaDatos.errorException(respuesta, e);
 		}
 
+		// todo - hay que hacer tambien la consulta para regresar la RUTA y RUTA_DESTINO
 		DatosAsigResponse listaDeSolicituTraslado = DatosAsigMapper.INSTANCE.EntityAJson(consultaGeneral);
 		return ValidaDatos.resp(respuesta, "Exito", listaDeSolicituTraslado);
 	}
@@ -225,6 +200,8 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 		RegistroRecorridoEntity recorrido = null;
 		try {
 
+			// todo - cambiar los queries del repositorio para que se consulte tambien la tabla de rutas para recuperar
+			//		  el origen de la ruta
 			if (idRuta != null && idSolicitud != null && idVehiculo != null) {
 				if (!idRuta.equals("") && !idSolicitud.equals("") && !idVehiculo.equals("")) {
 					recorrido = regRecorrido1Repository.getRegistroRecorridoByIdRuta(idRuta, idSolicitud, idVehiculo);
@@ -240,22 +217,33 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 			return ValidaDatos.errorException(respuesta, e);
 		}
 
+		// todo - cambiar el objeto que se regresa a la vista
+		// 		- agregar los datos para el origen de la ruta que se recupera de la tabla SINTRANST_RUTAS
 		RegistroRecorridoResponse listaDeSolicituTraslado = RegistroRecorridoMapper.INSTANCE.EntityAJson(recorrido);
 		return ValidaDatos.resp(respuesta, "Exito", listaDeSolicituTraslado);
 	}
 
 	@Override
-	public <T> Response update(RegistroRecorridoDTO datosRecorrido) {
-		// TODO Auto-generated method stub
-		Response<T> respuesta = new Response<>();
-		try {
-			regRecorrido1Repository.update(datosRecorrido.getHoraInicioAsignacion(), datosRecorrido.getIdRuta1(),
-					datosRecorrido.getHrInicio1(), datosRecorrido.getHrFin1(), datosRecorrido.getIdRuta2(),
-					datosRecorrido.getHrInicio2(), datosRecorrido.getHrFin2(), datosRecorrido.getIdRuta3(),
-					datosRecorrido.getHrInicio3(), datosRecorrido.getHrFin3(), datosRecorrido.getEstatusTraslado(),
-					datosRecorrido.getIdVehiculo(), datosRecorrido.getIdRuta());
+	public Response<?> update(ActualizarControlRutaRequest params) {
 
-			datosRepository.flush();
+		Response<ActualizarControlRutaRequest> respuesta = new Response<>();
+		try {
+			final Integer idRutaOrigen = params.getIdRutaOrigen();
+			RutasAsigEntity rutaOrigen = rutasRepository.findById(idRutaOrigen)
+					.orElseThrow(() -> new Exception("No se ha encontrado la ruta origen con id " + idRutaOrigen));
+
+			final Integer idRutaDestino = params.getIdRutaDestino();
+			RutasDestinos rutaDestino = rutasDestinoRepository.findById(idRutaDestino)
+					.orElseThrow(() -> new Exception("No se ha encontrado la ruta destino con id " + idRutaOrigen));
+
+			rutaOrigen.setHoraInicio(params.getHoraInicioOrigen());
+			rutaOrigen.setHoraFin(params.getHoraFinOrigen());
+			rutaDestino.setTimHoraInicio(params.getHoraInicioDestino());
+			rutaDestino.setTimHoraFin(params.getHoraFinDestino());
+
+			rutasRepository.save(rutaOrigen);
+			rutasDestinoRepository.save(rutaDestino);
+
 		} catch (Exception e) {
 			return ValidaDatos.errorException(respuesta, e);
 		}

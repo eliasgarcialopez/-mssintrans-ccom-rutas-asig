@@ -1,12 +1,9 @@
 package mx.gob.imss.mssistrans.ccom.rutas.controller;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import mx.gob.imss.mssistrans.ccom.rutas.dto.ControlRutasRequest;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.ControlRutasResponse;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.ControlRutasTotalesResponse;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.Respuesta;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import mx.gob.imss.mssistrans.ccom.rutas.dto.*;
+import mx.gob.imss.mssistrans.ccom.rutas.service.ControlRutasService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,23 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import mx.gob.imss.mssistrans.ccom.rutas.service.ControlRutasService;
+import java.util.HashMap;
+import java.util.Map;
 
 
 
@@ -154,6 +138,21 @@ public class ControlRutasController {
 		}
 	}
 
+	/**
+	 * Libera los recursos que tenga asignados el control de ruta
+	 * @param idRuta
+	 * @param params
+	 * @return
+	 */
+	@PutMapping("/liberar-ruta/{idRuta}")
+	public ResponseEntity<?> liberarControlRuta(@PathVariable Integer idRuta,
+												@RequestBody LiberarControlRutasRequest params) {
+		// todo - se puede pasar el idRuta o el idControlRuta
+		// todo - ver que se le va a pasar al serivico para liberar los recursos
+		Respuesta<?> respuesta = rutasService.liberarControlRuta(idRuta, params);
+		return new ResponseEntity<>(respuesta, HttpStatus.valueOf(respuesta.getCodigo()));
+	}
+
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public Respuesta<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException exception) {
@@ -169,4 +168,5 @@ public class ControlRutasController {
 		});
 		return response;
 	}
+
 }

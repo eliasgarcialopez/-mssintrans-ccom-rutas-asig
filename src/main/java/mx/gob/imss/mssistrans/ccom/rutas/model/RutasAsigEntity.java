@@ -7,11 +7,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -25,7 +24,11 @@ public class RutasAsigEntity {
 
 	@Column(name = "NUM_FOLIO_RUTA", unique = false, nullable = true)
 	private String numFolioRuta;
-	
+
+	@Column(name = "TIM_HORARIO_INICIAL")
+	private String horaInicio;
+	@Column(name = "TIM_HORARIO_FINAL")
+	private String horaFin;
 
 }
 
