@@ -622,25 +622,23 @@ public Respuesta<ControlRutasTotalesResponse> consultarTotalesVehiculos() {
 			Optional<ZonaAtencion> zonaOp=   zonaAtencionRepository.findByIdModuloAndActivoEquals(moduloAmbulancia.getIdModulo(),true);
 			if(zonaOp.isPresent()) {
 				
-				Integer idZona=zonaOp.get().getIdZona();
+				Integer idZona = zonaOp.get().getIdZona();
 				
-				Integer totalVA=   vehiculoRepository.countTotalVehiculoAsignados(idZona);
+				Integer totalVA = vehiculoRepository.countTotalVehiculoAsignados(idZona);
 				
-					rutasResponse.setTotalVehiculosAsignados(totalVA);
+				rutasResponse.setTotalVehiculosAsignados(totalVA);
 					
-					Integer totalVD=   vehiculoRepository.countTotalVehiculoDisponibles(idZona);
+				Integer totalVD = vehiculoRepository.countTotalVehiculoDisponibles(idZona);
 			
-					rutasResponse.setTotalVehiculosDisponibles(totalVD);
+				rutasResponse.setTotalVehiculosDisponibles(totalVD);
 					
-					Integer totalMan=   vehiculoRepository.countTotalVehiculoMantenimiento(idZona);
+				Integer totalMan = vehiculoRepository.countTotalVehiculoMantenimiento(idZona);
 		
 				rutasResponse.setTotalVehiculosMantenimiento(totalMan);
 				
-				
-				Integer totalSin=   vehiculoRepository.countTotalVehiculoSiniestrados(idZona);
+				Integer totalSin = vehiculoRepository.countTotalVehiculoSiniestrados(idZona);
 			
 				rutasResponse.setTotalVehiculosSiniestrados(totalSin);
-
 				   
 	        	response.setDatos(rutasResponse);
 		            response.setError(false);

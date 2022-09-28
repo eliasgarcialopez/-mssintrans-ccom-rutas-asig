@@ -45,9 +45,9 @@ public class SolicitudTrasladoController {
 	 * @return
 	 */
 	@GetMapping
-	public ResponseEntity<Respuesta<?>> consultarSolicitudesTraslado(@RequestParam Integer turno) {
+	public ResponseEntity<Respuesta<?>> consultarSolicitudesTraslado() {
 	
-	Respuesta<?> response =solicitudTrasladoService.consultarSolicitudesByEstatusAndTurno(turno);
+	Respuesta<?> response =solicitudTrasladoService.consultarSolicitudesByEstatus();
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
