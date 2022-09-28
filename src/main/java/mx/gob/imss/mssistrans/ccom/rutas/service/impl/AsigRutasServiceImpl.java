@@ -195,33 +195,28 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 
 	@Override
 	public <T> Response getRegistroRecorrido(Integer idControlRuta, Integer idRuta, Integer idSolicitud,
-			Integer idVehiculo){
+											 Integer idVehiculo){
 		Response<T> respuesta = new Response<>();
-		RegistroRecorridoEntity recorrido = null;
+		DatosRegistroRecorridoDTO recorridoDTO = null;
 		try {
 
-			// todo - cambiar los queries del repositorio para que se consulte tambien la tabla de rutas para recuperar
-			//		  el origen de la ruta
 			if (idRuta != null && idSolicitud != null && idVehiculo != null) {
 				if (!idRuta.equals("") && !idSolicitud.equals("") && !idVehiculo.equals("")) {
-					recorrido = regRecorrido1Repository.getRegistroRecorridoByIdRuta(idRuta, idSolicitud, idVehiculo);
+					recorridoDTO = regRecorrido1Repository.getRegistroRecorridoByIdRutaIdSolicitudIdVehiculo(idRuta, idSolicitud, idVehiculo);
 				} else if (!idControlRuta.equals("")) {
-					recorrido = regRecorrido1Repository.getRegistroRecorrido(idControlRuta);
+					recorridoDTO = regRecorrido1Repository.getRegistroRecorridoByRuta(idControlRuta);
 				}
 			} else if (idControlRuta != null)
 				if (!idControlRuta.equals("")) {
-					recorrido = regRecorrido1Repository.getRegistroRecorrido(idControlRuta);
+					recorridoDTO = regRecorrido1Repository.getRegistroRecorridoByRuta(idControlRuta);
 				}
-		
+
 		} catch (Exception e) {
 			return ValidaDatos.errorException(respuesta, e);
 		}
-
-		// todo - cambiar el objeto que se regresa a la vista
-		// 		- agregar los datos para el origen de la ruta que se recupera de la tabla SINTRANST_RUTAS
-		RegistroRecorridoResponse listaDeSolicituTraslado = RegistroRecorridoMapper.INSTANCE.EntityAJson(recorrido);
-		return ValidaDatos.resp(respuesta, "Exito", listaDeSolicituTraslado);
+		return ValidaDatos.resp(respuesta, "Exito", recorridoDTO);
 	}
+
 
 	@Override
 	public Response<?> update(ActualizarControlRutaRequest params) {

@@ -1,9 +1,11 @@
 package mx.gob.imss.mssistrans.ccom.rutas.repository;
 
 
+import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosRegistroRecorridoDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import mx.gob.imss.mssistrans.ccom.rutas.model.RegistroRecorridoEntity;
@@ -47,5 +49,26 @@ public interface RegistroRecorridoRepository extends JpaRepository<RegistroRecor
 			, String idRuta2, String hrInicio2, String hrFin2
 			, String idRuta3, String hrInicio3, String hrFin3
 			, String estatusTraslado, String idVehiculo, String idRuta);
+
+	@Query("SELECT new mx.gob.imss.mssistrans.ccom.rutas.dto.DatosRegistroRecorridoDTO("
+			+ " cr.idVehiculo.idVehiculo, cr.fechaInicioAsigna, cr.timInicioAsigna, cr.desEstatusAsigna, "
+			+ " rd.idDestino, rd.timHoraInicio, rd.timHoraFin, ru.idOrigen, ru.timHorarioInicial, ru.timHorarioFinal) "
+			+ " FROM ControlRutas AS cr "
+			+ " INNER JOIN Rutas AS ru ON ru.idRuta = cr.ruta.idRuta "
+			+ " INNER JOIN RutasDestinos AS rd ON rd.ruta.idRuta = cr.ruta.idRuta "
+			+ " WHERE cr.ruta.idRuta = :idRuta "
+			+ " AND cr.idSolcitud.idSolicitud = :idSolicitud "
+			+ " AND cr.idVehiculo.idVehiculo = :idVehiculo ")
+	DatosRegistroRecorridoDTO getRegistroRecorridoByIdRutaIdSolicitudIdVehiculo(@Param("idRuta") Integer idRuta,
+																				@Param("idSolicitud") Integer idSolicitud, @Param("idVehiculo") Integer idVehiculo);
+
+	@Query("SELECT new mx.gob.imss.mssistrans.ccom.rutas.dto.DatosRegistroRecorridoDTO("
+			+ " cr.idVehiculo.idVehiculo, cr.fechaInicioAsigna, cr.timInicioAsigna, cr.desEstatusAsigna, "
+			+ " rd.idDestino, rd.timHoraInicio, rd.timHoraFin, ru.idOrigen, ru.timHorarioInicial, ru.timHorarioFinal) "
+			+ " FROM ControlRutas AS cr "
+			+ " INNER JOIN Rutas AS ru ON ru.idRuta = cr.ruta.idRuta "
+			+ " INNER JOIN RutasDestinos AS rd ON rd.ruta.idRuta = cr.ruta.idRuta "
+			+ " WHERE cr.ruta.idRuta = :idRuta ")
+	DatosRegistroRecorridoDTO getRegistroRecorridoByRuta(@Param("idRuta") Integer idRuta);
     
 }
