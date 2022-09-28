@@ -11,7 +11,8 @@ import mx.gob.imss.mssistrans.ccom.rutas.model.RutasAsigEntity;
 @Repository
 public interface RutasAsigRepository extends JpaRepository<RutasAsigEntity, Integer> {
 
-	@Query(value = "SELECT SR.ID_RUTA, SR.NUM_FOLIO_RUTA"
+	@Query(value = "SELECT SR.ID_RUTA, SR.NUM_FOLIO_RUTA, " +
+			"SR.TIM_HORARIO_INICIAL, SR.TIM_HORARIO_FINAL"
 			+ " FROM SINTRANST_CONTROL_RUTAS SCR"
 			+ " INNER JOIN SINTRANST_RUTAS SR ON SR.ID_RUTA = SCR.ID_RUTA"
 			+ " WHERE SR.IND_SISTEMA = SCR.IND_SISTEMA AND SR.IND_ACTIVO = SCR.IND_ACTIVO"
@@ -24,7 +25,8 @@ public interface RutasAsigRepository extends JpaRepository<RutasAsigEntity, Inte
 			,nativeQuery = true)
 	List<RutasAsigEntity> getRutas();
 	
-    @Query(value =  "SELECT SR.ID_RUTA, SR.NUM_FOLIO_RUTA"
+    @Query(value =  "SELECT SR.ID_RUTA, SR.NUM_FOLIO_RUTA, " +
+			"SR.TIM_HORARIO_INICIAL, SR.TIM_HORARIO_FINAL"
 			+ " FROM SINTRANST_CONTROL_RUTAS SCR"
 			+ " INNER JOIN SINTRANST_RUTAS SR ON SR.ID_RUTA = SCR.ID_RUTA"
 			+ " INNER JOIN SINTRANST_MODULO_AMBULANCIA MA ON MA.ID_MODULO_AMBULANCIA  = SCR.ID_MODULO_AMBULANCIA"
