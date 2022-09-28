@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import mx.gob.imss.mssistrans.ccom.rutas.model.DatosAsigEntity;
+import mx.gob.imss.mssistrans.ccom.rutas.model.DatosControlRutasEntity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.ReasignacionTripulacionGroupEntity;
 
 @Data
@@ -18,7 +19,7 @@ import mx.gob.imss.mssistrans.ccom.rutas.model.ReasignacionTripulacionGroupEntit
 public class DetReasignacionesRutasResponse {
 
 	@JsonProperty
-	private DatosAsigEntity datosReasignacion;
+	private DatosControlRutasEntity datosReasignacion;
 	@JsonProperty
 	private ReasignacionTripulacionGroupEntity tripulacion;
 }

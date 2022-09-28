@@ -21,6 +21,7 @@ import mx.gob.imss.mssistrans.ccom.rutas.dto.ReasignacionTripulacionResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.Response;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.SiniestrosResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.model.DatosAsigEntity;
+import mx.gob.imss.mssistrans.ccom.rutas.model.DatosControlRutasEntity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.DetReasignacionRutasEntity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.ReasignacionEccoEntity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.ReasignacionTripulacionEntity;
@@ -30,6 +31,7 @@ import mx.gob.imss.mssistrans.ccom.rutas.model.TripulacionAsigCam01Entity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.TripulacionAsigCam02Entity;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.AsigRutasRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.DatosAsigRepository;
+import mx.gob.imss.mssistrans.ccom.rutas.repository.DatosControlRutasRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.ReAsignacionRutasRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.ReasignacionEccoRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.ReasignacionTripulacionRepository;
@@ -56,16 +58,25 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 
 	@Autowired
 	private AsigRutasRepository asigRutasRepository;
+
 	@Autowired
 	private ReasignacionEccoRepository eccoRepository;
+	
 	@Autowired
 	private DatosAsigRepository datosRepository;
+	
+	@Autowired
+	private DatosControlRutasRepository datosCRRepository;
+	
 	@Autowired
 	private ReasignacionTripulacionRepository choferRepository;
+	
 	@Autowired
 	private TripulacionAsigCamillero01Repository camillero01Repository;
+	
 	@Autowired
 	private TripulacionAsigCamillero02Repository camillero02Repository;
+	
 	@Autowired
 	private SiniestrosRepository siniestrosRepository;
 
@@ -121,16 +132,16 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 	@Override
 	public <T> Response getDetalleReAsignacion(Integer idControlRuta) {
 		Response<T> respuesta = new Response<>();
-		DatosAsigEntity datosAsig = null;
+		DatosControlRutasEntity datosCR = null;
 		ReasignacionTripulacionGroupEntity tripulacionAsigEntity = new ReasignacionTripulacionGroupEntity();
 		
 		List<DetReasignacionRutasEntity> detalleReAsignaciones = new ArrayList<DetReasignacionRutasEntity>();
 		DetReasignacionRutasEntity detRutasAsignaciones = new DetReasignacionRutasEntity();
 		try {
-			datosAsig = datosRepository.getDatosAsigByIdCtrlRuta(idControlRuta);
+			datosCR = datosCRRepository.getDatosAsigByIdCtrlRuta(idControlRuta);
 			tripulacionAsigEntity = obtenerTripulacion (idControlRuta, null, null, null);
 
-			detRutasAsignaciones.setDatosReasignacion(datosAsig);
+			detRutasAsignaciones.setDatosReasignacion(datosCR);
 			detRutasAsignaciones.setTripulacion(tripulacionAsigEntity);
 			detalleReAsignaciones.add(detRutasAsignaciones);
 		} catch (Exception e) {
@@ -199,7 +210,7 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 				getTripulante2 = camillero02Repository.getCamillero2(idControlRuta);
 			}
 		if (getChofer != null) {
-			tripulacionAsigEntity.setIdControlRuta(getChofer.getIdControlRuta());
+			tripulacionAsigEntity.setIdControlRuta(idControlRuta.toString());
 			tripulacionAsigEntity.setIdPersonalAmbulancia(getChofer.getIdPersonalAmbulancia());
 			tripulacionAsigEntity.setIdChofer(getChofer.getIdChofer());
 			tripulacionAsigEntity.setNombreChofer(getChofer.getNomTripulante());
