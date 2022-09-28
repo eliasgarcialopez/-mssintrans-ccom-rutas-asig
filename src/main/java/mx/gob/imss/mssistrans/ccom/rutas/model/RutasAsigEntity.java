@@ -20,7 +20,7 @@ public class RutasAsigEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID_RUTA", unique = false, nullable = true)
-	private String idRuta;
+	private Integer idRuta;
 
 	@Column(name = "NUM_FOLIO_RUTA", unique = false, nullable = true)
 	private String numFolioRuta;
