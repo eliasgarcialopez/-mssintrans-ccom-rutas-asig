@@ -250,7 +250,6 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 				controlRutas.setDesEstatusAsigna(estatusAsignacion);
 				controlRutasRepository.save(controlRutas);
 
-				// todo - hay que cambiar el estatus del vehiculo a 8 para que se pueda seguir siendo utilizado
 				// se libera solo cuando esta terminada o cancelada
 				if (estatusAsignacion.equals("2") || estatusAsignacion.equals("3")) {
 					final Integer idVehiculo = controlRutas.getIdVehiculo().getIdVehiculo();
