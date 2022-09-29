@@ -78,7 +78,7 @@ public interface RegistroRecorridoRepository extends JpaRepository<RegistroRecor
             + " FROM ControlRutas AS cr "
             + " INNER JOIN Rutas AS ru ON ru.idRuta = cr.ruta.idRuta "
             + " INNER JOIN RutasDestinos AS rd ON rd.ruta.idRuta = cr.ruta.idRuta "
-            + " WHERE cr.ruta.idRuta = :idRuta ")
-    DatosRegistroRecorridoDTO getRegistroRecorridoByRuta(@Param("idRuta") Integer idRuta);
+            + " WHERE cr.idControlRuta = :idControlRuta ")
+    DatosRegistroRecorridoDTO getRegistroRecorridoByRuta(@Param("idControlRuta") Integer idControlRuta);
     
 }
