@@ -1,17 +1,8 @@
 package mx.gob.imss.mssistrans.ccom.rutas.service;
 
+import mx.gob.imss.mssistrans.ccom.rutas.dto.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import mx.gob.imss.mssistrans.ccom.rutas.dto.ControlRutasResponse;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.ControlRutasTablaResponse;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.ControlRutasTotalesResponse;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.Respuesta;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.ControlRutasRequest;
-
-
-
-
 
 public interface ControlRutasService {
 	 /**
@@ -54,7 +45,15 @@ public interface ControlRutasService {
      *
      * @param idControlRuta
      */
-    Respuesta<Integer> eliminarRutas(Integer idControlRuta); 
+    Respuesta<Integer> eliminarRutas(Integer idControlRuta);
 
 
+    /**
+     * Libera los recursos que se asignaron al control de rutas
+     *
+     * @param idRuta
+     * @param params
+     * @return
+     */
+    Respuesta<?> liberarControlRuta(Integer idRuta, LiberarControlRutasRequest params);
 }

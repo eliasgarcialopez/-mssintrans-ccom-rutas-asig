@@ -14,4 +14,5 @@ public interface  TripulacionInterfaceResponse {
 	String getcveMatriculaCamillero1();
 	String getnombreCamillero2();
 	String getcveMatriculaCamillero2();
+	String getFecFecha();
 }

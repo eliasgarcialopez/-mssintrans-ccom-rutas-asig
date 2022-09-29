@@ -13,6 +13,6 @@ public interface SolicitudTrasladoService {
      * @param idControlRuta
      * @return
      */
-	  Respuesta<List<SolicitudTrasladoResponse>> consultarSolicitudesByEstatusAndTurno(Integer turno);
+	  Respuesta<List<SolicitudTrasladoResponse>> consultarSolicitudesByEstatus();
 
 }

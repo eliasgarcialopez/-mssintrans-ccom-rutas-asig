@@ -15,10 +15,9 @@ public interface DatosAsigRepository extends JpaRepository<DatosAsigEntity, Inte
     		+ " , SCR.ID_CONTROL_RUTA"
     		+ " FROM SINTRANST_CONTROL_RUTAS SCR"
     		+ " INNER JOIN SINTRANST_VEHICULOS SV ON SV.ID_VEHICULO = SCR.ID_VEHICULO"
-    		+ " INNER JOIN SINTRANST_ASIGNACIONES SA ON SA.ID_VEHICULO = SCR.ID_VEHICULO "
-    		+ " WHERE SCR.IND_SISTEMA = 1 AND SCR.IND_ACTIVO = 1 AND"
-    		+ " SCR.IND_ACTIVO  = SA.IND_ACTIVO AND SCR.IND_SISTEMA  = SA.IND_SISTEMA AND SCR.IND_SISTEMA = 1 AND SCR.IND_ACTIVO = 1 AND"
-    		+ " SCR.ID_CONTROL_RUTA = ? "
+    		+ " LEFT JOIN SINTRANST_ASIGNACIONES SA ON SA.ID_VEHICULO = SCR.ID_VEHICULO "
+    		+ " WHERE SCR.IND_ACTIVO=1 AND SV.IND_ACTIVO =1 "
+    		+ " AND SCR.ID_CONTROL_RUTA = ? "
             ,nativeQuery = true)
     DatosAsigEntity getDatosAsigByIdCtrlRuta( Integer idControlRuta );
 
@@ -42,4 +41,13 @@ public interface DatosAsigRepository extends JpaRepository<DatosAsigEntity, Inte
 			,nativeQuery = true )
 	void update (String idNuevoVehiculo, String idNuevaRuta, String idNuevaSolicitud, String desEstatus, String idVehiculo, String idRuta, String idSolicitud );
     
+    @Query(value = "SELECT SCR.ID_CONTROL_RUTA as ID_ASIGNACION, SCR.ID_VEHICULO, SCR.ID_RUTA, SCR.ID_SOLICITUD, SV.CVE_ECCO, "
+    		+ "	SV.NUM_PLACAS, SCR.DES_ESTATUS_ASIGNA, SCR.ID_CONTROL_RUTA"
+    		+ " FROM SINTRANST_CONTROL_RUTAS SCR"
+    		+ " INNER JOIN SINTRANST_VEHICULOS SV ON SV.ID_VEHICULO = SCR.ID_VEHICULO"
+    		+ " WHERE SCR.IND_SISTEMA = 1 "
+    		+ "	AND SCR.IND_ACTIVO = 1 AND SCR.IND_SISTEMA = 1 "
+    		+ "	AND SCR.IND_ACTIVO = 1 AND SCR.ID_CONTROL_RUTA = ? "
+            ,nativeQuery = true)
+    DatosAsigEntity getDatosByIdCtrlRuta( Integer idControlRuta );
 }

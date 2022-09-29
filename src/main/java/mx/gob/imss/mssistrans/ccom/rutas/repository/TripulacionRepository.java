@@ -34,7 +34,8 @@ public interface TripulacionRepository extends JpaRepository<Tripulacion, Intege
     		"	cam1.NOM_CAMILLERO AS nombreCamillero2,\n" +
     		"	cam1.CVE_MATRICULA AS cveMatriculaCamillero2,\n" +
     		"	SINTRANST_TRIPULACION.ID_VEHICULO AS idVehiculo,\n" +
-    		"	SINTRANST_TRIPULACION.ID_TRIPULACION as idTripulacion\n" +
+    		"	SINTRANST_TRIPULACION.ID_TRIPULACION as idTripulacion,\n" +
+    		"	SINTRANST_TRIPULACION.FEC_FECHA as fecFecha\n" +
     		"FROM\n" +
     		"	SINTRANST_TRIPULACION\n" +
     		"	INNER JOIN SINTRANST_PERSONAL_AMBULANCIA AS c1 ON SINTRANST_TRIPULACION.ID_PERSONAL_AMBULANCIA_C1 = c1.ID_PERSONAL_AMBULANCIA\n" +
@@ -46,6 +47,7 @@ public interface TripulacionRepository extends JpaRepository<Tripulacion, Intege
     		"	INNER JOIN SINTRANST_CAMILLERO AS cam1 ON c2.ID_CAMILLERO = cam1.ID_CAMILLERO \n" +
     		"WHERE\n" +
     		"	SINTRANST_TRIPULACION.ID_VEHICULO = :idVehiculo \n" +
+    	    "AND SINTRANST_TRIPULACION.IND_ACTIVO = 1 \n" +
     		"GROUP BY\n" +
     		"	SINTRANST_TRIPULACION.ID_TRIPULACION",
   		 nativeQuery = true)

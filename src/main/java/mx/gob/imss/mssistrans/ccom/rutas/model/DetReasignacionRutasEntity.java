@@ -12,7 +12,7 @@ import lombok.Setter;
 public class DetReasignacionRutasEntity {
 
 	/************ Datos de la Asignacion *********************/
-	private DatosAsigEntity datosReasignacion;
+	private DatosControlRutasEntity datosReasignacion;
 	/************ Tripulacion Asignada *********************/
 	private ReasignacionTripulacionGroupEntity tripulacion;
 }

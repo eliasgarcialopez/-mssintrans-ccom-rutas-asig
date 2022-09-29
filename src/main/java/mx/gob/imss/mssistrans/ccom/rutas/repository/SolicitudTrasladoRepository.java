@@ -20,9 +20,6 @@ public interface SolicitudTrasladoRepository extends JpaRepository<SolicitudTras
   *vespertino horario del turno 14.01 a 19:00,
   *nocturno o especial horario del turno 19.01 a 06:00
   * 1 acepta 2 rechazada 3 cancelada 4 asignada.
-
-  * @param idArrendadora
-  * @param activo
   * @return
   */
 	@Query(value = "SELECT SO FROM SolicitudTraslado SO "
@@ -38,12 +35,12 @@ public interface SolicitudTrasladoRepository extends JpaRepository<SolicitudTras
 			+ "AND SO.desEstatusSolicitud IN ('1') ")
 	List<SolicitudTraslado> findSolicitudTrasladoAceptadas(String hrInicio, String hrfin);
 
-	@Query(value = "SELECT SO FROM SolicitudTraslado SO "
-			+ "WHERE SO.activo = true "
-			+ "and SO.fecSolicitud = ?3"
-			+ " AND  SO.timSolicitud between ?1 and ?2 "
-			+ "AND SO.desEstatusSolicitud IN ('1') ")
-	List<SolicitudTraslado> findSolicitudTrasladoAceptadas(String hrInicio, String hrfin, LocalDate fechaActual);
 
+	@Query(value = "SELECT SO.* FROM SINTRANST_SOLICITUD_TRASLADO SO "
+			+ "JOIN SINTRANSC_UNIDADES_ADSCRIPCION UA ON SO.ID_UNIDAD_ADSCRIPCION = UA.ID_UNIDAD_ADSCRIPCION " 
+			+ "WHERE UA.ID_OOAD = ?1 "
+			+ "AND SO.IND_ACTIVO = 1 "
+			+ "AND SO.DES_ESTATUS_SOLICITUD IN ('1','2','3') ", nativeQuery = true)
+	List<SolicitudTraslado> findSolicitudTrasladoAceptadas(Integer idOoad);
 	
 }

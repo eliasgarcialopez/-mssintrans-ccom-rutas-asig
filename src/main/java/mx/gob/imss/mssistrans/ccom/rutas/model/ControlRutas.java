@@ -19,15 +19,13 @@ public class ControlRutas implements Serializable {
     private Integer idControlRuta;
 		
 
-    @Basic
     @OneToOne
-	@JoinColumn( name="ID_SOLICITUD", unique = false, nullable = true)
+	@JoinColumn( name="ID_SOLICITUD")
     private SolicitudTraslado idSolcitud;
 	 
 
-    @Basic
     @OneToOne
-	@JoinColumn( name="ID_VEHICULO", unique = false, nullable = true)
+	@JoinColumn( name="ID_VEHICULO")
     private Vehiculos idVehiculo;
     
    

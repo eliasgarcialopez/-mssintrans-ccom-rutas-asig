@@ -1,13 +1,12 @@
 package mx.gob.imss.mssistrans.ccom.rutas.service.impl;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import javax.transaction.Transactional;
-
+import com.google.gson.Gson;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import mx.gob.imss.mssistrans.ccom.rutas.dto.*;
+import mx.gob.imss.mssistrans.ccom.rutas.model.*;
+import mx.gob.imss.mssistrans.ccom.rutas.repository.*;
+import mx.gob.imss.mssistrans.ccom.rutas.service.ControlRutasService;
 import mx.gob.imss.mssistrans.ccom.rutas.util.Utility;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jfree.util.Log;
@@ -20,39 +19,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
-import com.google.gson.Gson;
-
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.ControlRutasRequest;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.ControlRutasResponse;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.ControlRutasTablaResponse;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.ControlRutasTotalesResponse;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosUsuario;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.Respuesta;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.TripulacionInterfaceResponse;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.TripulacionResponse;
-import mx.gob.imss.mssistrans.ccom.rutas.model.ControlRutas;
-import mx.gob.imss.mssistrans.ccom.rutas.model.ModuloAmbulancia;
-import mx.gob.imss.mssistrans.ccom.rutas.model.Ooad;
-import mx.gob.imss.mssistrans.ccom.rutas.model.Rutas;
-import mx.gob.imss.mssistrans.ccom.rutas.model.RutasDestinos;
-import mx.gob.imss.mssistrans.ccom.rutas.model.SolicitudTraslado;
-import mx.gob.imss.mssistrans.ccom.rutas.model.Tripulacion;
-import mx.gob.imss.mssistrans.ccom.rutas.model.UnidadAdscripcion;
-import mx.gob.imss.mssistrans.ccom.rutas.model.Vehiculos;
-import mx.gob.imss.mssistrans.ccom.rutas.model.ZonaAtencion;
-import mx.gob.imss.mssistrans.ccom.rutas.repository.ControlRutasRepository;
-import mx.gob.imss.mssistrans.ccom.rutas.repository.ModuloAmbulanciaRepository;
-import mx.gob.imss.mssistrans.ccom.rutas.repository.RutasDestinosRepository;
-import mx.gob.imss.mssistrans.ccom.rutas.repository.RutasRepository;
-import mx.gob.imss.mssistrans.ccom.rutas.repository.SolicitudTrasladoRepository;
-import mx.gob.imss.mssistrans.ccom.rutas.repository.TripulacionRepository;
-import mx.gob.imss.mssistrans.ccom.rutas.repository.UnidadAdscripcionRepository;
-import mx.gob.imss.mssistrans.ccom.rutas.repository.UsuarioRepository;
-import mx.gob.imss.mssistrans.ccom.rutas.repository.VehiculosRepository;
-import mx.gob.imss.mssistrans.ccom.rutas.repository.ZonaAtencionRepository;
-import mx.gob.imss.mssistrans.ccom.rutas.service.ControlRutasService;
+import javax.transaction.Transactional;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -193,24 +165,24 @@ public class ControlRutasServiceImpl implements ControlRutasService {
   					ModuloAmbulancia moduloAmbulancia=ruta.getModulo();
   					
   					Optional<ZonaAtencion> zonaAtencion = zonaAtencionRepository.findByIdModuloAndActivoEquals(moduloAmbulancia.getIdModulo(), true);
+  					
   					Integer idZona = zonaAtencion.get().getIdZona();
   					
-  					Integer totalVA=   vehiculoRepository.countTotalVehiculoAsignados(idZona);
+  					Integer totalVA = vehiculoRepository.countTotalVehiculoAsignados(idZona);
   					
-  	  				rutasResponse.setTotalVehiculosAsignados(totalVA);
-  	  				
-  	  				Integer totalVD=   vehiculoRepository.countTotalVehiculoDisponibles(idZona);
-					
-  	  				rutasResponse.setTotalVehiculosDisponibles(totalVD);
-  	  				
-  	  				Integer totalMan=   vehiculoRepository.countTotalVehiculoMantenimiento(idZona);
-				
-	  				rutasResponse.setTotalVehiculosMantenimiento(totalMan);
-	  				
-	  				
-	  				Integer totalSin=   vehiculoRepository.countTotalVehiculoSiniestrados(idZona);
-					
-	  				rutasResponse.setTotalVehiculosSiniestrados(totalSin);
+  					rutasResponse.setTotalVehiculosAsignados(totalVA);
+  						
+  					Integer totalVD = vehiculoRepository.countTotalVehiculoDisponibles(idZona);
+  				
+  					rutasResponse.setTotalVehiculosDisponibles(totalVD);
+  						
+  					Integer totalMan = vehiculoRepository.countTotalVehiculoMantenimiento(idZona);
+  			
+  					rutasResponse.setTotalVehiculosMantenimiento(totalMan);
+  					
+  					Integer totalSin = vehiculoRepository.countTotalVehiculoSiniestrados(idZona);
+  				
+  					rutasResponse.setTotalVehiculosSiniestrados(totalSin);
   				}
   				
   				TripulacionResponse tripRes=new TripulacionResponse();
@@ -583,6 +555,22 @@ Respuesta<Integer> response = new Respuesta<>();
 			DatosUsuario datosUsuarios = gson.fromJson(user, DatosUsuario.class);
 			rutas.setCveMatricula(datosUsuarios.getMatricula());
 			
+            Optional<Vehiculos> veOp = vehiculoRepository.findById(rutas.getIdVehiculo().getIdVehiculo());
+            if (veOp.isPresent()) {
+                Vehiculos ve = veOp.get();
+                ve.setDesEstatusVehiculo("8");
+                vehiculoRepository.save(ve);
+                log.info(" Se cambio estatus de vehiculo a 8");
+
+            } else log.info("Vehiculo no encontrado" + rutas.getIdVehiculo());
+            
+            Optional<SolicitudTraslado> solicitud = solRepository.findById(rutas.getIdSolcitud().getIdSolicitud());
+            if (solicitud.isPresent()) {
+                SolicitudTraslado solicitudTraslado = solicitud.get();
+                solicitudTraslado.setDesEstatusSolicitud("1");
+                solRepository.save(solicitudTraslado);
+            } else log.info("Solicitud no encontrado" + rutas.getIdSolcitud().getIdSolicitud());
+			
 			
 			controlRutasRepository.save(rutas);
 			
@@ -609,7 +597,7 @@ Respuesta<Integer> response = new Respuesta<>();
 		return response;
 	}
 
-@Override
+	@Override
 public Respuesta<ControlRutasTotalesResponse> consultarTotalesVehiculos() {
 	Respuesta<ControlRutasTotalesResponse> response = new Respuesta<>();
     try {
@@ -634,25 +622,23 @@ public Respuesta<ControlRutasTotalesResponse> consultarTotalesVehiculos() {
 			Optional<ZonaAtencion> zonaOp=   zonaAtencionRepository.findByIdModuloAndActivoEquals(moduloAmbulancia.getIdModulo(),true);
 			if(zonaOp.isPresent()) {
 				
-				Integer idZona=zonaOp.get().getIdZona();
+				Integer idZona = zonaOp.get().getIdZona();
 				
-				Integer totalVA=   vehiculoRepository.countTotalVehiculoAsignados(idZona);
+				Integer totalVA = vehiculoRepository.countTotalVehiculoAsignados(idZona);
 				
-					rutasResponse.setTotalVehiculosAsignados(totalVA);
+				rutasResponse.setTotalVehiculosAsignados(totalVA);
 					
-					Integer totalVD=   vehiculoRepository.countTotalVehiculoDisponibles(idZona);
+				Integer totalVD = vehiculoRepository.countTotalVehiculoDisponibles(idZona);
 			
-					rutasResponse.setTotalVehiculosDisponibles(totalVD);
+				rutasResponse.setTotalVehiculosDisponibles(totalVD);
 					
-					Integer totalMan=   vehiculoRepository.countTotalVehiculoMantenimiento(idZona);
+				Integer totalMan = vehiculoRepository.countTotalVehiculoMantenimiento(idZona);
 		
 				rutasResponse.setTotalVehiculosMantenimiento(totalMan);
 				
-				
-				Integer totalSin=   vehiculoRepository.countTotalVehiculoSiniestrados(idZona);
+				Integer totalSin = vehiculoRepository.countTotalVehiculoSiniestrados(idZona);
 			
 				rutasResponse.setTotalVehiculosSiniestrados(totalSin);
-
 				   
 	        	response.setDatos(rutasResponse);
 		            response.setError(false);
@@ -676,6 +662,11 @@ public Respuesta<ControlRutasTotalesResponse> consultarTotalesVehiculos() {
         response.setCodigo(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
     return response;
+
 }
 
+	@Override
+	public Respuesta<?> liberarControlRuta(Integer idRuta, LiberarControlRutasRequest params) {
+		return null;
+	}
 }
