@@ -40,7 +40,7 @@ public interface SolicitudTrasladoRepository extends JpaRepository<SolicitudTras
 			+ "JOIN SINTRANSC_UNIDADES_ADSCRIPCION UA ON SO.ID_UNIDAD_ADSCRIPCION = UA.ID_UNIDAD_ADSCRIPCION " 
 			+ "WHERE UA.ID_OOAD = ?1 "
 			+ "AND SO.IND_ACTIVO = 1 "
-			+ "AND SO.DES_ESTATUS_SOLICITUD IN ('1','2','3') ", nativeQuery = true)
+			+ "AND SO.DES_ESTATUS_SOLICITUD = '1' ", nativeQuery = true)
 	List<SolicitudTraslado> findSolicitudTrasladoAceptadas(Integer idOoad);
 	
 }

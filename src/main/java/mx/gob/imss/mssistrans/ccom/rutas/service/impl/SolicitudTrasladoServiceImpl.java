@@ -55,8 +55,8 @@ public class SolicitudTrasladoServiceImpl implements SolicitudTrasladoService {
 	        	 log.info("consultando solicitudes de traslado aceptadas, {}");
 
 				List<SolicitudTraslado> result = new ArrayList<SolicitudTraslado>();
-				//final LocalDate fechaActual = LocalDate.now();
-				result = solicitudTrasladoRepository.findSolicitudTrasladoAceptadas(datosUsuario.IDOOAD);
+				final LocalDate fechaActual = LocalDate.now();
+				result = solicitudTrasladoRepository.findSolicitudTrasladoAceptadas(15);
 
 	            log.info("solicitudes, {}", result.size());
 	            List<SolicitudTrasladoResponse> content = new ArrayList<>();
