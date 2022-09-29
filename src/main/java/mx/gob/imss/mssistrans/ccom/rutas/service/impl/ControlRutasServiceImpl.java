@@ -165,24 +165,24 @@ public class ControlRutasServiceImpl implements ControlRutasService {
   					ModuloAmbulancia moduloAmbulancia=ruta.getModulo();
   					
   					Optional<ZonaAtencion> zonaAtencion = zonaAtencionRepository.findByIdModuloAndActivoEquals(moduloAmbulancia.getIdModulo(), true);
+  					
   					Integer idZona = zonaAtencion.get().getIdZona();
   					
-  					Integer totalVA=   vehiculoRepository.countTotalVehiculoAsignados(idZona);
+  					Integer totalVA = vehiculoRepository.countTotalVehiculoAsignados(idZona);
   					
-  	  				rutasResponse.setTotalVehiculosAsignados(totalVA);
-  	  				
-  	  				Integer totalVD=   vehiculoRepository.countTotalVehiculoDisponibles(idZona);
-					
-  	  				rutasResponse.setTotalVehiculosDisponibles(totalVD);
-  	  				
-  	  				Integer totalMan=   vehiculoRepository.countTotalVehiculoMantenimiento(idZona);
-				
-	  				rutasResponse.setTotalVehiculosMantenimiento(totalMan);
-	  				
-	  				
-	  				Integer totalSin=   vehiculoRepository.countTotalVehiculoSiniestrados(idZona);
-					
-	  				rutasResponse.setTotalVehiculosSiniestrados(totalSin);
+  					rutasResponse.setTotalVehiculosAsignados(totalVA);
+  						
+  					Integer totalVD = vehiculoRepository.countTotalVehiculoDisponibles(idZona);
+  				
+  					rutasResponse.setTotalVehiculosDisponibles(totalVD);
+  						
+  					Integer totalMan = vehiculoRepository.countTotalVehiculoMantenimiento(idZona);
+  			
+  					rutasResponse.setTotalVehiculosMantenimiento(totalMan);
+  					
+  					Integer totalSin = vehiculoRepository.countTotalVehiculoSiniestrados(idZona);
+  				
+  					rutasResponse.setTotalVehiculosSiniestrados(totalSin);
   				}
   				
   				TripulacionResponse tripRes=new TripulacionResponse();
