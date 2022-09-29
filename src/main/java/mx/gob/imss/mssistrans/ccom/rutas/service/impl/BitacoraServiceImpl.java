@@ -69,7 +69,7 @@ public class BitacoraServiceImpl implements BitacoraService {
                 datosBitacora.setIdVehiculo(controlRutaEntity.getIdVehiculo().getIdVehiculo());
                 datosBitacora.setCveEcco(controlRutaEntity.getIdVehiculo().getCveEcco());
                 datosBitacora.setDesMarca(controlRutaEntity.getIdVehiculo().getDesMarca());
-                datosBitacora.setDesTipoVeh(controlRutaEntity.getIdVehiculo().getDesTipoVehiculo());
+                datosBitacora.setDesTipoVeh(controlRutaEntity.getIdVehiculo().getDesTipoVehiculoConnue());
                 datosBitacora.setNumPlacas(controlRutaEntity.getIdVehiculo().getNumPlacas());
                 datosBitacora.setDesModelo(controlRutaEntity.getIdVehiculo().getDesModelo());
                 datosBitacora.setNomModuloAmb(controlRutaEntity.getModulo().getDesNombre());
@@ -143,7 +143,7 @@ public class BitacoraServiceImpl implements BitacoraService {
 			parameters.put("inmueble", bitacoraServiciosEntity.getControlRuta().getIdVehiculo().getUnidad().getNomUnidadAdscripcion());
 			parameters.put("marca", bitacoraServiciosEntity.getControlRuta().getIdVehiculo().getDesMarca());
 			parameters.put("placas", bitacoraServiciosEntity.getControlRuta().getIdVehiculo().getNumPlacas());
-			parameters.put("tipo", bitacoraServiciosEntity.getControlRuta().getIdVehiculo().getDesTipoVehiculoConnue());
+			parameters.put("tipo", bitacoraServiciosEntity.getControlRuta().getIdVehiculo().getDesTipoVehiculo());
 			parameters.put("modelo", bitacoraServiciosEntity.getControlRuta().getIdVehiculo().getDesModelo().toString());
 			parameters.put("unidadAdscripcion", bitacoraServiciosEntity.getControlRuta().getIdVehiculo().getUnidad().getNomUnidadAdscripcion());
 			parameters.put("tripulacion", bitacoraServiciosEntity.getControlRuta().getTripulacion().getIdTripulacion().toString());
