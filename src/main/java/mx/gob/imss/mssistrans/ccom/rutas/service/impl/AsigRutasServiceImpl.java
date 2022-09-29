@@ -1,15 +1,14 @@
 package mx.gob.imss.mssistrans.ccom.rutas.service.impl;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import javax.transaction.Transactional;
 
 import mx.gob.imss.mssistrans.ccom.rutas.dto.*;
 import mx.gob.imss.mssistrans.ccom.rutas.model.*;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import mx.gob.imss.mssistrans.ccom.rutas.util.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -18,14 +17,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import lombok.AllArgsConstructor;
 import mx.gob.imss.mssistrans.ccom.rutas.service.AsigRutasService;
-import mx.gob.imss.mssistrans.ccom.rutas.util.AsigRutasMapper;
-import mx.gob.imss.mssistrans.ccom.rutas.util.DatosAsigMapper;
-import mx.gob.imss.mssistrans.ccom.rutas.util.EccoMapper;
-import mx.gob.imss.mssistrans.ccom.rutas.util.RegistroRecorridoMapper;
-import mx.gob.imss.mssistrans.ccom.rutas.util.RutasMapper;
-import mx.gob.imss.mssistrans.ccom.rutas.util.SolTrasladoMapper;
-import mx.gob.imss.mssistrans.ccom.rutas.util.TripulacionAsigMapper;
-import mx.gob.imss.mssistrans.ccom.rutas.util.ValidaDatos;
 
 /**
  * @author opimentel
@@ -37,25 +28,18 @@ import mx.gob.imss.mssistrans.ccom.rutas.util.ValidaDatos;
 @Service
 public class AsigRutasServiceImpl implements AsigRutasService {
 
-	@Autowired
-	private AsigRutasRepository asigRutasRepository;
-	@Autowired
-	private RutasAsigRepository rutasRepository;
-	@Autowired
-	private SolTrasladoRepository solicitudTrasladoRepository;
-	@Autowired
-	private EccoRepository eccoRepository;
-	@Autowired
-	private DatosAsigRepository datosRepository;
-	@Autowired
-	private TripulacionAsigRepository choferRepository;
-	@Autowired
-	private TripulacionAsigCamillero01Repository camillero01Repository;
-	@Autowired
-	private TripulacionAsigCamillero02Repository camillero02Repository;
-	@Autowired
-	private RegistroRecorridoRepository regRecorrido1Repository;
+	private final AsigRutasRepository asigRutasRepository;
+	private final RutasAsigRepository rutasRepository;
+	private final SolTrasladoRepository solicitudTrasladoRepository;
+	private final EccoRepository eccoRepository;
+	private final DatosAsigRepository datosRepository;
+	private final TripulacionAsigRepository choferRepository;
+	private final TripulacionAsigCamillero01Repository camillero01Repository;
+	private final TripulacionAsigCamillero02Repository camillero02Repository;
+	private final RegistroRecorridoRepository regRecorrido1Repository;
 	private final RutasDestinosRepository rutasDestinoRepository;
+	private final ControlRutasRepository controlRutasRepository;
+	private final VehiculosRepository vehiculosRepository;
 
 	@Override
 	public <T> Response<?> consultaVistaRapida(Integer pagina, Integer tamanio, String orden, String columna,
@@ -218,26 +202,65 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 	}
 
 
-	@Override
+    @Override
 	public Response<?> update(ActualizarControlRutaRequest params) {
 
 		Response<ActualizarControlRutaRequest> respuesta = new Response<>();
 		try {
-			final Integer idRutaOrigen = params.getIdRutaOrigen();
-			RutasAsigEntity rutaOrigen = rutasRepository.findById(idRutaOrigen)
-					.orElseThrow(() -> new Exception("No se ha encontrado la ruta origen con id " + idRutaOrigen));
+			// todo - validar si la asignacion se cancelo
+//			if (params.getEstatusRecorrido())
 
-			final Integer idRutaDestino = params.getIdRutaDestino();
-			RutasDestinos rutaDestino = rutasDestinoRepository.findById(idRutaDestino)
-					.orElseThrow(() -> new Exception("No se ha encontrado la ruta destino con id " + idRutaOrigen));
 
-			rutaOrigen.setHoraInicio(params.getHoraInicioOrigen());
-			rutaOrigen.setHoraFin(params.getHoraFinOrigen());
-			rutaDestino.setTimHoraInicio(params.getHoraInicioDestino());
-			rutaDestino.setTimHoraFin(params.getHoraFinDestino());
+			// todo - validar el estatus que llega de la asigancaion para que,
+			// 		- en el caso de un estatus 3 - terminada hay que actualizar el estatus del ecco para que se pueda
+			// 		  en otra solicitud de traslado-> asignacion -> control ruta
+			// todo - hay que actualizar el estatus del control de rutas al 3 - Terminada
+			// 		- tambien hay que considerar que cuando se cancela la asignacion hay que liberar
+			final String estatus = params.getEstatusRecorrido();
+			final EstatusControlRutasEnum[] values = EstatusControlRutasEnum.values();
+			final Optional<EstatusControlRutasEnum> estatusEnum = Arrays
+					.stream(values)
+					.filter(value -> Objects.equals(value.getValor(), estatus))
+					.findFirst();
 
-			rutasRepository.save(rutaOrigen);
-			rutasDestinoRepository.save(rutaDestino);
+			if (!estatusEnum.isPresent()) {
+				throw new Exception("El estatus no es correcto, revisar el valor " + estatus);
+			} else {
+				final Integer idRutaOrigen = params.getIdRutaOrigen();
+				RutasAsigEntity rutaOrigen = rutasRepository.findById(idRutaOrigen)
+						.orElseThrow(() -> new Exception("No se ha encontrado la ruta origen con id " + idRutaOrigen));
+
+				final Integer idRutaDestino = params.getIdRutaDestino();
+				RutasDestinos rutaDestino = rutasDestinoRepository.findById(idRutaDestino)
+						.orElseThrow(() -> new Exception("No se ha encontrado la ruta destino con id " + idRutaOrigen));
+
+				rutaOrigen.setHoraInicio(params.getHoraInicioOrigen());
+				rutaOrigen.setHoraFin(params.getHoraFinOrigen());
+				rutaDestino.setTimHoraInicio(params.getHoraInicioDestino());
+				rutaDestino.setTimHoraFin(params.getHoraFinDestino());
+
+				rutasRepository.save(rutaOrigen);
+				rutasDestinoRepository.save(rutaDestino);
+
+				final String estatusAsignacion = estatusEnum.get().getValor();
+				// todo - cambiar el estatus del control de rutas
+				final Integer idControlRuta = params.getIdControlRuta();
+				final ControlRutas controlRutas = controlRutasRepository.findByIdControlRuta(idControlRuta)
+						.orElseThrow(() -> new Exception("No se ha encontrado el control de rutas con id: " + idControlRuta));
+				controlRutas.setDesEstatusAsigna(estatusAsignacion);
+				controlRutasRepository.save(controlRutas);
+
+				// todo - hay que cambiar el estatus del vehiculo a 8 para que se pueda seguir siendo utilizado
+				// se libera solo cuando esta terminada o cancelada
+				if (estatusAsignacion.equals("2") || estatusAsignacion.equals("3")) {
+					final Integer idVehiculo = controlRutas.getIdVehiculo().getIdVehiculo();
+					final Vehiculos vehiculo = vehiculosRepository.findById(idVehiculo)
+							.orElseThrow(() -> new Exception("No se ha encontrado el vehiculo con id: " + idVehiculo));
+					// colocar el estatus 8 hace que el vehiculo pueda ser asignado nuevamente para atender otra solicitud
+					vehiculo.setDesEstatusVehiculo("8");
+					vehiculosRepository.save(vehiculo);
+				}
+			}
 
 		} catch (Exception e) {
 			return ValidaDatos.errorException(respuesta, e);
@@ -278,7 +301,7 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 		TripulacionAsigCam01Entity getTripulante = null;
 		TripulacionAsigCam02Entity getTripulante2 = null;
 		TripulacionAsigEntity getChofer = null;
-		
+
 
 		if (idRuta != null && idSolicitud != null && idVehiculo != null) {
 			if (!idRuta.equals("") && !idSolicitud.equals("") && !idVehiculo.equals("")) {
@@ -296,7 +319,7 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 				getTripulante = camillero01Repository.getCamillero1(idControlRuta);
 				getTripulante2 = camillero02Repository.getCamillero2(idControlRuta);
 			}
-		
+
 		if (getChofer != null) {
 			tripulacionAsigEntity.setIdControlRuta(getChofer.getIdControlRuta());
 			tripulacionAsigEntity.setIdPersonalAmbulancia(getChofer.getIdPersonalAmbulancia());
@@ -311,7 +334,7 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 		}
 		return tripulacionAsigGroupEntity;
 	}
-	
+
 	@Override
 	public <T> Response<?> getControlRutas(Integer pagina, Integer tamanio, String orden, String columna,
 			String idAsignacion, String idSolicitud) {
@@ -342,7 +365,7 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 		}
 
 	}
-	
+
 	@SuppressWarnings("unlikely-arg-type")
 	@Override
 	public <T> Response getDatosControlRutaById(Integer idControlRuta) {
