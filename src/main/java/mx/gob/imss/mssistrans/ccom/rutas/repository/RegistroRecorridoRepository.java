@@ -50,25 +50,35 @@ public interface RegistroRecorridoRepository extends JpaRepository<RegistroRecor
 			, String idRuta3, String hrInicio3, String hrFin3
 			, String estatusTraslado, String idVehiculo, String idRuta);
 
-	@Query("SELECT new mx.gob.imss.mssistrans.ccom.rutas.dto.DatosRegistroRecorridoDTO("
-			+ " cr.idVehiculo.idVehiculo, cr.fechaInicioAsigna, cr.timInicioAsigna, cr.desEstatusAsigna, "
-			+ " rd.idDestino, rd.timHoraInicio, rd.timHoraFin, ru.idOrigen, ru.timHorarioInicial, ru.timHorarioFinal) "
-			+ " FROM ControlRutas AS cr "
-			+ " INNER JOIN Rutas AS ru ON ru.idRuta = cr.ruta.idRuta "
-			+ " INNER JOIN RutasDestinos AS rd ON rd.ruta.idRuta = cr.ruta.idRuta "
-			+ " WHERE cr.ruta.idRuta = :idRuta "
-			+ " AND cr.idSolcitud.idSolicitud = :idSolicitud "
-			+ " AND cr.idVehiculo.idVehiculo = :idVehiculo ")
-	DatosRegistroRecorridoDTO getRegistroRecorridoByIdRutaIdSolicitudIdVehiculo(@Param("idRuta") Integer idRuta,
-																				@Param("idSolicitud") Integer idSolicitud, @Param("idVehiculo") Integer idVehiculo);
-
-	@Query("SELECT new mx.gob.imss.mssistrans.ccom.rutas.dto.DatosRegistroRecorridoDTO("
-			+ " cr.idVehiculo.idVehiculo, cr.fechaInicioAsigna, cr.timInicioAsigna, cr.desEstatusAsigna, "
-			+ " rd.idDestino, rd.timHoraInicio, rd.timHoraFin, ru.idOrigen, ru.timHorarioInicial, ru.timHorarioFinal) "
-			+ " FROM ControlRutas AS cr "
-			+ " INNER JOIN Rutas AS ru ON ru.idRuta = cr.ruta.idRuta "
-			+ " INNER JOIN RutasDestinos AS rd ON rd.ruta.idRuta = cr.ruta.idRuta "
-			+ " WHERE cr.ruta.idRuta = :idRuta ")
-	DatosRegistroRecorridoDTO getRegistroRecorridoByRuta(@Param("idRuta") Integer idRuta);
+    @Query("SELECT new mx.gob.imss.mssistrans.ccom.rutas.dto.DatosRegistroRecorridoDTO("
+            + " cr.idVehiculo.idVehiculo, cr.fechaInicioAsigna, cr.timInicioAsigna, cr.desEstatusAsigna, "
+            + " rd.idDestino, "
+            + " (SELECT uni.nomUnidadAdscripcion FROM UnidadAdscripcion uni where uni.idUnidadAdscripcion = ru.idUnidadDestino ) as nomUnidadDestino, "
+            + " (SELECT CONCAT(sol.desColonia,', ',sol.desCalle,', ',sol.numExterior,', ',sol.numInterior) FROM SolicitudTraslado sol WHERE sol.idSolicitud = cr.idSolcitud) as destinoParticular, "
+            + " rd.timHoraInicio, rd.timHoraFin, ru.idOrigen, "
+            + " (SELECT uni.nomUnidadAdscripcion FROM UnidadAdscripcion uni where uni.idUnidadAdscripcion = ru.idUnidadSolcitante ) as nomUnidadOrigen, "
+            + " ru.timHorarioInicial, ru.timHorarioFinal) "
+            + " FROM ControlRutas AS cr "
+            + " INNER JOIN Rutas AS ru ON ru.idRuta = cr.ruta.idRuta "
+            + " INNER JOIN RutasDestinos AS rd ON rd.ruta.idRuta = cr.ruta.idRuta "
+            + " WHERE cr.ruta.idRuta = :idRuta "
+            + " AND cr.idSolcitud.idSolicitud = :idSolicitud "
+            + " AND cr.idVehiculo.idVehiculo = :idVehiculo ")
+    DatosRegistroRecorridoDTO getRegistroRecorridoByIdRutaIdSolicitudIdVehiculo(@Param("idRuta") Integer idRuta, 
+            @Param("idSolicitud") Integer idSolicitud, @Param("idVehiculo") Integer idVehiculo);
+    
+    @Query("SELECT new mx.gob.imss.mssistrans.ccom.rutas.dto.DatosRegistroRecorridoDTO("
+            + " cr.idVehiculo.idVehiculo, cr.fechaInicioAsigna, cr.timInicioAsigna, cr.desEstatusAsigna, "
+            + " rd.idDestino, "
+            + " (SELECT uni.nomUnidadAdscripcion FROM UnidadAdscripcion uni where uni.idUnidadAdscripcion = ru.idUnidadDestino ) as nomUnidadDestino, "
+            + " (SELECT CONCAT(sol.desColonia,', ',sol.desCalle,', ',sol.numExterior,', ',sol.numInterior) FROM SolicitudTraslado sol WHERE sol.idSolicitud = cr.idSolcitud) as destinoParticular, "
+            + " rd.timHoraInicio, rd.timHoraFin, ru.idOrigen, "
+            + " (SELECT uni.nomUnidadAdscripcion FROM UnidadAdscripcion uni where uni.idUnidadAdscripcion = ru.idUnidadSolcitante ) as nomUnidadOrigen, "
+            + " ru.timHorarioInicial, ru.timHorarioFinal) "
+            + " FROM ControlRutas AS cr "
+            + " INNER JOIN Rutas AS ru ON ru.idRuta = cr.ruta.idRuta "
+            + " INNER JOIN RutasDestinos AS rd ON rd.ruta.idRuta = cr.ruta.idRuta "
+            + " WHERE cr.ruta.idRuta = :idRuta ")
+    DatosRegistroRecorridoDTO getRegistroRecorridoByRuta(@Param("idRuta") Integer idRuta);
     
 }

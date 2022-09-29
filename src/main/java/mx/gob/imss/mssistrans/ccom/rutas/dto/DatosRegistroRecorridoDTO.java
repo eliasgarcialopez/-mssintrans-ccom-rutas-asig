@@ -30,11 +30,17 @@ public class DatosRegistroRecorridoDTO {
     @JsonProperty
     private Integer idDestino;
     @JsonProperty
+    private String nomUnidadDestino;
+    @JsonProperty
+    private String destinoParticular;
+    @JsonProperty
     private String timHoraInicio;
     @JsonProperty
     private String timHoraFin;
     @JsonProperty
     private Integer idOrigen;
+    @JsonProperty
+    private String nomUnidadOrigen;
     @JsonProperty
     private String timHorarioInicial;
     @JsonProperty
