@@ -69,7 +69,7 @@ public class BitacoraServiceImpl implements BitacoraService {
                 datosBitacora.setIdVehiculo(controlRutaEntity.getIdVehiculo().getIdVehiculo());
                 datosBitacora.setCveEcco(controlRutaEntity.getIdVehiculo().getCveEcco());
                 datosBitacora.setDesMarca(controlRutaEntity.getIdVehiculo().getDesMarca());
-                datosBitacora.setDesTipoVeh(controlRutaEntity.getIdVehiculo().getDesTipoVehiculo());
+                datosBitacora.setDesTipoVeh(controlRutaEntity.getIdVehiculo().getDesTipoVehiculoConnue());
                 datosBitacora.setNumPlacas(controlRutaEntity.getIdVehiculo().getNumPlacas());
                 datosBitacora.setDesModelo(controlRutaEntity.getIdVehiculo().getDesModelo());
                 datosBitacora.setNomModuloAmb(controlRutaEntity.getModulo().getDesNombre());

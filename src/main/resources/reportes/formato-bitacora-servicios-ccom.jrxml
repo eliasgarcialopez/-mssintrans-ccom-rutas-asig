@@ -46,7 +46,7 @@
 				<textElement>
 					<font size="16"/>
 				</textElement>
-				<text><![CDATA[Formato: Bitácora de servicios terrestres]]></text>
+				<text><![CDATA[Bitácora de servicios terrestres]]></text>
 			</staticText>
 			<textField pattern="MMMMM dd, yyyy">
 				<reportElement x="21" y="26" width="100" height="15" uuid="7688581a-8efa-4570-81eb-ba983b009fba">

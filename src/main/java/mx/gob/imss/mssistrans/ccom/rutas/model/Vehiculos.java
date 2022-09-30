@@ -41,6 +41,9 @@ public class Vehiculos {
 	@Column(name = "DES_TIPO_VEHICULO", unique = false, nullable = true)
 	private String desTipoVehiculo;
 	
+	@Column(name = "DES_TIPO_VEHICULO_CONNUE")
+	private String desTipoVehiculoConnue;
+	
 	@Column(name = "DES_CLASIF_CONUEE", unique = false, nullable = true)
 	private String desClasifConuee;
 	
