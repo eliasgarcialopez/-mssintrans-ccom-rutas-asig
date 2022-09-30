@@ -226,7 +226,7 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 
                 final Integer idRutaDestino = params.getIdRutaDestino();
                 RutasDestinos rutaDestino = rutasDestinoRepository.findById(idRutaDestino)
-                        .orElseThrow(() -> new Exception("No se ha encontrado la ruta destino con id " + idRutaOrigen));
+                        .orElseThrow(() -> new Exception("No se ha encontrado la ruta destino con id " + idRutaDestino));
 
                 rutaOrigen.setHoraInicio(params.getHoraInicioOrigen());
                 rutaOrigen.setHoraFin(params.getHoraFinOrigen());

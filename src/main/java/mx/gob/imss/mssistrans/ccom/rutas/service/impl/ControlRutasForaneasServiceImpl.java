@@ -6,6 +6,7 @@ import mx.gob.imss.mssistrans.ccom.rutas.dto.*;
 import mx.gob.imss.mssistrans.ccom.rutas.model.*;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.*;
 import mx.gob.imss.mssistrans.ccom.rutas.service.ControlRutasForaneasService;
+import mx.gob.imss.mssistrans.ccom.rutas.util.EstatusSolicitudesEnum;
 import mx.gob.imss.mssistrans.ccom.rutas.util.Utility;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.data.domain.Page;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.time.LocalDate;
@@ -24,6 +26,7 @@ import java.util.Optional;
 
 @Service
 @Slf4j
+@Transactional
 public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasService {
     private final ControlRutasForaneasRepository controlRutasForaneasRepository;
     private final UnidadAdscripcionRepository unidadAdscripcionRepository;
@@ -274,8 +277,10 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
 
     @Override
     public Respuesta<Integer> crearRuta(ControlRutasForaneasRequest rutas) {
+        // todo - puede que existan solicitudes que no tengan destino
         Respuesta<Integer> response = new Respuesta<>();
-        try {// Pendiente crear el campo foliador....
+        try {
+            // Pendiente crear el campo foliador....
             String user = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             log.info("usuario {}", user);
             if (user.equals("denegado")) {
@@ -286,7 +291,8 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                 return response;
             }
 
-            log.info("Creando la ruta");
+            log.info("Creando la ruta origen...");
+
             Rutas ruta = new Rutas();
             ruta.setActivo(true);
             ruta.setCveMatricula(rutas.getCveMatricula());
@@ -294,26 +300,36 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
             ruta.setIndiceSistema(true);
             ruta.setIndRutaForanea(true);
 
-            ArrayList<String> horas = Utility.getHorarioStringByTurno(rutas.getTurno());
-            if (horas.size() == 2) {
-                ruta.setTimHorarioInicial(horas.get(0));
-                ruta.setTimHorarioFinal(horas.get(1));
-            }
+//            ArrayList<String> horas = Utility.getHorarioStringByTurno(rutas.getTurno());
+//            if (horas.size() == 2) {
+//                ruta.setTimHorarioInicial(horas.get(0));
+//                ruta.setTimHorarioFinal(horas.get(1));
+//            }
 
 
             log.info("Obtenemos solicitud");
 
-            Optional<SolicitudTraslado> solicitud = solicitudTrasladoRepository.findById(rutas.getIdSolicitudTraslado());
+            Optional<SolicitudTraslado> solicitud = solicitudTrasladoRepository
+                    .findById(rutas.getIdSolicitudTraslado());
+
             if (solicitud.isPresent()) {
                 SolicitudTraslado solicitudTraslado = solicitud.get();
+
                 ruta.setIdOrigen(solicitudTraslado.getCveOrigen());
-                ruta.setIdUnidadDestino(solicitudTraslado.getCveDestino());
+                //
+                // todo - cambiar esta llegando vacio
+                ruta.setIdUnidadDestino(solicitudTraslado.getCveDestino() == null ? null : solicitudTraslado.getCveDestino());
                 ruta.setIdUnidadSolcitante(solicitudTraslado.getIdUnidadSolicitante());
 
                 log.info("Actualizando estatus a asignada ");
-                solicitudTraslado.setDesEstatusSolicitud("4");
+                // todo - estatus para solicitudes de traslado
+                // todo - cambiar tambien en asignacion normal
+                solicitudTraslado.setDesEstatusSolicitud(EstatusSolicitudesEnum.Asignada.getValor()); // estatus asignada
+
                 solicitudTrasladoRepository.save(solicitudTraslado);
+
             } else log.info("Solicitud no encontrado" + rutas.getIdSolicitudTraslado());
+
             //pendiente
             //ruta.setNumFolioRuta(user)
 
@@ -322,10 +338,10 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
             destinos.setIdUnidadDestino(ruta.getIdUnidadDestino());
             destinos.setIndiceSistema(true);
 
-            if (horas.size() == 2) {
-                destinos.setTimHoraInicio(horas.get(0));
-                destinos.setTimHoraFin(horas.get(1));
-            }
+//            if (horas.size() == 2) {
+//                destinos.setTimHoraInicio(horas.get(0));
+//                destinos.setTimHoraFin(horas.get(1));
+//            }
 
             destinos.setRuta(ruta);
 
@@ -589,7 +605,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
             Gson gson = new Gson();
             DatosUsuario datosUsuarios = gson.fromJson(user, DatosUsuario.class);
             rutas.setCveMatricula(datosUsuarios.getMatricula());
-            
+
             Optional<Vehiculos> veOp = vehiculoRepository.findById(rutas.getIdVehiculo().getIdVehiculo());
             if (veOp.isPresent()) {
                 Vehiculos ve = veOp.get();
@@ -598,7 +614,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                 log.info(" Se cambio estatus de vehiculo a 8");
 
             } else log.info("Vehiculo no encontrado" + rutas.getIdVehiculo());
-            
+
             Optional<SolicitudTraslado> solicitud = solicitudTrasladoRepository.findById(rutas.getIdSolcitud().getIdSolicitud());
             if (solicitud.isPresent()) {
                 SolicitudTraslado solicitudTraslado = solicitud.get();
