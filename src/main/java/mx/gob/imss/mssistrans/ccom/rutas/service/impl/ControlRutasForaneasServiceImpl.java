@@ -86,11 +86,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
             DatosUsuario datosUsuarios = gson.fromJson(usuario, DatosUsuario.class);
 
             //Validar si es adminsitrador...
-            final Page<ControlRutas> result = datosUsuarios.getRol().equals("Administrador")
-                    || datosUsuarios.getRol().equals("Operador de Ruta Centracom")
-                    || datosUsuarios.getRol().equals("Jefe de Centracom")
-                    || datosUsuarios.getRol().equals("Jefe de Modulo de Ambulancias")
-                    || datosUsuarios.getRol().equals("Controlador de Rutas Centracom")
+            final Page<ControlRutas> result = datosUsuarios.getRol().equals("Administrador") || datosUsuarios.getRol().equals("Normativo") || datosUsuarios.IDOOAD == 9 || datosUsuarios.IDOOAD == 39
                     ? controlRutasForaneasRepository.findAll(pageable)
                     : controlRutasForaneasRepository.findAll(pageable, datosUsuarios.getIDOOAD());
 

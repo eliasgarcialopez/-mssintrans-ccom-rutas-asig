@@ -85,10 +85,11 @@ public class AsigRutasServiceImpl implements AsigRutasService {
         Response<T> respuesta = new Response<>();
         List<RutasAsigEntity> consultaGeneral = null;
         try {
-            if (rol.toUpperCase().equals("ADMINISTRADOR"))
+            if(rol.equals("Administrador") || rol.equals("Normativo") || idOoad == 9 || idOoad == 39 ) {
                 consultaGeneral = rutasRepository.getRutas();
-            else
+            } else {
                 consultaGeneral = rutasRepository.getRutasByOoad(idOoad);
+            }
         } catch (Exception e) {
             return ValidaDatos.errorException(respuesta, e);
         }
@@ -102,10 +103,11 @@ public class AsigRutasServiceImpl implements AsigRutasService {
         Response<T> respuesta = new Response<>();
         List<SolTrasladoEntity> consultaGeneral = null;
         try {
-            if (datosUsuario.getRol().toUpperCase().equals("ADMINISTRADOR"))
+            if(datosUsuario.rol.equals("Administrador") || datosUsuario.rol.equals("Normativo") || datosUsuario.IDOOAD == 9 || datosUsuario.IDOOAD == 39 ) {
                 consultaGeneral = solicitudTrasladoRepository.getSolicitudTraslado(idRuta);
-            else
+            } else {
                 consultaGeneral = solicitudTrasladoRepository.getSolicitudTraslado(datosUsuario.getIDOOAD(), idRuta);
+            }
         } catch (Exception e) {
             return ValidaDatos.errorException(respuesta, e);
         }
