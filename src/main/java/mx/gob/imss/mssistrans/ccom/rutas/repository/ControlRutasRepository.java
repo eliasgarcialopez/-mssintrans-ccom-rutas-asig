@@ -24,6 +24,7 @@ public interface ControlRutasRepository extends JpaRepository<ControlRutas, Inte
     @Query(value = "SELECT CR FROM ControlRutas CR "
             + "WHERE CR.activo = true and CR.indiceSistema = true"
             + " AND  CR.idControlRuta = ?1"
+            + " and CR.activo = true"
     )
     Optional<ControlRutas> findByIdControlRuta(Integer idControlRuta);
 
@@ -36,7 +37,7 @@ public interface ControlRutasRepository extends JpaRepository<ControlRutas, Inte
     @Query(value = "SELECT CR FROM ControlRutas CR "
             + "WHERE CR.activo = true and CR.indiceSistema = true"
             + " AND  CR.idSolcitud = ?1 " +
-            "and cr.activo = true"
+            "and CR.activo = true"
     )
     Optional<ControlRutas> findByIdSolicitud(Integer idControlRuta);
 

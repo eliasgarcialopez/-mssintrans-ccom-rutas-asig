@@ -331,7 +331,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
 
             ruta.getDestinos().add(destinos);
 
-            rutasRepository.save(ruta);
+//            rutasRepository.save(ruta);
 
 
             Gson gson = new Gson();
@@ -371,12 +371,14 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                 ve.setDesEstatusVehiculo("9");
                 vehiculoRepository.save(ve);
                 log.info(" vehiculo a asignado");
+                ruta.setDesServicio(ve.getDesTipoServicio());
 
             } else log.info("Vehiculo no encontrado" + params.getIdVehiculo());
             //pendiente ver el catalog de status asignado
             controlRutas.setDesEstatusAsigna("1");
             controlRutas.setIndiceSistema(true);
 
+            rutasRepository.save(ruta);
 //            Optional<ModuloAmbulancia> moduloOp = moAmbulanciaRepository.findByIdOOADAndActivoEquals(params.getIdModulo(), true);
             Optional<ModuloAmbulancia> moduloOp = moAmbulanciaRepository.findByIdModuloAndActivoEquals(params.getIdModulo(), true);
             if (moduloOp.isPresent())
@@ -451,10 +453,10 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                 ruta.setIndRutaForanea(true);
                 ruta.setIndiceSistema(true);
                 ArrayList<String> horas = Utility.getHorarioStringByTurno(rutaDTO.getTurno());
-                if (horas.size() == 2) {
-                    ruta.setTimHorarioInicial(horas.get(0));
-                    ruta.setTimHorarioFinal(horas.get(1));
-                }
+//                if (horas.size() == 2) {
+//                    ruta.setTimHorarioInicial(horas.get(0));
+//                    ruta.setTimHorarioFinal(horas.get(1));
+//                }
 
                 Optional<SolicitudTraslado> solicitud = solicitudTrasladoRepository.findById(rutaDTO.getIdSolicitudTraslado());
                 if (solicitud.isPresent()) {
@@ -480,10 +482,10 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                 destinos.setActivo(true);
                 destinos.setIdUnidadDestino(ruta.getIdUnidadDestino());
                 destinos.setIndiceSistema(true);
-                if (horas.size() == 2) {
-                    destinos.setTimHoraInicio(horas.get(0));
-                    destinos.setTimHoraFin(horas.get(1));
-                }
+//                if (horas.size() == 2) {
+//                    destinos.setTimHoraInicio(horas.get(0));
+//                    destinos.setTimHoraFin(horas.get(1));
+//                }
                 destinos.setRuta(ruta);
                 //destinosRepository.save(destinos);
                 log.info("destinos agregados");
@@ -491,8 +493,8 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                 ruta.getDestinos().add(destinos);
                 ruta.setFechaActualizacion(LocalDate.now());
 
-                rutasRepository.save(ruta);
-                log.info("Ruta Actualizada");
+//                rutasRepository.save(ruta);
+//                log.info("Ruta Actualizada");
 
                 controlRuta.setRuta(ruta);
                 Optional<Vehiculos> veOp = vehiculoRepository.findById(rutaDTO.getIdVehiculo());
@@ -504,7 +506,11 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                     vehiculo.setDesEstatusVehiculo("9");//en transito.
                     vehiculoRepository.save(vehiculo);
                     log.info("Vehiculo Asignado" + vehiculo);
+                    ruta.setDesServicio(vehiculo.getDesTipoServicio());
                 }
+
+                rutasRepository.save(ruta);
+                log.info("Ruta Actualizada");
 
                 controlRuta.setCveMatricula(rutaDTO.getCveMatricula());
                 controlRuta.setFechaActualizacion(LocalDate.now());
