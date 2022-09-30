@@ -272,7 +272,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
     }
 
     @Override
-    public Respuesta<Integer> crearRuta(ControlRutasForaneasRequest rutas) {
+    public Respuesta<Integer> crearRuta(ControlRutasForaneasRequest params) {
         // todo - puede que existan solicitudes que no tengan destino
         Respuesta<Integer> response = new Respuesta<>();
         try {
@@ -291,29 +291,22 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
 
             Rutas ruta = new Rutas();
             ruta.setActivo(true);
-            ruta.setCveMatricula(rutas.getCveMatricula());
+            ruta.setCveMatricula(params.getCveMatricula());
             ruta.setFechaAlta(LocalDate.now());
             ruta.setIndiceSistema(true);
             ruta.setIndRutaForanea(true);
 
-//            ArrayList<String> horas = Utility.getHorarioStringByTurno(rutas.getTurno());
-//            if (horas.size() == 2) {
-//                ruta.setTimHorarioInicial(horas.get(0));
-//                ruta.setTimHorarioFinal(horas.get(1));
-//            }
-
-
             log.info("Obtenemos solicitud");
 
             Optional<SolicitudTraslado> solicitud = solicitudTrasladoRepository
-                    .findById(rutas.getIdSolicitudTraslado());
+                    .findById(params.getIdSolicitudTraslado());
 
             if (solicitud.isPresent()) {
                 SolicitudTraslado solicitudTraslado = solicitud.get();
 
+                // ruta origen
                 ruta.setIdOrigen(solicitudTraslado.getCveOrigen());
-                //
-                // todo - cambiar esta llegando vacio
+                // ruta destino
                 ruta.setIdUnidadDestino(solicitudTraslado.getCveDestino() == null ? null : solicitudTraslado.getCveDestino());
                 ruta.setIdUnidadSolcitante(solicitudTraslado.getIdUnidadSolicitante());
 
@@ -324,7 +317,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
 
                 solicitudTrasladoRepository.save(solicitudTraslado);
 
-            } else log.info("Solicitud no encontrado" + rutas.getIdSolicitudTraslado());
+            } else log.info("Solicitud no encontrado" + params.getIdSolicitudTraslado());
 
             //pendiente
             //ruta.setNumFolioRuta(user)
@@ -333,11 +326,6 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
             destinos.setActivo(true);
             destinos.setIdUnidadDestino(ruta.getIdUnidadDestino());
             destinos.setIndiceSistema(true);
-
-//            if (horas.size() == 2) {
-//                destinos.setTimHoraInicio(horas.get(0));
-//                destinos.setTimHoraFin(horas.get(1));
-//            }
 
             destinos.setRuta(ruta);
 
@@ -374,7 +362,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
 
             else log.info("Solicitud no encontrado");
 
-            Optional<Vehiculos> veOp = vehiculoRepository.findById(rutas.getIdVehiculo());
+            Optional<Vehiculos> veOp = vehiculoRepository.findById(params.getIdVehiculo());
             if (veOp.isPresent()) {
                 controlRutas.setIdVehiculo(veOp.get());
                 Vehiculos ve = veOp.get();
@@ -384,25 +372,25 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                 vehiculoRepository.save(ve);
                 log.info(" vehiculo a asignado");
 
-            } else log.info("Vehiculo no encontrado" + rutas.getIdVehiculo());
+            } else log.info("Vehiculo no encontrado" + params.getIdVehiculo());
             //pendiente ver el catalog de status asignado
             controlRutas.setDesEstatusAsigna("1");
             controlRutas.setIndiceSistema(true);
 
-//            Optional<ModuloAmbulancia> moduloOp = moAmbulanciaRepository.findByIdOOADAndActivoEquals(rutas.getIdModulo(), true);
-            Optional<ModuloAmbulancia> moduloOp = moAmbulanciaRepository.findByIdModuloAndActivoEquals(rutas.getIdModulo(), true);
+//            Optional<ModuloAmbulancia> moduloOp = moAmbulanciaRepository.findByIdOOADAndActivoEquals(params.getIdModulo(), true);
+            Optional<ModuloAmbulancia> moduloOp = moAmbulanciaRepository.findByIdModuloAndActivoEquals(params.getIdModulo(), true);
             if (moduloOp.isPresent())
                 controlRutas.setModulo(moduloOp.get());
-            else log.info("modulo no encontrado" + rutas.getIdModulo());
-            log.info("folio.." + rutas.getNumFolioTarjeta());
-            controlRutas.setNumFolioTarjetaCombustible("" + rutas.getNumFolioTarjeta());
+            else log.info("modulo no encontrado" + params.getIdModulo());
+            log.info("folio.." + params.getNumFolioTarjeta());
+            controlRutas.setNumFolioTarjetaCombustible("" + params.getNumFolioTarjeta());
             controlRutas.setRuta(ruta);
-            controlRutas.setFechaInicioAsigna(LocalDate.parse(rutas.getFechaRuta()));
-            controlRutas.setTimInicioAsigna(LocalTime.parse(rutas.getHoraRuta()));
+            controlRutas.setFechaInicioAsigna(LocalDate.parse(params.getFechaRuta()));
+            controlRutas.setTimInicioAsigna(LocalTime.parse(params.getHoraRuta()));
 
-            Optional<Tripulacion> tripOp = tripulacionRepository.findById(rutas.getIdTripulacion());
+            Optional<Tripulacion> tripOp = tripulacionRepository.findById(params.getIdTripulacion());
             if (tripOp.isPresent()) controlRutas.setTripulacion(tripOp.get());
-            else log.info("Tripulacion no encontrado" + rutas.getIdTripulacion());
+            else log.info("Tripulacion no encontrado" + params.getIdTripulacion());
 
             log.info("Guardamos el control de ruta");
 
@@ -411,11 +399,11 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
             // todo - guardar los viaticos
             Viaticos viaticos = new Viaticos();
             viaticos.setControlRutas(controlRutas);
-            viaticos.setViaticosChofer(Double.valueOf(rutas.getViaticosChofer()));
-            viaticos.setViaticosCamillero1(Double.valueOf(rutas.getViaticosCamillero1()));
-            viaticos.setViaticosCamillero2(Double.valueOf(rutas.getViaticosCamillero2()));
-            viaticos.setViaticosCaseta(Double.valueOf(rutas.getViaticosCaseta()));
-            viaticos.setCveMatricula(rutas.getCveMatricula());
+            viaticos.setViaticosChofer(Double.valueOf(params.getViaticosChofer()));
+            viaticos.setViaticosCamillero1(Double.valueOf(params.getViaticosCamillero1()));
+            viaticos.setViaticosCamillero2(Double.valueOf(params.getViaticosCamillero2()));
+            viaticos.setViaticosCaseta(Double.valueOf(params.getViaticosCaseta()));
+            viaticos.setCveMatricula(params.getCveMatricula());
             viaticos.setFecAlta(LocalDate.now());
 
             viaticosRepository.save(viaticos);
