@@ -78,7 +78,7 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 			Gson gson = new Gson();
 			DatosUsuario datosUsuarios = gson.fromJson(usuario, DatosUsuario.class);
 			//Validar si es adminsitrador...
-			final Page<ControlRutas> result = datosUsuarios.getRol().equals("Administrador") || datosUsuarios.getRol().equals("Normativo") || datosUsuarios.IDOOAD == 9 || datosUsuarios.IDOOAD == 39?  controlRutasRepository.findAll(pageable) : controlRutasRepository.findAll(pageable,datosUsuarios.getIDOOAD());
+			final Page<ControlRutas> result = datosUsuarios.getRol().equals("Administrador")  || datosUsuarios.getRol().equals("Operador de Ruta Centracom") || datosUsuarios.getRol().equals("Jefe de Centracom") || datosUsuarios.getRol().equals("Jefe de Modulo de Ambulancias") || datosUsuarios.getRol().equals("Controlador de Rutas Centracom")?  controlRutasRepository.findAll(pageable) : controlRutasRepository.findAll(pageable,datosUsuarios.getIDOOAD());
 		
 			
 			log.info("las rutas, {}", result.getContent().size());
@@ -336,7 +336,7 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 			//Actualizamos folio
 		
 			ruta.setNumFolioRuta(folio);
-			rutasRepository.save(ruta);
+			//rutasRepository.save(ruta);
 			// Generamos registro de control de ruta
 			
 			ControlRutas controlRutas=new ControlRutas();
@@ -358,12 +358,15 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 				 ve.setDesEstatusVehiculo("9");
 				 vehiculoRepository.save(ve);
 				 log.info(" vehiculo a asignado");
+	             ruta.setDesServicio(ve.getDesTipoServicio());
 				 
 			 }
 			 else log.info("Vehiculo no encontrado"+rutas.getIdVehiculo());
+			 rutasRepository.save(ruta);
 			 //pendiente ver el catalog de status asignado
 			 controlRutas.setDesEstatusAsigna("1");
 			 controlRutas.setIndiceSistema(true);
+			 
 			 
 			 Optional<ModuloAmbulancia> moduloOp= moAmbulanciaRepository.findById(rutas.getIdModulo());
 			 if(moduloOp.isPresent())
