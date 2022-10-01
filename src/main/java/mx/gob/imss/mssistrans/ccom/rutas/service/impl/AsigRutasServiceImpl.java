@@ -85,10 +85,11 @@ public class AsigRutasServiceImpl implements AsigRutasService {
         Response<T> respuesta = new Response<>();
         List<RutasAsigEntity> consultaGeneral = null;
         try {
-            if (rol.toUpperCase().equals("ADMINISTRADOR"))
+            if (rol.equals("Administrador") || rol.equals("Normativo") || idOoad == 9 || idOoad == 39) {
                 consultaGeneral = rutasRepository.getRutas();
-            else
+            } else {
                 consultaGeneral = rutasRepository.getRutasByOoad(idOoad);
+            }
         } catch (Exception e) {
             return ValidaDatos.errorException(respuesta, e);
         }
@@ -102,10 +103,11 @@ public class AsigRutasServiceImpl implements AsigRutasService {
         Response<T> respuesta = new Response<>();
         List<SolTrasladoEntity> consultaGeneral = null;
         try {
-            if (datosUsuario.getRol().toUpperCase().equals("ADMINISTRADOR"))
+            if (datosUsuario.rol.equals("Administrador") || datosUsuario.rol.equals("Normativo") || datosUsuario.IDOOAD == 9 || datosUsuario.IDOOAD == 39) {
                 consultaGeneral = solicitudTrasladoRepository.getSolicitudTraslado(idRuta);
-            else
+            } else {
                 consultaGeneral = solicitudTrasladoRepository.getSolicitudTraslado(datosUsuario.getIDOOAD(), idRuta);
+            }
         } catch (Exception e) {
             return ValidaDatos.errorException(respuesta, e);
         }
@@ -201,15 +203,6 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 
         Response<ActualizarControlRutaRequest> respuesta = new Response<>();
         try {
-            // todo - validar si la asignacion se cancelo
-//			if (params.getEstatusRecorrido())
-
-
-            // todo - validar el estatus que llega de la asigancaion para que,
-            // 		- en el caso de un estatus 3 - terminada hay que actualizar el estatus del ecco para que se pueda
-            // 		  en otra solicitud de traslado-> asignacion -> control ruta
-            // todo - hay que actualizar el estatus del control de rutas al 3 - Terminada
-            // 		- tambien hay que considerar que cuando se cancela la asignacion hay que liberar
             final String estatus = params.getEstatusRecorrido();
             final EstatusControlRutasEnum[] values = EstatusControlRutasEnum.values();
             final Optional<EstatusControlRutasEnum> estatusEnum = Arrays
@@ -226,7 +219,7 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 
                 final Integer idRutaDestino = params.getIdRutaDestino();
                 RutasDestinos rutaDestino = rutasDestinoRepository.findById(idRutaDestino)
-                        .orElseThrow(() -> new Exception("No se ha encontrado la ruta destino con id " + idRutaOrigen));
+                        .orElseThrow(() -> new Exception("No se ha encontrado la ruta destino con id " + idRutaDestino));
 
                 rutaOrigen.setHoraInicio(params.getHoraInicioOrigen());
                 rutaOrigen.setHoraFin(params.getHoraFinOrigen());
@@ -237,10 +230,16 @@ public class AsigRutasServiceImpl implements AsigRutasService {
                 rutasDestinoRepository.save(rutaDestino);
 
                 final String estatusAsignacion = estatusEnum.get().getValor();
-                // todo - cambiar el estatus del control de rutas
+
                 final Integer idControlRuta = params.getIdControlRuta();
-                final ControlRutas controlRutas = controlRutasRepository.findByIdControlRuta(idControlRuta)
-                        .orElseThrow(() -> new Exception("No se ha encontrado el control de rutas con id: " + idControlRuta));
+                final Integer idSolicitud = params.getIdSolicitud();
+
+                final ControlRutas controlRutas = idControlRuta != null ?
+                        controlRutasRepository.findByIdControlRuta(idControlRuta)
+                                .orElseThrow(() -> new Exception("No se ha encontrado el control de rutas con id: " + idControlRuta)) :
+                        controlRutasRepository.findByIdSolicitud(idSolicitud)
+                                .orElseThrow(() -> new Exception("No se ha encontrado el control de rutas relacionado a la solicitud: " + idSolicitud));
+
                 controlRutas.setDesEstatusAsigna(estatusAsignacion);
                 controlRutasRepository.save(controlRutas);
 

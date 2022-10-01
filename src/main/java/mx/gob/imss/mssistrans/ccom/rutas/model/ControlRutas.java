@@ -17,37 +17,26 @@ public class ControlRutas implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_CONTROL_RUTA")
     private Integer idControlRuta;
-		
 
     @OneToOne
 	@JoinColumn( name="ID_SOLICITUD")
     private SolicitudTraslado idSolcitud;
-	 
 
     @OneToOne
 	@JoinColumn( name="ID_VEHICULO")
     private Vehiculos idVehiculo;
-    
-   
-    
+
     @Basic
     @Column(name = "DES_ESTATUS_ASIGNA")
     private String desEstatusAsigna;
-    
 
-
-    
-    @Basic
     @OneToOne
 	@JoinColumn( name="ID_TRIPULACION", unique = false, nullable = true)
     private Tripulacion tripulacion;
-    
-    
+
     @Basic
     @Column(name = "NUM_FOLIO_TJTA_COMBUSTIBLE")
     private String numFolioTarjetaCombustible;
-    
-    
 
     @Basic
     @Column(name = "FEC_INICIO_ASIGNA")
@@ -56,17 +45,11 @@ public class ControlRutas implements Serializable {
     @Basic
     @Column(name = "TIM_INICIO_ASIGNA")
     private LocalTime timInicioAsigna;
-    
-    
-    
-    
-    @Basic
+
     @OneToOne
 	@JoinColumn( name="ID_RUTA", unique = false, nullable = true)
-    
     private Rutas ruta;
-    
-    
+
     @OneToOne
 	@JoinColumn( name="ID_MODULO_AMBULANCIA", unique = false, nullable = true)
     private ModuloAmbulancia modulo;
@@ -74,8 +57,7 @@ public class ControlRutas implements Serializable {
     @Basic
     @Column(name = "CVE_MATRICULA")
     private String cveMatricula;
-        
-	
+
     @Basic
     @Column(name = "FEC_ALTA")
     private LocalDate fechaAlta;

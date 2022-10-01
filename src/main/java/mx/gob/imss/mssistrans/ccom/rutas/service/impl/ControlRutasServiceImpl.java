@@ -336,7 +336,7 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 			//Actualizamos folio
 		
 			ruta.setNumFolioRuta(folio);
-			rutasRepository.save(ruta);
+			//rutasRepository.save(ruta);
 			// Generamos registro de control de ruta
 			
 			ControlRutas controlRutas=new ControlRutas();
@@ -358,12 +358,15 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 				 ve.setDesEstatusVehiculo("9");
 				 vehiculoRepository.save(ve);
 				 log.info(" vehiculo a asignado");
+	             ruta.setDesServicio(ve.getDesTipoServicio());
 				 
 			 }
 			 else log.info("Vehiculo no encontrado"+rutas.getIdVehiculo());
+			 rutasRepository.save(ruta);
 			 //pendiente ver el catalog de status asignado
 			 controlRutas.setDesEstatusAsigna("1");
 			 controlRutas.setIndiceSistema(true);
+			 
 			 
 			 Optional<ModuloAmbulancia> moduloOp= moAmbulanciaRepository.findById(rutas.getIdModulo());
 			 if(moduloOp.isPresent())

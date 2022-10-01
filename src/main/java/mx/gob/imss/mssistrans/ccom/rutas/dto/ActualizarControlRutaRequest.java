@@ -7,6 +7,7 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ActualizarControlRutaRequest {
     private Integer idControlRuta;
+    private Integer idSolicitud;
     private String estatusAsignado;
     private String estatusRecorrido;
     private Integer idRutaOrigen;
