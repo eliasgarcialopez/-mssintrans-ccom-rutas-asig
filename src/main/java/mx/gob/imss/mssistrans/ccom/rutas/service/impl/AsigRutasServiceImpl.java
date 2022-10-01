@@ -234,7 +234,7 @@ public class AsigRutasServiceImpl implements AsigRutasService {
                 final Integer idControlRuta = params.getIdControlRuta();
                 final Integer idSolicitud = params.getIdSolicitud();
 
-                final ControlRutas controlRutas = idControlRuta == null ?
+                final ControlRutas controlRutas = idControlRuta != null ?
                         controlRutasRepository.findByIdControlRuta(idControlRuta)
                                 .orElseThrow(() -> new Exception("No se ha encontrado el control de rutas con id: " + idControlRuta)) :
                         controlRutasRepository.findByIdSolicitud(idSolicitud)
