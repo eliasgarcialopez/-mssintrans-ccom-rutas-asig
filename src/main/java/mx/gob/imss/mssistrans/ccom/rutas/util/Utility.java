@@ -128,7 +128,7 @@ public class Utility {
 //	}
 //}
     public static String getAbvFromOOAD(Integer consecutivo) {
-        if (consecutivo < 10) return "0" + consecutivo;
+        if (consecutivo!=null && consecutivo < 10) return "0" + consecutivo;
         else
             return "" + consecutivo;
     }

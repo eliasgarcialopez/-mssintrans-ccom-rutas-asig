@@ -344,10 +344,9 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
 
             //Se obtiene el folio
 
-
             Utility utility = new Utility();
             //pendiente definir las siglas ooad
-            String folio = utility.generateFolio("", ruta.getIdRuta());
+            String folio = utility.generateFolio("", ruta.getIdRuta()!=null?ruta.getIdRuta():1);
             //Actualizamos folio
 
             ruta.setNumFolioRuta(folio);
