@@ -7,6 +7,7 @@ import mx.gob.imss.mssistrans.ccom.rutas.model.*;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.*;
 import mx.gob.imss.mssistrans.ccom.rutas.service.ControlRutasForaneasService;
 import mx.gob.imss.mssistrans.ccom.rutas.util.EstatusSolicitudesEnum;
+import mx.gob.imss.mssistrans.ccom.rutas.util.EstatusVehiculosEnum;
 import mx.gob.imss.mssistrans.ccom.rutas.util.Utility;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.data.domain.Page;
@@ -350,9 +351,8 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
             //Actualizamos folio
 
             ruta.setNumFolioRuta(folio);
-            rutasRepository.save(ruta);
-            // Generamos registro de control de ruta
 
+            // Generamos registro de control de ruta
             ControlRutas controlRutas = new ControlRutas();
             controlRutas.setActivo(true);
             controlRutas.setCveMatricula(ruta.getCveMatricula());
@@ -379,12 +379,15 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
             controlRutas.setIndiceSistema(true);
 
             rutasRepository.save(ruta);
-//            Optional<ModuloAmbulancia> moduloOp = moAmbulanciaRepository.findByIdOOADAndActivoEquals(params.getIdModulo(), true);
+
             Optional<ModuloAmbulancia> moduloOp = moAmbulanciaRepository.findByIdModuloAndActivoEquals(params.getIdModulo(), true);
+
             if (moduloOp.isPresent())
                 controlRutas.setModulo(moduloOp.get());
             else log.info("modulo no encontrado" + params.getIdModulo());
+
             log.info("folio.." + params.getNumFolioTarjeta());
+
             controlRutas.setNumFolioTarjetaCombustible("" + params.getNumFolioTarjeta());
             controlRutas.setRuta(ruta);
             controlRutas.setFechaInicioAsigna(LocalDate.parse(params.getFechaRuta()));
@@ -398,7 +401,6 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
 
             controlRutasForaneasRepository.save(controlRutas);
 
-            // todo - guardar los viaticos
             Viaticos viaticos = new Viaticos();
             viaticos.setControlRutas(controlRutas);
             viaticos.setViaticosChofer(Double.valueOf(params.getViaticosChofer()));
@@ -452,11 +454,6 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                 ruta.setFechaActualizacion(LocalDate.now());
                 ruta.setIndRutaForanea(true);
                 ruta.setIndiceSistema(true);
-                ArrayList<String> horas = Utility.getHorarioStringByTurno(rutaDTO.getTurno());
-//                if (horas.size() == 2) {
-//                    ruta.setTimHorarioInicial(horas.get(0));
-//                    ruta.setTimHorarioFinal(horas.get(1));
-//                }
 
                 Optional<SolicitudTraslado> solicitud = solicitudTrasladoRepository.findById(rutaDTO.getIdSolicitudTraslado());
                 if (solicitud.isPresent()) {
@@ -467,7 +464,9 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                     controlRuta.setIdSolcitud(solicitudTraslado);
 
                     //Ponemos esta solicitud en asiganda
-                    solicitudTraslado.setDesEstatusSolicitud("4");
+                    // todo - hacer un enum para los estatus de la so
+//                    solicitudTraslado.setDesEstatusSolicitud("4");
+                    solicitudTraslado.setDesEstatusSolicitud(EstatusSolicitudesEnum.Asignada.getValor());
                     solicitudTrasladoRepository.save(solicitudTraslado);
                 }
                 //borrando  destinos existentes
@@ -503,7 +502,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                     Vehiculos vehiculo = veOp.get();
                     controlRuta.setIdVehiculo(vehiculo);
                     // todo - ver si se puede implementar el enum para los estatus
-                    vehiculo.setDesEstatusVehiculo("9");//en transito.
+                    vehiculo.setDesEstatusVehiculo(EstatusVehiculosEnum.En_Transito.getValor()); // 9 - En Transito.
                     vehiculoRepository.save(vehiculo);
                     log.info("Vehiculo Asignado" + vehiculo);
                     ruta.setDesServicio(vehiculo.getDesTipoServicio());
@@ -599,7 +598,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
             Optional<Vehiculos> veOp = vehiculoRepository.findById(rutas.getIdVehiculo().getIdVehiculo());
             if (veOp.isPresent()) {
                 Vehiculos ve = veOp.get();
-                ve.setDesEstatusVehiculo("8");
+                ve.setDesEstatusVehiculo(EstatusVehiculosEnum.En_Operacion.getValor()); // 8 - En Operacion
                 vehiculoRepository.save(ve);
                 log.info(" Se cambio estatus de vehiculo a 8");
 
@@ -608,7 +607,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
             Optional<SolicitudTraslado> solicitud = solicitudTrasladoRepository.findById(rutas.getIdSolcitud().getIdSolicitud());
             if (solicitud.isPresent()) {
                 SolicitudTraslado solicitudTraslado = solicitud.get();
-                solicitudTraslado.setDesEstatusSolicitud("1");
+                solicitudTraslado.setDesEstatusSolicitud(EstatusSolicitudesEnum.Aceptada.getValor());
                 solicitudTrasladoRepository.save(solicitudTraslado);
             } else log.info("Solicitud no encontrado" + rutas.getIdSolcitud().getIdSolicitud());
 
