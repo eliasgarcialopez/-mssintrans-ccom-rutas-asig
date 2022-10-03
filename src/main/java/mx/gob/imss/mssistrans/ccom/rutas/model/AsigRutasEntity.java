@@ -40,5 +40,8 @@ public class AsigRutasEntity {
 	@Column(name = "ID_RUTA", unique = false, nullable = true)
 	private String idRuta;
 	
+	@Column(name = "ID_REASIGNACION", unique = false, nullable = true)
+	private String idReasignacion;
+	
 }
 
