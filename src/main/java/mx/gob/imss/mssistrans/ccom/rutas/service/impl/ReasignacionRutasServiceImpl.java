@@ -210,7 +210,7 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 				getTripulante2 = camillero02Repository.getCamillero2(idControlRuta);
 			}
 		if (getChofer != null) {
-			tripulacionAsigEntity.setIdControlRuta(idControlRuta.toString());
+			tripulacionAsigEntity.setIdControlRuta(idControlRuta!=null?idControlRuta.toString():"");
 			tripulacionAsigEntity.setIdPersonalAmbulancia(getChofer.getIdPersonalAmbulancia());
 			tripulacionAsigEntity.setIdChofer(getChofer.getIdChofer());
 			tripulacionAsigEntity.setNombreChofer(getChofer.getNomTripulante());
