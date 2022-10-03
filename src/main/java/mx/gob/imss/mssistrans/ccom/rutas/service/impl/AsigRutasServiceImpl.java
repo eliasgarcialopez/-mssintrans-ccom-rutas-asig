@@ -363,15 +363,14 @@ public class AsigRutasServiceImpl implements AsigRutasService {
     @Override
     public <T> Response getDatosControlRutaById(Integer idControlRuta) {
         Response<T> respuesta = new Response<>();
-        DatosAsigEntity consultaGeneral = null;
+        DatosControlRutaDTO datosControlRutaDTO = new DatosControlRutaDTO();
         try {
-            consultaGeneral = datosRepository.getDatosByIdCtrlRuta(idControlRuta);
+            datosControlRutaDTO = datosRepository.getDatosControlRutaByIdCtrlRuta(idControlRuta);
         } catch (Exception e) {
             return ValidaDatos.errorException(respuesta, e);
         }
 
-        DatosAsigResponse listaDeSolicituTraslado = DatosAsigMapper.INSTANCE.EntityAJson(consultaGeneral);
-        return ValidaDatos.resp(respuesta, "Exito", listaDeSolicituTraslado);
+        return ValidaDatos.resp(respuesta, "Exito", datosControlRutaDTO);
     }
 
 }

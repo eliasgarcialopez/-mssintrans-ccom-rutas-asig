@@ -4,8 +4,11 @@ package mx.gob.imss.mssistrans.ccom.rutas.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosControlRutaDTO;
+import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosRegistroRecorridoDTO;
 import mx.gob.imss.mssistrans.ccom.rutas.model.DatosAsigEntity;
 
 @Repository
@@ -50,4 +53,14 @@ public interface DatosAsigRepository extends JpaRepository<DatosAsigEntity, Inte
     		+ "	AND SCR.IND_ACTIVO = 1 AND SCR.ID_CONTROL_RUTA = ? "
             ,nativeQuery = true)
     DatosAsigEntity getDatosByIdCtrlRuta( Integer idControlRuta );
+    
+    @Query("SELECT new mx.gob.imss.mssistrans.ccom.rutas.dto.DatosControlRutaDTO("
+            + " cr.idControlRuta,vh.idVehiculo, vh.cveEcco, vh.numPlacas, cr.ruta.idRuta, cr.idSolcitud.idSolicitud,"
+            + " cr.desEstatusAsigna, cr.desTipoIncidente) "
+            + " FROM ControlRutas AS cr "
+            + " INNER JOIN Vehiculos AS vh ON vh.idVehiculo = cr.idVehiculo.idVehiculo "
+            + " WHERE cr.indiceSistema = true "
+            + " AND cr.activo = true "
+            + " AND cr.idControlRuta = :idControlRuta")
+    DatosControlRutaDTO getDatosControlRutaByIdCtrlRuta(@Param("idControlRuta") Integer idControlRuta);
 }
