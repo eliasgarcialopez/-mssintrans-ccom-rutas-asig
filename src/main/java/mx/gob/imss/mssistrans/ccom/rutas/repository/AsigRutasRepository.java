@@ -100,6 +100,18 @@ public interface AsigRutasRepository extends JpaRepository<AsigRutasEntity, Inte
 			+ " WHERE IND_ACTIVO = 1 AND ID_CONTROL_RUTA = ? "
 			,nativeQuery = true )
 	void delete ( String idControlRuta );
+
+	@Modifying(flushAutomatically = true)
+	@Query(value = "UPDATE SINTRANST_REASIGNACION_RUTAS SET FEC_BAJA = CURRENT_TIMESTAMP(), IND_ACTIVO = 0"
+			+ " WHERE IND_ACTIVO = 1 AND ID_REASIGNACION = ? "
+			,nativeQuery = true )
+	void deleteReasignacion ( String idReasignacion );
+
+	@Modifying(flushAutomatically = true)
+	@Query(value = "UPDATE SINTRANST_CONTROL_RUTAS SET DES_ESTATUS_ASIGNA='1' "
+			+ " WHERE ID_CONTROL_RUTA IN (SELECT DISTINCT  scr.ID_CONTROL_RUTA  FROM SINTRANST_REASIGNACION_RUTAS sra JOIN SINTRANST_CONTROL_RUTAS scr ON (scr.ID_RUTA=sra.ID_RUTA) WHERE sra.IND_ACTIVO =1 AND scr.IND_ACTIVO =1 AND sra.ID_REASIGNACION=?) "
+			,nativeQuery = true )
+	void actalizarCOntrolRutasReasignacion ( String idReasignacion );
 	
     @Query(value = "SELECT SR.ID_RUTA, SR.NUM_FOLIO_RUTA AS NUM_FOLIO_RUTA, SCR.ID_SOLICITUD AS ID_SOLICITUD, SV.CVE_ECCO AS CVE_ECCO"
     		+ " , SCR.DES_ESTATUS_ASIGNA AS DES_ESTATUS_ASIGNA, SCR.ID_CONTROL_RUTA AS ID_CONTROL_RUTA, SV.ID_VEHICULO AS ID_VEHICULO"
