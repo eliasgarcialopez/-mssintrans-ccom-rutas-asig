@@ -94,13 +94,13 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 			Page consultaAsignacionRutas = null;
 			if (idRuta == null || idRuta.equals(""))
 				if (idSolicitud == null || idSolicitud.equals(""))
-					consultaAsignacionRutas = asigRutasRepository.consultaGeneral(page);
+					consultaAsignacionRutas = asigRutasRepository.consultaGeneralRasignaciones(page);
 				else
-					consultaAsignacionRutas = asigRutasRepository.getConsultaByIdSolicitud(idSolicitud, page);
+					consultaAsignacionRutas = asigRutasRepository.getConsultaByIdSolicitudReasignaciones(idSolicitud, page);
 			else if (idSolicitud == null || idSolicitud.equals(""))
-				consultaAsignacionRutas = asigRutasRepository.getConsultaByIdAsignacion(idRuta, page);
+				consultaAsignacionRutas = asigRutasRepository.getConsultaByIdAsignacionReasignaciones(idRuta, page);
 			else
-				consultaAsignacionRutas = asigRutasRepository.getConsultaById(idRuta, idSolicitud, page);
+				consultaAsignacionRutas = asigRutasRepository.getConsultaByIdReasignaciones(idRuta, idSolicitud, page);
 			final List<AsigRutasResponse> content = (List<AsigRutasResponse>) AsigRutasMapper.INSTANCE
 					.formatearListaArrendados(consultaAsignacionRutas.getContent());
 
