@@ -244,7 +244,7 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 
                 controlRutas.setDesEstatusAsigna(estatusAsignacion);
                 // todo - agregar un enum para el tipo de incidente cuando se tenga el catalogo
-                controlRutas.setDesTipoIncidente(params.getIdIncidente());
+                controlRutas.setDesTipoIncidente(params.getIdTipoIncidente());
                 controlRutasRepository.save(controlRutas);
 
                 // se libera solo cuando esta terminada o cancelada
