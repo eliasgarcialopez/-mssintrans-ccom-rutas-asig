@@ -119,7 +119,10 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 	public Response delete(String idReAsignacion) {
 		Response respuesta = new Response<>();
 		try {
-			asigRutasRepository.delete(idReAsignacion);
+			asigRutasRepository.deleteReasignacion(idReAsignacion);
+			asigRutasRepository.flush();
+
+			asigRutasRepository.actalizarCOntrolRutasReasignacion(idReAsignacion);
 			asigRutasRepository.flush();
 			return ValidaDatos.resp(respuesta, "Exito", null);
 		} catch (Exception e) {

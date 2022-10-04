@@ -31,7 +31,10 @@ public class AsigRutasResponse {
 
 	@JsonProperty
 	private String idVehiculo;
+	
 	@JsonProperty
 	private String idRuta;
 	
+	@JsonProperty
+	private String idReasignacion;
 }
