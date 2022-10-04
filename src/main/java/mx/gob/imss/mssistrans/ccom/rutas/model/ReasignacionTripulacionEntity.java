@@ -44,5 +44,9 @@ public class ReasignacionTripulacionEntity {
 	@Column(name = "DES_SINIESTRO", unique = false, nullable = true)
 	private String desSiniestro;
 
+	@Column(name = "ID_REASIGNACION", unique = false, nullable = true)
+	private String idReasignacion;
+	
+
 }
 
