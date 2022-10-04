@@ -162,14 +162,15 @@
 				<text><![CDATA[Placas:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="22" y="105" width="128" height="13" uuid="83fa62cb-385a-420a-b7ca-fec05bfda9b5">
+				<reportElement x="22" y="105" width="131" height="13" uuid="83fa62cb-385a-420a-b7ca-fec05bfda9b5">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<text><![CDATA[Tipo de servcio de la ruta:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="154" y="105" width="100" height="13" uuid="5346daa5-51a9-458d-be2f-c1ad883b9123">
+				<reportElement x="156" y="105" width="100" height="13" uuid="5346daa5-51a9-458d-be2f-c1ad883b9123">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
@@ -208,7 +209,7 @@
 				<textFieldExpression><![CDATA[$P{tipoServicio}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="154" y="118" width="100" height="13" uuid="2b51df0f-cd3b-4e19-aac3-810583862576">
+				<reportElement x="156" y="118" width="100" height="13" uuid="2b51df0f-cd3b-4e19-aac3-810583862576">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
