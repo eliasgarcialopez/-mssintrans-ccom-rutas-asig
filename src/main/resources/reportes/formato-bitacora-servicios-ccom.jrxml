@@ -162,7 +162,7 @@
 				<text><![CDATA[Placas:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="22" y="105" width="131" height="13" uuid="83fa62cb-385a-420a-b7ca-fec05bfda9b5">
+				<reportElement x="22" y="105" width="132" height="13" uuid="83fa62cb-385a-420a-b7ca-fec05bfda9b5">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -202,7 +202,7 @@
 				<textFieldExpression><![CDATA[$P{modelo}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="22" y="118" width="100" height="13" uuid="15e62114-937c-41c1-8f94-8ea74d6ec59c">
+				<reportElement x="22" y="118" width="128" height="13" uuid="15e62114-937c-41c1-8f94-8ea74d6ec59c">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -216,7 +216,7 @@
 				<textFieldExpression><![CDATA[$P{idRuta}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="411" y="19" width="115" height="13" uuid="e7ec0362-9a2f-414b-a080-547652f5cca3">
+				<reportElement x="411" y="19" width="129" height="13" uuid="e7ec0362-9a2f-414b-a080-547652f5cca3">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle"/>
@@ -438,13 +438,14 @@
 				<text><![CDATA[Firma del chofer]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="11" y="551" width="116" height="15" uuid="9e861410-443a-419b-8173-47ba0f5f6e98">
+				<reportElement x="11" y="551" width="260" height="15" uuid="9e861410-443a-419b-8173-47ba0f5f6e98">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Nombre que entregó*:]]></text>
+				<text><![CDATA[Nombre y firma del responsable administrativo*:]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="291" y="551" width="134" height="15" uuid="d91846bb-4c01-4fce-9d79-109adad4dab6">
@@ -453,7 +454,7 @@
 				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Nombre que recibió*:]]></text>
+				<text><![CDATA[Observaciones*:]]></text>
 			</staticText>
 			<rectangle radius="5">
 				<reportElement x="9" y="571" width="275" height="37" uuid="f84524ec-4c74-4468-aa5d-e4dfc3f3f2c7">
@@ -473,13 +474,14 @@
 				</graphicElement>
 			</rectangle>
 			<staticText>
-				<reportElement x="11" y="510" width="140" height="15" uuid="921b7324-aa27-4f36-a2b5-b852b7bf9aa8">
+				<reportElement x="11" y="510" width="155" height="15" uuid="921b7324-aa27-4f36-a2b5-b852b7bf9aa8">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Total de servicios del mes*:]]></text>
+				<text><![CDATA[Total servicios del mes*:]]></text>
 			</staticText>
 			<rectangle radius="5">
 				<reportElement x="11" y="527" width="143" height="19" uuid="b498a8e0-78bd-48be-809c-70f890e5489a">
@@ -491,13 +493,14 @@
 				</graphicElement>
 			</rectangle>
 			<staticText>
-				<reportElement x="171" y="510" width="140" height="15" uuid="7df45ce4-50ce-4f48-bb73-58365dc684e8">
+				<reportElement x="171" y="510" width="150" height="15" uuid="7df45ce4-50ce-4f48-bb73-58365dc684e8">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Total de servicios del mes*:]]></text>
+				<text><![CDATA[Total combustible*:]]></text>
 			</staticText>
 			<rectangle radius="5">
 				<reportElement x="171" y="527" width="143" height="19" uuid="251e8208-9fb8-47c5-b7ac-b94ac0a105c0">
@@ -554,7 +557,7 @@
 				<text><![CDATA[Camillero 2:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="22" y="75" width="100" height="13" uuid="fc5b68e0-34cd-4a3b-81bd-dabe6d994e69">
+				<reportElement x="22" y="75" width="118" height="13" uuid="fc5b68e0-34cd-4a3b-81bd-dabe6d994e69">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textFieldExpression><![CDATA[$P{tripulacion}]]></textFieldExpression>
