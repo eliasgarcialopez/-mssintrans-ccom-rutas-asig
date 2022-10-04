@@ -16,4 +16,5 @@ public class ActualizarControlRutaRequest {
     private Integer idRutaDestino;
     private String horaInicioDestino;
     private String horaFinDestino;
+    private String idIncidente; // validar el nombre del campo
 }

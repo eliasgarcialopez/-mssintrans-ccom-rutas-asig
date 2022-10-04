@@ -71,6 +71,8 @@ public class AsigRutasServiceImpl implements AsigRutasService {
     public Response delete(String idControlRuta) {
         Response respuesta = new Response<>();
         try {
+            // todo - hay que regresar al paso anterior la asignacion de ruta
+            //      - en este punto cuando se elmin
             asigRutasRepository.delete(idControlRuta);
             asigRutasRepository.flush();
             return ValidaDatos.resp(respuesta, "Exito", null);
@@ -241,6 +243,8 @@ public class AsigRutasServiceImpl implements AsigRutasService {
                                 .orElseThrow(() -> new Exception("No se ha encontrado el control de rutas relacionado a la solicitud: " + idSolicitud));
 
                 controlRutas.setDesEstatusAsigna(estatusAsignacion);
+                // todo - agregar un enum para el tipo de incidente cuando se tenga el catalogo
+                controlRutas.setDesTipoIncidente(params.getIdIncidente());
                 controlRutasRepository.save(controlRutas);
 
                 // se libera solo cuando esta terminada o cancelada

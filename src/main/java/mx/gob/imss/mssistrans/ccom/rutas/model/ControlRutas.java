@@ -74,6 +74,6 @@ public class ControlRutas implements Serializable {
     @Column(name = "IND_SISTEMA")
     private boolean indiceSistema;
     
-    @Column(name = "DES_TIPO_INCIDENTE", unique = false, nullable = true)
+    @Column(name = "DES_TIPO_INCIDENTE")
     private String desTipoIncidente;
 }
