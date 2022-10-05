@@ -56,7 +56,11 @@ public class SolicitudTrasladoServiceImpl implements SolicitudTrasladoService {
 
 				List<SolicitudTraslado> result = new ArrayList<SolicitudTraslado>();
 				final LocalDate fechaActual = LocalDate.now();
-				result = solicitudTrasladoRepository.findSolicitudTrasladoAceptadas(15);
+				if (datosUsuario.rol.equals("Administrador") || datosUsuario.rol.equals("Normativo") || datosUsuario.IDOOAD == 9 || datosUsuario.IDOOAD == 39) {
+					result = solicitudTrasladoRepository.findSolicitudTrasladoAceptadasAdmin();
+				} else {
+					result = solicitudTrasladoRepository.findSolicitudTrasladoAceptadas(datosUsuario.IDOOAD);
+				}
 
 	            log.info("solicitudes, {}", result.size());
 	            List<SolicitudTrasladoResponse> content = new ArrayList<>();
