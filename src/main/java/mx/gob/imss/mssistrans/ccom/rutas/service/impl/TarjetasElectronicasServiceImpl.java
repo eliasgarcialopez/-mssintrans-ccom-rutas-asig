@@ -54,20 +54,22 @@ public class TarjetasElectronicasServiceImpl implements TarjetasElectronicasServ
 			DatosUsuario datosUsuarios = gson.fromJson(usuario, DatosUsuario.class);
 			log.info("usuario {}", usuario);
 			
-            TarjetasElectronicas tarjetaEntity = tarjetasRepository.findTarjetasDigitalesByOoad(datosUsuarios.getIDOOAD());
+            List<TarjetasElectronicas> tarjetaEntity = tarjetasRepository.findTarjetasDigitalesByOoad(datosUsuarios.getIDOOAD());
             
             log.info("consultando folios "+tarjetaEntity);
 			
             ArrayList<String> lstTarjetasUsadas = controlRutasRepository.findTarjetasByOoad(datosUsuarios.getIDOOAD()); // Para descartar tarjetas utilizadas
-            if(tarjetaEntity!=null) {
-            
-            int folioInicial = Integer.parseInt(tarjetaEntity.getNumFolioInicial());
-            int folioFinal = Integer.parseInt(tarjetaEntity.getNumFolioFinal());
-            for (int i = folioInicial; i <= folioFinal; i++) {
-                CatalogoGenerico catalogo = new CatalogoGenerico(i, String.format("%010d", i), tarjetaEntity.getIdTarjetaElectronica());
-                if (lstTarjetasUsadas.contains(String.format("%010d", i))) continue;
-                lstTarjetas.add(catalogo);
-            }
+            if(!tarjetaEntity.isEmpty()){
+                for(TarjetasElectronicas tarj: tarjetaEntity) {
+
+                    int folioInicial = Integer.parseInt(tarj.getNumFolioInicial());
+                    int folioFinal = Integer.parseInt(tarj.getNumFolioFinal());
+                    for (int i = folioInicial; i <= folioFinal; i++) {
+                        CatalogoGenerico catalogo = new CatalogoGenerico(i, String.format("%010d", i), tarj.getIdTarjetaElectronica());
+                        if (lstTarjetasUsadas.contains(String.format("%010d", i))) continue;
+                        lstTarjetas.add(catalogo);
+                    }
+                }
             response.setDatos(lstTarjetas);
             response.setCodigo(HttpStatus.OK.value());
             response.setMensaje("Exito");
