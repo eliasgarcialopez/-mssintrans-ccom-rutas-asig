@@ -31,7 +31,7 @@ public class Arrendatarios {
 	private String nomArrendadora;
 	
 	@Column(name = "NUM_CONTRATO", unique = false, nullable = true)
-	private Long numContrato;
+	private String numContrato;
 	
 	@Column(name = "FEC_INI_CONTRATO", unique = false, nullable = true)
 	private Date fecIniContrato;
