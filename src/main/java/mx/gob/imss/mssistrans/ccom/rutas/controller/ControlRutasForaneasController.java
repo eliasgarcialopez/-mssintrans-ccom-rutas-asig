@@ -1,7 +1,6 @@
 package mx.gob.imss.mssistrans.ccom.rutas.controller;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.*;
 import mx.gob.imss.mssistrans.ccom.rutas.service.ControlRutasForaneasService;
 import org.springframework.data.domain.PageRequest;
@@ -18,7 +17,6 @@ import java.util.Map;
 
 
 @AllArgsConstructor
-@Slf4j
 @RestController
 @RequestMapping("/asignaciones-foraneas")
 @CrossOrigin(methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})

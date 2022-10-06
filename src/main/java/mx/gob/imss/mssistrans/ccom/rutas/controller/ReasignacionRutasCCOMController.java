@@ -92,7 +92,6 @@ public class ReasignacionRutasCCOMController {
 			respuesta = ValidaDatos.noAutorizado(respuesta);
 			return new ResponseEntity<>(respuesta, HttpStatus.OK);
 		} else {
-			//DatosUsuarioDTO datosUsuario = ValidaDatos.datosUsuarios();
 			Response response = reasignacionRutasServiceImpl.getEcco();
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}

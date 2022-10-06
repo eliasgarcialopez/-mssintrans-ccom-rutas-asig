@@ -49,8 +49,6 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 	private SolicitudTrasladoRepository solRepository;
 	@Autowired
 	private TripulacionRepository tripulacionRepository;
-	@Autowired
-	 private UsuarioRepository usuarioRepository;
 	
 	@Autowired
 	private ZonaAtencionRepository zonaAtencionRepository;
@@ -129,13 +127,6 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 				return response;
 			}
             log.info("Consultando la ruta");
-            Gson gson = new Gson();
-			DatosUsuario datosUsuarios = gson.fromJson(user, DatosUsuario.class);
-		    
-		    
-		//  Optional<ModuloAmbulancia> opModulo=moAmbulanciaRepository.findByIdOOADAndActivoEquals(idOOAD, true);
-		    
-		    
 		     
              Optional<ControlRutas>  result=controlRutasRepository.findByIdControlRuta(idControlRuta);            
              ControlRutasResponse rutasResponse=new ControlRutasResponse();
@@ -203,13 +194,11 @@ public class ControlRutasServiceImpl implements ControlRutasService {
   		        	tripRes.setCveMatriculaCamillero1(tripOp.getcveMatriculaCamillero1());
   		        	tripRes.setCveMatriculaCamillero2(tripOp.getcveMatriculaCamillero2());
   		        	tripRes.setCveMatriculaChofer(tripOp.getcveMatriculaChofer());
-  		        	
-  		        	//Usuario camillero1=usuarioRepository.getUsuario(tripulacion.getPersonalCamillero1().getCamillero().getCveMatricula());
-  		        	tripRes.setNombreCamillero1(tripOp.getnombreCamillero1());
 
-  		        	//Usuario  camillero2=usuarioRepository.getUsuario(tripulacion.getPersonalCamillero2().getCamillero().getCveMatricula());
+  		        	tripRes.setNombreCamillero1(tripOp.getnombreCamillero1());
+  		        	
   		        	tripRes.setNombreCamillero2(tripOp.getnombreCamillero2());
-  		        	//Usuario  chofer=usuarioRepository.getUsuario(tripulacion.getPersonalChofer().getChofer().getMatriculaChofer());
+  		        	
   		        	tripRes.setNombreChofer(tripOp.getnombreChofer());
   					
 
@@ -259,8 +248,8 @@ public class ControlRutasServiceImpl implements ControlRutasService {
         }
         return response;
 	}
+	
     @Transactional
-
 	public Respuesta<Integer> crearRuta(ControlRutasRequest rutas) {
 		Respuesta<Integer> response = new Respuesta<>();
 		try {// Pendiente crear el campo foliador....
@@ -404,9 +393,10 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 		}
 		return response;
 	}
-@Transactional
+    
+    @Transactional
 	public Respuesta<Integer> editarRuta(Integer idControlRuta, ControlRutasRequest rutaDTO) {
-Respuesta<Integer> response = new Respuesta<>();
+		Respuesta<Integer> response = new Respuesta<>();
 		
 		try {
 			
@@ -428,7 +418,7 @@ Respuesta<Integer> response = new Respuesta<>();
 			Rutas ruta=  contRuta.getRuta();
 			
 			ruta.setActivo(true);
-			ruta.setCveMatricula(rutaDTO.getCveMatricula());			
+			ruta.setCveMatriculaModifica(rutaDTO.getCveMatricula());		
 			ruta.setFechaActualizacion(LocalDate.now());
 			ruta.setIndiceSistema(true);
 			ArrayList<String> horas= Utility.getHorarioStringByTurno(rutaDTO.getTurno());
@@ -464,7 +454,6 @@ Respuesta<Integer> response = new Respuesta<>();
 			RutasDestinos destinos=new RutasDestinos();
 			destinos.setActivo(true);
 			destinos.setIdUnidadDestino(ruta.getIdUnidadDestino());
-			;
 			destinos.setIndiceSistema(true);
 			if(horas.size()==2) {
 				destinos.setTimHoraInicio(horas.get(0));
@@ -492,8 +481,7 @@ Respuesta<Integer> response = new Respuesta<>();
 				
 			 
 			 }
-			 
-			 contRuta.setCveMatricula(rutaDTO.getCveMatricula());
+			 contRuta.setCveMatriculaModifica(rutaDTO.getCveMatricula());
 			 contRuta.setFechaActualizacion(LocalDate.now());
 			 contRuta.setNumFolioTarjetaCombustible(""+rutaDTO.getNumFolioTarjeta());
 			 contRuta.setTimInicioAsigna(LocalTime.parse(rutaDTO.getHoraRuta()));
@@ -535,8 +523,8 @@ Respuesta<Integer> response = new Respuesta<>();
 		}
 		return response;
 	}
-@Transactional
-	
+    
+    @Transactional
 	public Respuesta<Integer> eliminarRutas(Integer idControlRuta) {
 		Respuesta<Integer> response = new Respuesta<>();
 		try {
@@ -556,7 +544,7 @@ Respuesta<Integer> response = new Respuesta<>();
 
 			Gson gson = new Gson();
 			DatosUsuario datosUsuarios = gson.fromJson(user, DatosUsuario.class);
-			rutas.setCveMatricula(datosUsuarios.getMatricula());
+			rutas.setCveMatriculaBaja(datosUsuarios.getMatricula());
 			
             Optional<Vehiculos> veOp = vehiculoRepository.findById(rutas.getIdVehiculo().getIdVehiculo());
             if (veOp.isPresent()) {
@@ -580,8 +568,8 @@ Respuesta<Integer> response = new Respuesta<>();
 			log.info("Eliminando la  ruta");
 			Rutas ruta = rutasRepository.findById(rutas.getRuta().getIdRuta()).orElseThrow(Exception::new);
 			ruta.setFechaBaja(LocalDate.now());
-			ruta.setActivo(false);	
-			ruta.setCveMatricula(datosUsuarios.getMatricula());
+			ruta.setActivo(false);
+			rutas.setCveMatriculaBaja(datosUsuarios.getMatricula());
 			
 			
 			rutasRepository.save(ruta);
@@ -601,7 +589,7 @@ Respuesta<Integer> response = new Respuesta<>();
 	}
 
 	@Override
-public Respuesta<ControlRutasTotalesResponse> consultarTotalesVehiculos() {
+	public Respuesta<ControlRutasTotalesResponse> consultarTotalesVehiculos() {
 	Respuesta<ControlRutasTotalesResponse> response = new Respuesta<>();
     try {
     	String user = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

@@ -16,6 +16,11 @@ import java.util.List;
 @Getter
 @Setter
 public class Rutas implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5949896740070481496L;
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_RUTA")
@@ -35,7 +40,7 @@ public class Rutas implements Serializable {
 	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "ID_RUTA") 
     @JsonManagedReference
-	private List<RutasDestinos> destinos=new ArrayList();
+	private List<RutasDestinos> destinos=new ArrayList<>();
     @Basic
     @Column(name = "DES_CODIGO_POSTAL")
     private String desCodigoPostal;
@@ -111,6 +116,12 @@ public class Rutas implements Serializable {
     @Basic
     @Column(name = "CVE_MATRICULA")
     private String cveMatricula;
+    @Basic
+    @Column(name = "CVE_MATRICULA_MODIFICA")
+    private String cveMatriculaModifica;
+    @Basic
+    @Column(name = "CVE_MATRICULA_BAJA")
+    private String cveMatriculaBaja;
     @Basic
     @Column(name = "FEC_ALTA")
     private LocalDate fechaAlta;

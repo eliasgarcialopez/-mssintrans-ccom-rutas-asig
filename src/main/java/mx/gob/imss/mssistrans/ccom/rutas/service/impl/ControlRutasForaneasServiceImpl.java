@@ -33,7 +33,6 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
     private final UnidadAdscripcionRepository unidadAdscripcionRepository;
     private final ModuloAmbulanciaRepository moAmbulanciaRepository;
     private final VehiculosRepository vehiculoRepository;
-    private final UsuarioRepository usuarioRepository;
     private final SolicitudTrasladoRepository solicitudTrasladoRepository;
     private final RutasRepository rutasRepository;
     private final TripulacionRepository tripulacionRepository;
@@ -46,7 +45,6 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
             UnidadAdscripcionRepository unidadAdscripcionRepository,
             ModuloAmbulanciaRepository moAmbulanciaRepository,
             VehiculosRepository vehiculoRepository,
-            UsuarioRepository usuarioRepository,
             SolicitudTrasladoRepository solicitudTrasladoRepository,
             RutasRepository rutasRepository,
             TripulacionRepository tripulacionRepository,
@@ -57,7 +55,6 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
         this.unidadAdscripcionRepository = unidadAdscripcionRepository;
         this.moAmbulanciaRepository = moAmbulanciaRepository;
         this.vehiculoRepository = vehiculoRepository;
-        this.usuarioRepository = usuarioRepository;
         this.solicitudTrasladoRepository = solicitudTrasladoRepository;
         this.rutasRepository = rutasRepository;
         this.tripulacionRepository = tripulacionRepository;
@@ -449,7 +446,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                 Rutas ruta = controlRuta.getRuta();
 
                 ruta.setActivo(true);
-                ruta.setCveMatricula(rutaDTO.getCveMatricula());
+                ruta.setCveMatriculaModifica(rutaDTO.getCveMatricula());
                 ruta.setFechaActualizacion(LocalDate.now());
                 ruta.setIndRutaForanea(true);
                 ruta.setIndiceSistema(true);
@@ -480,19 +477,12 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                 destinos.setActivo(true);
                 destinos.setIdUnidadDestino(ruta.getIdUnidadDestino());
                 destinos.setIndiceSistema(true);
-//                if (horas.size() == 2) {
-//                    destinos.setTimHoraInicio(horas.get(0));
-//                    destinos.setTimHoraFin(horas.get(1));
-//                }
                 destinos.setRuta(ruta);
-                //destinosRepository.save(destinos);
+                
                 log.info("destinos agregados");
                 ruta.getDestinos().clear();
                 ruta.getDestinos().add(destinos);
                 ruta.setFechaActualizacion(LocalDate.now());
-
-//                rutasRepository.save(ruta);
-//                log.info("Ruta Actualizada");
 
                 controlRuta.setRuta(ruta);
                 Optional<Vehiculos> veOp = vehiculoRepository.findById(rutaDTO.getIdVehiculo());
@@ -509,15 +499,12 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
 
                 rutasRepository.save(ruta);
                 log.info("Ruta Actualizada");
-
-                controlRuta.setCveMatricula(rutaDTO.getCveMatricula());
+                controlRuta.setCveMatriculaModifica(rutaDTO.getCveMatricula());
                 controlRuta.setFechaActualizacion(LocalDate.now());
                 controlRuta.setNumFolioTarjetaCombustible("" + rutaDTO.getNumFolioTarjeta());
                 controlRuta.setTimInicioAsigna(LocalTime.parse(rutaDTO.getHoraRuta()));
                 controlRuta.setFechaInicioAsigna(LocalDate.parse(rutaDTO.getFechaRuta()));
-
-
-//                Optional<ModuloAmbulancia> moduloOp = moAmbulanciaRepository.findByIdOOADAndActivoEquals(rutaDTO.getIdModulo(), true);
+                
                 Optional<ModuloAmbulancia> moduloOp = moAmbulanciaRepository.findByIdModuloAndActivoEquals(rutaDTO.getIdModulo(), true);
                 if (moduloOp.isPresent())
                     controlRuta.setModulo(moduloOp.get());
@@ -534,8 +521,6 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                 final Viaticos viaticosRecuperados = viaticosRepository
                         .findByControlRutasIdControlRuta(controlRuta.getIdControlRuta());
 
-//                viaticosRepository.delete(viaticosRecuperados);
-
                 Viaticos viaticos = new Viaticos();
                 viaticos.setIdViaticos(viaticosRecuperados.getIdViaticos());
                 viaticos.setControlRutas(controlRuta);
@@ -543,7 +528,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                 viaticos.setViaticosCamillero1(Double.valueOf(rutaDTO.getViaticosCamillero1()));
                 viaticos.setViaticosCamillero2(Double.valueOf(rutaDTO.getViaticosCamillero2()));
                 viaticos.setViaticosCaseta(Double.valueOf(rutaDTO.getViaticosCaseta()));
-                viaticos.setCveMatricula(rutaDTO.getCveMatricula());
+                viaticos.setCveMatriculaModifica(rutaDTO.getCveMatricula());
                 viaticos.setFecActualizacion(LocalDate.now());
 
                 viaticosRepository.save(viaticos);
@@ -592,7 +577,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
 
             Gson gson = new Gson();
             DatosUsuario datosUsuarios = gson.fromJson(user, DatosUsuario.class);
-            rutas.setCveMatricula(datosUsuarios.getMatricula());
+            rutas.setCveMatriculaBaja(datosUsuarios.getMatricula());
 
             Optional<Vehiculos> veOp = vehiculoRepository.findById(rutas.getIdVehiculo().getIdVehiculo());
             if (veOp.isPresent()) {
@@ -616,7 +601,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
             Rutas ruta = rutasRepository.findById(rutas.getRuta().getIdRuta()).orElseThrow(Exception::new);
             ruta.setFechaBaja(LocalDate.now());
             ruta.setActivo(false);
-            ruta.setCveMatricula(datosUsuarios.getMatricula());
+            ruta.setCveMatriculaBaja(datosUsuarios.getMatricula());
 
 
             rutasRepository.save(ruta);

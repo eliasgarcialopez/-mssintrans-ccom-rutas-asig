@@ -13,6 +13,11 @@ import java.time.LocalTime;
 @Getter
 @Setter
 public class ControlRutas implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1317086005752958240L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_CONTROL_RUTA")
@@ -57,6 +62,14 @@ public class ControlRutas implements Serializable {
     @Basic
     @Column(name = "CVE_MATRICULA")
     private String cveMatricula;
+    
+    @Basic
+    @Column(name = "CVE_MATRICULA_MODIFICA")
+    private String cveMatriculaModifica;
+    
+    @Basic
+    @Column(name = "CVE_MATRICULA_BAJA")
+    private String cveMatriculaBaja;
 
     @Basic
     @Column(name = "FEC_ALTA")

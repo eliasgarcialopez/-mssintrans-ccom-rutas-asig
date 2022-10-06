@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import mx.gob.imss.mssistrans.ccom.rutas.dto.ReAsignacionRutasDTO;
 import mx.gob.imss.mssistrans.ccom.rutas.model.AsigRutasEntity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.ReAsignacionRutasEntity;
 
@@ -107,10 +106,10 @@ public interface ReAsignacionRutasRepository extends JpaRepository<ReAsignacionR
     Page<List<ReAsignacionRutasEntity>> getConsultaByIdSolicitud( String idSolicitud, Pageable pageable);
 
 	@Modifying(flushAutomatically = true)
-	@Query(value = "UPDATE SINTRANST_REASIGNACION_RUTAS  SET FEC_BAJA = CURRENT_TIMESTAMP(), IND_ACTIVO = 0"
+	@Query(value = "UPDATE SINTRANST_REASIGNACION_RUTAS  SET CVE_MATRICULA_BAJA = ?, FEC_BAJA = CURRENT_TIMESTAMP(), IND_ACTIVO = 0"
 			+ " WHERE IND_ACTIVO = 1 AND ID_REASIGNACION  = ? "
 			,nativeQuery = true )
-	void delete ( String idReAsignacion );
+	void delete (String cveMatriculaBaja, String idReAsignacion );
 	@Modifying(flushAutomatically = true)
 	@Query( value = "INSERT INTO SINTRANST_REASIGNACION_RUTAS (ID_VEHICULO, ID_RUTA, ID_CHOFER"
 			+ ", DES_MOTIVO_REASIGNACION, DES_SINIESTRO, ID_VEHICULO_SUST, ID_CHOFER_SUST, ID_ASIGNACION, CVE_MATRICULA"
@@ -120,44 +119,44 @@ public interface ReAsignacionRutasRepository extends JpaRepository<ReAsignacionR
 
 	@Modifying(flushAutomatically = true)
 	@Query( value = "UPDATE SINTRANST_REASIGNACION_RUTAS SET DES_SINIESTRO = ?, ID_VEHICULO_SUST = ?"
-			+ " , DES_MOTIVO_REASIGNACION = ?, FEC_ACTUALIZACION = CURRENT_TIMESTAMP()"
+			+ " , DES_MOTIVO_REASIGNACION = ?, CVE_MATRICULA_MODIFICA = ?, FEC_ACTUALIZACION = CURRENT_TIMESTAMP()"
 			+ " WHERE IND_ACTIVO=1 AND  ID_VEHICULO = ? AND ID_RUTA = ? AND ID_CHOFER = ? AND DATE(FEC_ALTA) = CURRENT_DATE()"
 		,nativeQuery = true)
-	void update (String desSiniestro, Integer idVehoculoSust, String desMotivoReasignacion, Integer idVehiculo, Integer idRuta, Integer idChofer);
+	void update (String desSiniestro, Integer idVehoculoSust, String desMotivoReasignacion, String cveMatriculaModifica, Integer idVehiculo, Integer idRuta, Integer idChofer);
 	@Modifying(flushAutomatically = true)
 	@Query( value = "UPDATE SINTRANST_REASIGNACION_RUTAS SET ID_VEHICULO_SUST = ?"
-			+ " , DES_MOTIVO_REASIGNACION = ?, FEC_ACTUALIZACION = CURRENT_TIMESTAMP()"
+			+ " , DES_MOTIVO_REASIGNACION = ?, CVE_MATRICULA_MODIFICA = ?, FEC_ACTUALIZACION = CURRENT_TIMESTAMP()"
 			+ " WHERE IND_ACTIVO=1 AND ID_VEHICULO = ? AND ID_RUTA = ? AND ID_CHOFER = ? AND DATE(FEC_ALTA) = CURRENT_DATE()"
 		,nativeQuery = true)
-	void update ( Integer idVehoculoSust, String desMotivoReasignacion, Integer idVehiculo, Integer idRuta, Integer idChofer);
+	void update ( Integer idVehoculoSust, String desMotivoReasignacion, String cveMatriculaModifica, Integer idVehiculo, Integer idRuta, Integer idChofer);
 	@Modifying(flushAutomatically = true)
 	@Query( value = "UPDATE SINTRANST_REASIGNACION_RUTAS SET ID_VEHICULO_SUST = ?"
-			+ " , DES_MOTIVO_REASIGNACION = ?, FEC_ACTUALIZACION = CURRENT_TIMESTAMP()"
+			+ " , DES_MOTIVO_REASIGNACION = ?, CVE_MATRICULA_MODIFICA = ?, FEC_ACTUALIZACION = CURRENT_TIMESTAMP()"
 			+ " WHERE IND_ACTIVO=1 AND ID_VEHICULO = ? AND ID_RUTA = ? AND ID_CHOFER = ? AND DATE(FEC_ALTA) = CURRENT_DATE()"
 		,nativeQuery = true)
-	void update (String desSiniestro, String desMotivoReasignacion, Integer idVehiculo, Integer idRuta, Integer idChofer);
+	void update (String desSiniestro, String desMotivoReasignacion, String cveMatriculaModifica, Integer idVehiculo, Integer idRuta, Integer idChofer);
 	@Modifying(flushAutomatically = true)
 	@Query( value = "UPDATE SINTRANST_REASIGNACION_RUTAS SET DES_SINIESTRO = ?, ID_VEHICULO_SUST = ?"
-			+ " , FEC_ACTUALIZACION = CURRENT_TIMESTAMP()"
+			+ " , CVE_MATRICULA_MODIFICA = ?, FEC_ACTUALIZACION = CURRENT_TIMESTAMP()"
 			+ " WHERE IND_ACTIVO=1 AND ID_VEHICULO = ? AND ID_RUTA = ? AND ID_CHOFER = ? AND DATE(FEC_ALTA) = CURRENT_DATE()"
 		,nativeQuery = true)
-	void update (String desSiniestro, Integer idVehoculoSust, Integer idVehiculo, Integer idRuta, Integer idChofer);
+	void update (String desSiniestro, Integer idVehoculoSust, String cveMatriculaModifica, Integer idVehiculo, Integer idRuta, Integer idChofer);
 	@Modifying(flushAutomatically = true)
-	@Query( value = "UPDATE SINTRANST_REASIGNACION_RUTAS SET DES_SINIESTRO = ?, FEC_ACTUALIZACION = CURRENT_TIMESTAMP()"
+	@Query( value = "UPDATE SINTRANST_REASIGNACION_RUTAS SET DES_SINIESTRO = ?, CVE_MATRICULA_MODIFICA = ?, FEC_ACTUALIZACION = CURRENT_TIMESTAMP()"
 			+ " WHERE IND_ACTIVO=1 AND ID_VEHICULO = ? AND ID_RUTA = ? AND ID_CHOFER = ? AND DATE(FEC_ALTA) = CURRENT_DATE()"
 		,nativeQuery = true)
-	void update (String desSiniestro, Integer idVehiculo, Integer idRuta, Integer idChofer);
+	void update (String desSiniestro, String cveMatriculaModifica, Integer idVehiculo, Integer idRuta, Integer idChofer);
 	@Modifying(flushAutomatically = true)
-	@Query( value = "UPDATE SINTRANST_REASIGNACION_RUTAS SET ID_VEHICULO_SUST = ?"
-			+ " , FEC_ACTUALIZACION = CURRENT_TIMESTAMP()"
+	@Query( value = "UPDATE SINTRANST_REASIGNACION_RUTAS SET ID_VEHICULO_SUST = ?, CVE_MATRICULA_MODIFICA = ?,"
+			+ " FEC_ACTUALIZACION = CURRENT_TIMESTAMP()"
 			+ " WHERE IND_ACTIVO=1 AND ID_VEHICULO = ? AND ID_RUTA = ? AND ID_CHOFER = ? AND DATE(FEC_ALTA) = CURRENT_DATE()"
 		,nativeQuery = true)
-	void update (Integer idVehoculoSust, Integer idVehiculo, Integer idRuta, Integer idChofer);
+	void update (Integer idVehoculoSust, String cveMatriculaModifica, Integer idVehiculo, Integer idRuta, Integer idChofer);
 	@Modifying(flushAutomatically = true)
-	@Query( value = "UPDATE SINTRANST_REASIGNACION_RUTAS SET DES_MOTIVO_REASIGNACION = ?, FEC_ACTUALIZACION = CURRENT_TIMESTAMP()"
+	@Query( value = "UPDATE SINTRANST_REASIGNACION_RUTAS SET DES_MOTIVO_REASIGNACION = ?, CVE_MATRICULA_MODIFICA = ?, FEC_ACTUALIZACION = CURRENT_TIMESTAMP()"
 			+ " WHERE IND_ACTIVO=1 AND ID_VEHICULO = ? AND ID_RUTA = ? AND ID_CHOFER = ? AND DATE(FEC_ALTA) = CURRENT_DATE()"
 		,nativeQuery = true)
-	void updateReasig ( String desMotivoReasignacion, Integer idVehiculo, Integer idRuta, Integer idChofer);
+	void updateReasig ( String desMotivoReasignacion, String cveMatriculaModifica, Integer idVehiculo, Integer idRuta, Integer idChofer);
 
 	
 }

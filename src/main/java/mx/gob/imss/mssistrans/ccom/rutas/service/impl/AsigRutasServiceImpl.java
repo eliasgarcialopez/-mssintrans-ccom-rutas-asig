@@ -7,7 +7,10 @@ import mx.gob.imss.mssistrans.ccom.rutas.repository.*;
 import mx.gob.imss.mssistrans.ccom.rutas.service.AsigRutasService;
 import mx.gob.imss.mssistrans.ccom.rutas.util.*;
 import org.springframework.data.domain.*;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import com.google.gson.Gson;
 
 import javax.transaction.Transactional;
 import java.sql.SQLException;
@@ -73,7 +76,13 @@ public class AsigRutasServiceImpl implements AsigRutasService {
         try {
             // todo - hay que regresar al paso anterior la asignacion de ruta
             //      - en este punto cuando se elmin
-            asigRutasRepository.delete(idControlRuta);
+        	String user = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			if (user.equals("denegado")) {
+				return ValidaDatos.noAutorizado(respuesta);
+			}
+			Gson gson = new Gson();
+			DatosUsuario datosUsuarios = gson.fromJson(user, DatosUsuario.class);
+            asigRutasRepository.delete(datosUsuarios.getMatricula(), idControlRuta);
             asigRutasRepository.flush();
             return ValidaDatos.resp(respuesta, "Exito", null);
         } catch (Exception e) {
@@ -362,8 +371,7 @@ public class AsigRutasServiceImpl implements AsigRutasService {
         }
 
     }
-
-    @SuppressWarnings("unlikely-arg-type")
+    
     @Override
     public <T> Response getDatosControlRutaById(Integer idControlRuta) {
         Response<T> respuesta = new Response<>();

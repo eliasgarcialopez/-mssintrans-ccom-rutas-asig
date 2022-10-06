@@ -177,16 +177,16 @@ Page<List<AsigRutasEntity>> getConsultaByIdSolicitudReasignaciones(String idSoli
     Page<List<AsigRutasEntity>> getConsultaByIdSolicitud(String idSolicitud, Pageable pageable);
 
     @Modifying(flushAutomatically = true)
-    @Query(value = "UPDATE SINTRANST_CONTROL_RUTAS SET FEC_BAJA = CURRENT_TIMESTAMP(), IND_ACTIVO = 0"
+    @Query(value = "UPDATE SINTRANST_CONTROL_RUTAS SET CVE_MATRICULA_BAJA = ?, FEC_BAJA = CURRENT_TIMESTAMP(), IND_ACTIVO = 0"
             + " WHERE IND_ACTIVO = 1 AND ID_CONTROL_RUTA = ? "
             , nativeQuery = true)
-    void delete(String idControlRuta);
+    void delete(String cveMatriculaBaja, String idControlRuta);
 
     @Modifying(flushAutomatically = true)
-    @Query(value = "UPDATE SINTRANST_REASIGNACION_RUTAS SET FEC_BAJA = CURRENT_TIMESTAMP(), IND_ACTIVO = 0"
+    @Query(value = "UPDATE SINTRANST_REASIGNACION_RUTAS SET CVE_MATRICULA_BAJA = ?, FEC_BAJA = CURRENT_TIMESTAMP(), IND_ACTIVO = 0"
             + " WHERE IND_ACTIVO = 1 AND ID_REASIGNACION = ? "
             , nativeQuery = true)
-    void deleteReasignacion(String idReasignacion);
+    void deleteReasignacion(String cveMatriculaBaja, String idReasignacion);
 
     @Modifying(flushAutomatically = true)
     @Query(value = "UPDATE SINTRANST_CONTROL_RUTAS SET DES_ESTATUS_ASIGNA='1' "

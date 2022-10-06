@@ -12,15 +12,19 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import com.google.gson.Gson;
+
 import lombok.AllArgsConstructor;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.AsigRutasResponse;
+import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosUsuario;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.DetReasignacionesRutasResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.ReasignacionEccoResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.ReasignacionTripulacionResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.Response;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.SiniestrosResponse;
-import mx.gob.imss.mssistrans.ccom.rutas.model.DatosAsigEntity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.DatosControlRutasEntity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.DetReasignacionRutasEntity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.ReasignacionEccoEntity;
@@ -83,6 +87,8 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 	@Autowired
 	private ReAsignacionRutasRepository reAsignacionRutasRepository;
 	
+	private static final String EMPTY_STRING = "";
+	
 	@Override
 	public <T> Response<?> consultaVistaRapida(Integer pagina, Integer tamanio, String orden, String columna,
 			String idRuta, String idSolicitud) {
@@ -92,12 +98,12 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 				Sort.by(Sort.Direction.fromString(orden.toUpperCase()), nomCol));
 		try {
 			Page consultaAsignacionRutas = null;
-			if (idRuta == null || idRuta.equals(""))
-				if (idSolicitud == null || idSolicitud.equals(""))
+			if (idRuta == null || idRuta.equals(EMPTY_STRING))
+				if (idSolicitud == null || idSolicitud.equals(EMPTY_STRING))
 					consultaAsignacionRutas = asigRutasRepository.consultaGeneralRasignaciones(page);
 				else
 					consultaAsignacionRutas = asigRutasRepository.getConsultaByIdSolicitudReasignaciones(idSolicitud, page);
-			else if (idSolicitud == null || idSolicitud.equals(""))
+			else if (idSolicitud == null || idSolicitud.equals(EMPTY_STRING))
 				consultaAsignacionRutas = asigRutasRepository.getConsultaByIdAsignacionReasignaciones(idRuta, page);
 			else
 				consultaAsignacionRutas = asigRutasRepository.getConsultaByIdReasignaciones(idRuta, idSolicitud, page);
@@ -119,7 +125,14 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 	public Response delete(String idReAsignacion) {
 		Response respuesta = new Response<>();
 		try {
-			asigRutasRepository.deleteReasignacion(idReAsignacion);
+			String user = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			if (user.equals("denegado")) {
+				return ValidaDatos.noAutorizado(respuesta);
+			}
+	
+			Gson gson = new Gson();
+			DatosUsuario datosUsuarios = gson.fromJson(user, DatosUsuario.class);
+			asigRutasRepository.deleteReasignacion(datosUsuarios.getMatricula(), idReAsignacion);
 			asigRutasRepository.flush();
 
 			asigRutasRepository.actalizarCOntrolRutasReasignacion(idReAsignacion);
@@ -197,23 +210,23 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 		ReasignacionTripulacionEntity getChofer = null;
 
 		if (idRuta != null && idSolicitud != null && idVehiculo != null) {
-			if (!idRuta.equals("") && !idSolicitud.equals("") && !idVehiculo.equals("")) {
+			if (!idRuta.equals(EMPTY_STRING) && !idSolicitud.equals(EMPTY_STRING) && !idVehiculo.equals(EMPTY_STRING)) {
 				getChofer = choferRepository.getDatosChoferByidVehiculo(idRuta, idSolicitud, idVehiculo);
 				getTripulante = camillero01Repository.getCamillero1ByIdVehiculo(idRuta, idSolicitud, idVehiculo);
 				getTripulante2 = camillero02Repository.getCamillero2ByIdVehiculo(idRuta, idSolicitud, idVehiculo);
-			} else if (!idControlRuta.equals("")) {
+			} else if (!idControlRuta.equals(EMPTY_STRING)) {
 				getChofer = choferRepository.getDatosChofer(idControlRuta);
 				getTripulante = camillero01Repository.getCamillero1(idControlRuta);
 				getTripulante2 = camillero02Repository.getCamillero2(idControlRuta);
 			}
 		} else if (idControlRuta != null)
-			if (!idControlRuta.equals("")) {
+			if (!idControlRuta.equals(EMPTY_STRING)) {
 				getChofer = choferRepository.getDatosChofer(idControlRuta);
 				getTripulante = camillero01Repository.getCamillero1(idControlRuta);
 				getTripulante2 = camillero02Repository.getCamillero2(idControlRuta);
 			}
 		if (getChofer != null) {
-			tripulacionAsigEntity.setIdControlRuta(idControlRuta!=null?idControlRuta.toString():"");
+			tripulacionAsigEntity.setIdControlRuta(idControlRuta!=null?idControlRuta.toString():EMPTY_STRING);
 			tripulacionAsigEntity.setIdPersonalAmbulancia(getChofer.getIdPersonalAmbulancia());
 			tripulacionAsigEntity.setIdChofer(getChofer.getIdChofer());
 			tripulacionAsigEntity.setNombreChofer(getChofer.getNomTripulante());
@@ -252,9 +265,9 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 		// TODO Auto-generated method stub
 		Response<T> respuesta = new Response<>();
 		try {
-			if(idVehiculoSust == null || idVehiculoSust.equals(""))
+			if(idVehiculoSust == null || idVehiculoSust.equals(EMPTY_STRING))
 				idVehiculoSust = idVehiculo;
-			if(idChoferSust == null || idChoferSust.equals(""))
+			if(idChoferSust == null || idChoferSust.equals(EMPTY_STRING))
 				idChoferSust = idChofer;
 			reAsignacionRutasRepository.save(idVehiculo, idRuta, idChofer, desMotivoReasig, desSiniestro
 					, idVehiculoSust, idChoferSust, idAsignacion, cveMatricula);
@@ -267,30 +280,40 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 
 	@Override
 	public <T> Response update(String desSiniestro, Integer idVehiculoSust, String desMotivoReasignacion, Integer idVehiculo, Integer idRuta, Integer idChofer) {
-		// TODO Auto-generated method stub
 		Response<T> respuesta = new Response<>();
 		try {
-				if(desSiniestro != null && idVehiculoSust != null && desMotivoReasignacion != null)
-					if(!desSiniestro.equals("") && !idVehiculoSust.equals("") && !desMotivoReasignacion.equals(""))
-						reAsignacionRutasRepository.update(desSiniestro, idVehiculoSust, desMotivoReasignacion, idVehiculo, idRuta, idChofer);
-				else if(idVehiculoSust != null && desMotivoReasignacion != null)
-					if(!idVehiculoSust.equals("") && !desMotivoReasignacion.equals(""))
-						reAsignacionRutasRepository.update(idVehiculoSust, desMotivoReasignacion, idVehiculo, idRuta, idChofer);
-				if(desSiniestro != null && desMotivoReasignacion != null)
-					if(!desSiniestro.equals("") && !desMotivoReasignacion.equals(""))
-						reAsignacionRutasRepository.update(desSiniestro, desMotivoReasignacion, idVehiculo, idRuta, idChofer);
-				if(desSiniestro != null && idVehiculoSust != null )
-					if(!desSiniestro.equals("") && !idVehiculoSust.equals(""))
-						reAsignacionRutasRepository.update(desSiniestro, idVehiculoSust, idVehiculo, idRuta, idChofer);
-				if(desSiniestro != null )
-					if(!desSiniestro.equals(""))
-						reAsignacionRutasRepository.update(desSiniestro, idVehiculo, idRuta, idChofer);
-				if( idVehiculoSust != null)
-					if(!idVehiculoSust.equals("") )
-						reAsignacionRutasRepository.update(idVehiculoSust, idVehiculo, idRuta, idChofer);
-				if(desMotivoReasignacion != null)
-					if( !desMotivoReasignacion.equals(""))
-						reAsignacionRutasRepository.updateReasig(desMotivoReasignacion, idVehiculo, idRuta, idChofer);
+			String user = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			if (user.equals("denegado")) {
+				return ValidaDatos.noAutorizado(respuesta);
+			}
+
+			Gson gson = new Gson();
+			DatosUsuario datosUsuarios = gson.fromJson(user, DatosUsuario.class);
+			
+			if (desSiniestro != null && idVehiculoSust != null && desMotivoReasignacion != null)
+				if (!desSiniestro.equals(EMPTY_STRING) && !idVehiculoSust.equals(EMPTY_STRING) && !desMotivoReasignacion.equals(EMPTY_STRING))
+					reAsignacionRutasRepository.update(desSiniestro, idVehiculoSust, desMotivoReasignacion, datosUsuarios.getMatricula(), idVehiculo,
+							idRuta, idChofer);
+				else if (idVehiculoSust != null && desMotivoReasignacion != null)
+					if (!idVehiculoSust.equals(EMPTY_STRING) && !desMotivoReasignacion.equals(EMPTY_STRING))
+						reAsignacionRutasRepository.update(idVehiculoSust, desMotivoReasignacion, datosUsuarios.getMatricula(), idVehiculo, idRuta,
+								idChofer);
+			if (desSiniestro != null && desMotivoReasignacion != null)
+				if (!desSiniestro.equals(EMPTY_STRING) && !desMotivoReasignacion.equals(EMPTY_STRING))
+					reAsignacionRutasRepository.update(desSiniestro, desMotivoReasignacion, datosUsuarios.getMatricula(), idVehiculo, idRuta,
+							idChofer);
+			if (desSiniestro != null && idVehiculoSust != null)
+				if (!desSiniestro.equals(EMPTY_STRING) && !idVehiculoSust.equals(EMPTY_STRING))
+					reAsignacionRutasRepository.update(desSiniestro, idVehiculoSust, datosUsuarios.getMatricula(), idVehiculo, idRuta, idChofer);
+			if (desSiniestro != null)
+				if (!desSiniestro.equals(EMPTY_STRING))
+					reAsignacionRutasRepository.update(desSiniestro, datosUsuarios.getMatricula(), idVehiculo, idRuta, idChofer);
+			if (idVehiculoSust != null)
+				if (!idVehiculoSust.equals(EMPTY_STRING))
+					reAsignacionRutasRepository.update(idVehiculoSust, datosUsuarios.getMatricula(), idVehiculo, idRuta, idChofer);
+			if (desMotivoReasignacion != null)
+				if (!desMotivoReasignacion.equals(EMPTY_STRING))
+					reAsignacionRutasRepository.updateReasig(desMotivoReasignacion, datosUsuarios.getMatricula(), idVehiculo, idRuta, idChofer);
 			datosRepository.flush();
 		} catch (Exception e) {
 			return ValidaDatos.errorException(respuesta, e);
