@@ -26,64 +26,65 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/bitacora")
-@CrossOrigin(methods = { RequestMethod.GET, RequestMethod.POST })
+@CrossOrigin(methods = {RequestMethod.GET, RequestMethod.POST})
 public class BitacoraServiciosController {
-	
-	@Autowired
-	private BitacoraService bitacoraService;
-	
-	/**
-	 * Endpoint para consultar vehiculos por ecco
-	 * @return
-	 */
-	@GetMapping("/ecco/{ecco}")
-	public ResponseEntity<?> consultaVehiculoEcco(@PathVariable String ecco) {
 
-	    String usuario = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (usuario.equals("denegado")) {
-           Respuesta<?> response = response = new Respuesta<>();
-           response.setError(false);
-           response.setCodigo(HttpStatus.UNAUTHORIZED.value());
-           response.setMensaje(usuario);
-           return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-        }
-       
-        Gson gson = new Gson();
-        DatosUsuario datosUsuario = gson.fromJson(usuario, DatosUsuario.class);
-        datosUsuario.getIDOOAD();
-        datosUsuario.getRol();
+    private final BitacoraService bitacoraService;
 
-        Respuesta<DatosBitacora> response = bitacoraService.buscaVehiculo(ecco, datosUsuario.getRol().equals("Administrador") ? 0 : datosUsuario.getIDOOAD());
-		return new ResponseEntity<>(response, HttpStatus.OK);
-	}
-	
-	/**
-	 * Endpoint para generar la bitacora de servicios
-     * @param bitacoraServicio
+    /**
+     * Endpoint para consultar vehiculos por ecco
+     *
      * @return
      */
-    @PostMapping(path = "/genera/{idOoad}/{idControlRuta}/{fechaResg}")
-    public ResponseEntity<?> bitacoraServicio(@PathVariable Integer idOoad, @PathVariable Integer idControlRuta, @PathVariable String fechaResg) throws IOException {
-    	
-    	String usuario = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    @GetMapping("/ecco/{ecco}")
+    public ResponseEntity<Respuesta<DatosBitacora>> consultaVehiculoEcco(@PathVariable String ecco) {
+
+        String usuario = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Respuesta<DatosBitacora> response = new Respuesta<>();
         if (usuario.equals("denegado")) {
-            Respuesta<?> response = response = new Respuesta<>();
             response.setError(false);
             response.setCodigo(HttpStatus.UNAUTHORIZED.value());
             response.setMensaje(usuario);
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
-        
+
+        Gson gson = new Gson();
+        DatosUsuario datosUsuario = gson.fromJson(usuario, DatosUsuario.class);
+        datosUsuario.getIDOOAD();
+        datosUsuario.getRol();
+
+        response = bitacoraService.buscaVehiculo(ecco, datosUsuario.getRol().equals("Administrador") ? 0 : datosUsuario.getIDOOAD());
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    /**
+     * Endpoint para generar la bitacora de servicios
+     *
+     * @param bitacoraServicio
+     * @return
+     */
+    @PostMapping(path = "/genera/{idOoad}/{idControlRuta}/{fechaResg}")
+    public ResponseEntity<Object> bitacoraServicio(@PathVariable Integer idOoad, @PathVariable Integer idControlRuta, @PathVariable String fechaResg) throws IOException {
+
+        String usuario = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Respuesta<byte[]> response = new Respuesta<>();
+        if (usuario.equals("denegado")) {
+            response.setError(false);
+            response.setCodigo(HttpStatus.UNAUTHORIZED.value());
+            response.setMensaje(usuario);
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        }
+
         Gson gson = new Gson();
         DatosUsuario datosUsuarios = gson.fromJson(usuario, DatosUsuario.class);
         datosUsuarios.getIDOOAD();
         datosUsuarios.getRol();
 
-        Respuesta<byte[]> response = bitacoraService.generaBitacora(idOoad, idControlRuta, fechaResg, datosUsuarios.getMatricula());
+        response = bitacoraService.generaBitacora(idOoad, idControlRuta, fechaResg, datosUsuarios.getMatricula());
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, "application/pdf")
                 .header(HttpHeaders.CONTENT_DISPOSITION,
                         "attachment; filename=formato-bitacora-servicio.pdf")
                 .body(response.getDatos());
     }
-     
+
 }
