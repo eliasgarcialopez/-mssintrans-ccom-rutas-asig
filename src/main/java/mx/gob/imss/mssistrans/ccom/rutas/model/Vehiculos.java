@@ -169,6 +169,12 @@ public class Vehiculos {
 	@Column(name = "CVE_MATRICULA", unique = false, nullable = true)
 	private String cveMatricula;
 	
+	@Column(name = "CVE_MATRICULA_MODIFICA", unique = false, nullable = true)
+	private String cveMatriculaModifica;
+	
+	@Column(name = "CVE_MATRICULA_BAJA", unique = false, nullable = true)
+	private String cveMatriculaBaja;
+	
 	@Column(name = "FEC_ALTA", unique = false, nullable = true)
 	private Date fecAlta;
 	

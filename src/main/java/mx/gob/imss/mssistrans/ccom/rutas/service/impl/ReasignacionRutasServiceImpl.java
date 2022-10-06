@@ -135,7 +135,7 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 			asigRutasRepository.deleteReasignacion(datosUsuarios.getMatricula(), idReAsignacion);
 			asigRutasRepository.flush();
 
-			asigRutasRepository.actalizarCOntrolRutasReasignacion(idReAsignacion);
+			asigRutasRepository.actalizarCOntrolRutasReasignacion(datosUsuarios.getMatricula(), idReAsignacion);
 			asigRutasRepository.flush();
 			return ValidaDatos.resp(respuesta, "Exito", null);
 		} catch (Exception e) {

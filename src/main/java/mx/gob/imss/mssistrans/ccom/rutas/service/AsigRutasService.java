@@ -1,8 +1,8 @@
 package mx.gob.imss.mssistrans.ccom.rutas.service;
 
 import mx.gob.imss.mssistrans.ccom.rutas.dto.ActualizarControlRutaRequest;
+import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosUsuario;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosUsuarioDTO;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.RegistroRecorridoDTO;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.Response;
 
 
@@ -26,7 +26,7 @@ public interface AsigRutasService {
 	 * @param datosRecorrido
 	 * @return
 	 */
-	Response<?> update(ActualizarControlRutaRequest datosRecorrido);
+	Response<?> update(ActualizarControlRutaRequest datosRecorrido, DatosUsuario datosUsuarios);
 	
 	<T>Response getDetalleRutasyAsig(Integer idControlRuta);
 	

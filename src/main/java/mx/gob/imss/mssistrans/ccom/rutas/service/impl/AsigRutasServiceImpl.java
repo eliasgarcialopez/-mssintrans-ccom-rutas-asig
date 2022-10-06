@@ -14,6 +14,7 @@ import com.google.gson.Gson;
 
 import javax.transaction.Transactional;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.*;
 
 /**
@@ -210,7 +211,7 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 
 
     @Override
-    public Response<?> update(ActualizarControlRutaRequest params) {
+    public Response<?> update(ActualizarControlRutaRequest params, DatosUsuario datosUsuarios) {
 
         Response<ActualizarControlRutaRequest> respuesta = new Response<>();
         try {
@@ -254,6 +255,8 @@ public class AsigRutasServiceImpl implements AsigRutasService {
                 controlRutas.setDesEstatusAsigna(estatusAsignacion);
                 // todo - agregar un enum para el tipo de incidente cuando se tenga el catalogo
                 controlRutas.setDesTipoIncidente(params.getIdTipoIncidente());
+                controlRutas.setCveMatriculaModifica(datosUsuarios.getMatricula());
+                controlRutas.setFechaActualizacion(LocalDate.now());
                 controlRutasRepository.save(controlRutas);
 
                 // se libera solo cuando esta terminada o cancelada
@@ -264,6 +267,8 @@ public class AsigRutasServiceImpl implements AsigRutasService {
                             .orElseThrow(() -> new Exception("No se ha encontrado el vehiculo con id: " + idVehiculo));
                     // colocar el estatus 8 hace que el vehiculo pueda ser asignado nuevamente para atender otra solicitud
                     vehiculo.setDesEstatusVehiculo("8");
+                    vehiculo.setCveMatriculaModifica(datosUsuarios.getMatricula());
+                    vehiculo.setFecActualizacion(new Date());
                     vehiculosRepository.save(vehiculo);
                 }
             }

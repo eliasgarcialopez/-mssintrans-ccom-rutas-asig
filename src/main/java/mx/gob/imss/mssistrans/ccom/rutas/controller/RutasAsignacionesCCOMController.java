@@ -1,11 +1,14 @@
 package mx.gob.imss.mssistrans.ccom.rutas.controller;
 
 import mx.gob.imss.mssistrans.ccom.rutas.dto.ActualizarControlRutaRequest;
+import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosUsuario;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -163,13 +166,15 @@ public class RutasAsignacionesCCOMController {
 
 	@PutMapping(path = "/")
 	public <T> ResponseEntity<Response> update(@RequestBody ActualizarControlRutaRequest datosRecorrido) {
-
 		Response<?> respuesta = new Response<>();
-		if (ValidaDatos.getAccess()) {
+		String user = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if (user.equals("denegado")) {
 			ValidaDatos.noAutorizado(respuesta);
 			return new ResponseEntity<>(respuesta, HttpStatus.OK);
 		} else {
-			Response response = asigRutasServiceImpl.update(datosRecorrido);
+			Gson gson = new Gson();
+			DatosUsuario datosUsuarios = gson.fromJson(user, DatosUsuario.class);
+			Response response = asigRutasServiceImpl.update(datosRecorrido, datosUsuarios);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	}
