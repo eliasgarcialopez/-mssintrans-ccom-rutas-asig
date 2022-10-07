@@ -629,7 +629,7 @@ public Respuesta<ControlRutasTotalesResponse> consultarTotalesVehiculos() {
 				
 				Integer totalVA = vehiculoRepository.countTotalVehiculoAsignados(idZona);
 				
-				rutasResponse.setTotalVehiculosAsignados(totalVA);
+				rutasResponse.setTotalVehiculosAsignados(opModulo.get().getNumAmbulanciasAsignadas());
 					
 				Integer totalVD = vehiculoRepository.countTotalVehiculoDisponibles(idZona);
 			
