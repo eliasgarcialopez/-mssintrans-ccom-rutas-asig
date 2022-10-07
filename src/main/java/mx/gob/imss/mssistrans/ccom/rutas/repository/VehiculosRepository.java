@@ -63,6 +63,13 @@ public interface VehiculosRepository extends JpaRepository<Vehiculos, Integer> {
 			 + "and v.DES_ESTATUS_VEHICULO in ('2', '4', '8') "
 			 , nativeQuery = true)
 	Integer countTotalVehiculoAsignados(Integer idZona);
+
+	@Query(value = "select count(v.ID_VEHICULO) from SINTRANST_VEHICULOS v "
+			+ "where v.ID_UNIDAD_ADSCRIPCION = ?1 "
+			+ "and v.IND_ACTIVO = 1 "
+			+ "and v.DES_TIPO_SERVICIO IN ('9', '10', '11') "
+			, nativeQuery = true)
+	Integer countTotalVehiculoAsignadosByUnidad(Integer idUnidad);
 	
 	 /**
      * vehiculos siniestrado se totalizan los que  tenga ese estatus  al mismo centracom o modulo de la misma OOAD
@@ -80,6 +87,14 @@ public interface VehiculosRepository extends JpaRepository<Vehiculos, Integer> {
 			 + "and v.DES_ESTATUS_VEHICULO in ('2') "
 			 , nativeQuery = true)
 	Integer countTotalVehiculoSiniestrados(Integer idZona);
+
+	@Query(value = "select count(v.ID_VEHICULO) from SINTRANST_VEHICULOS v "
+			+ "where v.ID_UNIDAD_ADSCRIPCION = ?1 "
+			+ "and v.IND_ACTIVO = 1 "
+			+ "and v.DES_TIPO_SERVICIO IN ('9', '10', '11') "
+			+ "and v.DES_ESTATUS_VEHICULO in ('2') "
+			, nativeQuery = true)
+	Integer countTotalVehiculoSiniestradosByUnidad(Integer idUnidad);
 	
 	 /**
      * vehiculos en mantenimiento se totalizan  lo que tenga ese estatus   asignados al mismo centracom o modulo de la misma OOAD
@@ -97,6 +112,14 @@ public interface VehiculosRepository extends JpaRepository<Vehiculos, Integer> {
 			 + "and v.DES_ESTATUS_VEHICULO in ('4') "
 			 , nativeQuery = true)
 	 Integer countTotalVehiculoMantenimiento(Integer idZona);
+
+	@Query(value = "select count(v.ID_VEHICULO) from SINTRANST_VEHICULOS v "
+			+ "where v.ID_UNIDAD_ADSCRIPCION = ?1 "
+			+ "and v.IND_ACTIVO = 1 "
+			+ "and v.DES_TIPO_SERVICIO IN ('9', '10', '11') "
+			+ "and v.DES_ESTATUS_VEHICULO in ('4') "
+			, nativeQuery = true)
+	Integer countTotalVehiculoMantenimientoByUnidad(Integer idUnidad);
 	
 	 /**
      * los vehiculos con esatus en Operacion  asignados al mismo centracom o modulo de la misma OOAD PENDIENTE
@@ -113,5 +136,13 @@ public interface VehiculosRepository extends JpaRepository<Vehiculos, Integer> {
 			 + "and v.DES_ESTATUS_VEHICULO in ('8') "
 			 , nativeQuery = true)
 	 Integer countTotalVehiculoDisponibles(Integer idZona);
+
+	@Query(value = "select count(v.ID_VEHICULO) from SINTRANST_VEHICULOS v "
+			+ "where v.ID_UNIDAD_ADSCRIPCION = ?1 "
+			+ "and v.IND_ACTIVO = 1 "
+			+ "and v.DES_TIPO_SERVICIO IN ('9', '10', '11') "
+			+ "and v.DES_ESTATUS_VEHICULO in ('8') "
+			, nativeQuery = true)
+	Integer countTotalVehiculoDisponiblesByUnidad(Integer idUnidad);
 	 
 }
