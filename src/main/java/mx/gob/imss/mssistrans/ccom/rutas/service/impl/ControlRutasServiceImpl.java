@@ -404,6 +404,8 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 			 /* Se crea la asignacion */
 			 Asignacion asignacion = new Asignacion();
 			 asignacion.setIdVehiculo(rutas.getIdVehiculo());
+			 asignacion.setIdChofer(controlRutas.getTripulacion().getPersonalChofer().getChofer().getIdChofer().longValue());
+			 asignacion.setIdRuta(controlRutas.getRuta().getIdRuta());
 			 asignacion.setDesEstatus("1");
 			 RespuestaAsig<AsignacionesEntity> aa = asignaciones.registraAsignacion(asignacion, datosUsuarios);
 			 AsignacionesEntity asignacionEntity = aa.getDatos();
