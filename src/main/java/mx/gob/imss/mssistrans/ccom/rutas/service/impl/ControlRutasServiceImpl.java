@@ -409,6 +409,7 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 			 asignacion.setIdChofer(controlRutas.getTripulacion().getPersonalChofer().getChofer().getIdChofer().longValue());
 			 asignacion.setIdRuta(controlRutas.getRuta().getIdRuta());
 			 asignacion.setDesEstatus("1");
+			 asignacion.setNumFolioTarjeta(controlRutas.getNumFolioTarjetaCombustible());
 			 RespuestaAsig<AsignacionesEntity> aa = asignaciones.registraAsignacion(asignacion, datosUsuarios);
 			 AsignacionesEntity asignacionEntity = aa.getDatos();
 			 

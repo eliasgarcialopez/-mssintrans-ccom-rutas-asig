@@ -29,5 +29,8 @@ public class Asignacion {
 	
 	@JsonProperty
 	private String desEstatus;
+
+	@JsonProperty
+	private String numFolioTarjeta;
 	
 }
