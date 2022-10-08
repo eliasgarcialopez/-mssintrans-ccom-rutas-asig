@@ -72,6 +72,8 @@ public class AsignacionesServiceImpl implements AsignacionesService {
             asignacionEntity.setFechaAlta(new Date());
             asignacionEntity.setIndActivo(true);
             asignacionEntity.setIndSistema(true);
+            asignacionEntity.setChofer(asignacion.getIdChofer().intValue());
+            asignacionEntity.setRuta(asignacion.getIdRuta());
             asignacionesRepository.save(asignacionEntity);
             // Actualización de estatus tarjeta no aplica
             	
