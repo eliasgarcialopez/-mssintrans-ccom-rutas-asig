@@ -13,34 +13,19 @@ import lombok.NoArgsConstructor;
 public class Asignacion {
 
 	@JsonProperty
-	private Integer idAsignacion;
+	private Integer idAsignacion;  // no va
 	
 	@JsonProperty
-	private String numAsignacion;
+	private String numAsignacion; // ya va en la implementacion
 	
 	@JsonProperty
-	private Integer idVehiculo;
+	private Integer idVehiculo; // ya se manda desde el alta de ruta
 	
 	@JsonProperty
-	private String cveEcco;
+	private Long idChofer; // No va
 	
 	@JsonProperty
-	private String desMarca;
-
-	@JsonProperty
-	private String numPlacas;
-	
-	@JsonProperty
-	private String desModelo;
-	
-	@JsonProperty
-	private Long idChofer;
-	
-	@JsonProperty
-	private Integer idRuta;
-	
-	@JsonProperty
-	private String numFolioTarjeta;
+	private Integer idRuta; // Nova
 	
 	@JsonProperty
 	private String desEstatus;

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.*;
+import mx.gob.imss.mssistrans.ccom.rutas.dto.Asignacion;
 import mx.gob.imss.mssistrans.ccom.rutas.model.*;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.*;
 import mx.gob.imss.mssistrans.ccom.rutas.service.ControlRutasService;
@@ -23,6 +24,8 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,6 +60,15 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 	
 	@Autowired	
 	 private TripulacionRepository triRepository;
+	
+	@Autowired
+	private AsignacionesServiceImpl asignaciones;
+	
+	@Autowired
+	private BitacoraServiciosRepository bitacoraRepository;
+	
+	@Autowired
+	private BitacoraServiciosAsigRepository bitacoraRepositoryAsig;
 
 	@Override
 	public Respuesta<Page<ControlRutasTablaResponse>> consultarRutas(Pageable pageable) {
@@ -389,7 +401,28 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 			 log.info("Ruta asignada..");
 			// As 
 			 
-			
+			 /* Se crea la asignacion */
+			 Asignacion asignacion = new Asignacion();
+			 asignacion.setIdVehiculo(rutas.getIdVehiculo());
+			 asignacion.setDesEstatus("1");
+			 asignaciones.registraAsignacion(null, datosUsuarios);
+			 
+			 Vehiculos vehiculo = vehiculoRepository.getById(controlRutas.getIdVehiculo().getIdVehiculo());
+			 
+			 /* Crea la Bitacora con el id de asignacion */
+			 String numBitacora = getSigBitacora(vehiculo.getUnidad().getOoad().getIdOoad());  // validar
+			 BitacoraServiciosAsignacionEntity bitacoraServiciosEntity = new BitacoraServiciosAsignacionEntity();
+			    bitacoraServiciosEntity.setNumBitacora(numBitacora);
+			    bitacoraServiciosEntity.setFecBitacora(new Date());
+			    bitacoraServiciosEntity.setIdOoad(vehiculo.getUnidad().getOoad().getIdOoad());  // validar
+			    bitacoraServiciosEntity.setAsignacion(null);  // setear dato
+			    bitacoraServiciosEntity.setMatricula(datosUsuarios.getMatricula());
+			    bitacoraServiciosEntity.setFechaAlta(new Date());
+			    bitacoraServiciosEntity.setIndActivo(true);
+			    bitacoraServiciosEntity.setIndSistema(true);
+			    
+			    bitacoraRepositoryAsig.save(bitacoraServiciosEntity);
+			 
 			response.setCodigo(HttpStatus.OK.value());
 			response.setMensaje("Exito");
 			response.setError(false);
@@ -404,6 +437,18 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 		}
 		return response;
 	}
+    
+    private String getSigBitacora(Integer idOoad) {
+        String mes = String.format("%02d", Calendar.getInstance().get(Calendar.MONTH) + 1);
+        String ooad = String.format("%02d", idOoad);
+        String ultimoFolio = bitacoraRepository.findUltimoFolioByMesOoad(idOoad, mes);
+        if (ultimoFolio == null) {
+            ultimoFolio = "0000";
+        }
+
+        return mes + '-' + ooad + '-' + String.format("%04d", Integer.parseInt(ultimoFolio) + 1);
+    }
+    
 @Transactional
 	public Respuesta<Integer> editarRuta(Integer idControlRuta, ControlRutasRequest rutaDTO) {
 Respuesta<Integer> response = new Respuesta<>();
@@ -509,7 +554,7 @@ Respuesta<Integer> response = new Respuesta<>();
 			
 			 
 			 
-			      controlRutasRepository.save(contRuta);
+			 controlRutasRepository.save(contRuta);
 			 log.info("Asignacion Actualizada");
 					
 			response.setCodigo(HttpStatus.OK.value());

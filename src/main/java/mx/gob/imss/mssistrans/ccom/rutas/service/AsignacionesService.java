@@ -7,12 +7,13 @@ import org.springframework.data.domain.Page;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.Asignacion;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosUsuario;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.RespuestaAsig;
+import mx.gob.imss.mssistrans.ccom.rutas.model.AsignacionesEntity;
 
 public interface AsignacionesService {
 	/**
      * Alta de asignación
      */
-	RespuestaAsig<Asignacion> registraAsignacion(Asignacion asignacion, DatosUsuario datosUsuarios);
+	RespuestaAsig<AsignacionesEntity> registraAsignacion(Asignacion asignacion, DatosUsuario datosUsuarios);
  	
 	/**
      * Actualización de asignación

@@ -56,8 +56,8 @@ public class AsignacionesServiceImpl implements AsignacionesService {
 
     @Transactional(rollbackOn = SQLException.class)
     @Override
-    public RespuestaAsig<Asignacion> registraAsignacion(Asignacion asignacion, DatosUsuario datosUsuarios) {
-    	RespuestaAsig<Asignacion> response = new RespuestaAsig<Asignacion>();
+    public RespuestaAsig<AsignacionesEntity> registraAsignacion(Asignacion asignacion, DatosUsuario datosUsuarios) {
+    	RespuestaAsig<AsignacionesEntity> response = new RespuestaAsig<AsignacionesEntity>();
 
 //        RutasEntity ruta = rutasRepository.getById(asignacion.getIdRuta());
         VehiculosEntity vehiculo = vehiculosRepository.getById(asignacion.getIdVehiculo());
@@ -68,8 +68,6 @@ public class AsignacionesServiceImpl implements AsignacionesService {
             AsignacionesEntity asignacionEntity = AsignacionesMapper.INSTANCE.jsonToAsignaEntity(asignacion);
             asignacionEntity.setVehiculo( vehiculo );
             asignacionEntity.setNumAsignacion("CCOM");
-//            asignacionEntity.setChofer( chofer );
-//            asignacionEntity.setRuta(ruta);
             asignacionEntity.setMatricula(datosUsuarios.getMatricula());
             asignacionEntity.setFechaAlta(new Date());
             asignacionEntity.setIndActivo(true);
@@ -118,10 +116,7 @@ public class AsignacionesServiceImpl implements AsignacionesService {
             response.setError(false);
             Asignacion asignacionResp = AsignacionesMapper.INSTANCE.asignaEntityToJson(asignacionEntity);
             asignacionResp.setIdVehiculo(asignacion.getIdVehiculo());
-            asignacionResp.setCveEcco( asignacionEntity.getVehiculo().getCveEcco() );
-//            asignacionResp.setIdChofer(asignacion.getIdChofer());
-//            asignacionResp.setIdRuta(asignacion.getIdRuta());
-            response.setDatos(asignacionResp);
+            response.setDatos(asignacionEntity);
 
         } catch (Exception exc) {
             log.error("Error en registro de asignacion ", exc.getMessage());

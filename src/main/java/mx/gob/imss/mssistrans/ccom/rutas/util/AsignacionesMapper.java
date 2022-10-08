@@ -20,9 +20,7 @@ public interface AsignacionesMapper {
 	
 	Asignacion asignaEntityToJson(AsignacionesEntity asignacionEntity);
 	
-	@Mappings(value = {
-            @Mapping(source = "unidad.ooad.idOoad", target = "idOoad")
-    })
+	
 	DatosVehiculo datosVehToJson(VehiculosEntity vehiculosEntity);
 	
 	// validar
