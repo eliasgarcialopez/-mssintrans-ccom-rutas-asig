@@ -20,7 +20,7 @@ public interface ReasignacionEccoRepository extends JpaRepository<ReasignacionEc
     		+ " LEFT JOIN SINTRANST_ASIGNACIONES SA ON SA.ID_VEHICULO = SCR.ID_VEHICULO "
     		+ " WHERE SR.IND_ACTIVO = 1 AND SCR.IND_ACTIVO = 1 AND SV.IND_ACTIVO = 1"
     		+ " AND SCR.IND_SISTEMA = 1"
-    		+ " AND SCR.FEC_INICIO_ASIGNA = CURRENT_DATE()"
+			+ " AND SV.DES_TIPO_SERVICIO IN ('9', '10', '11') AND SA.ID_ASIGNACION IS NOT NULL "
             , countQuery = "SELECT COUNT(SV.ID_VEHICULO)"
             		+ " FROM SINTRANST_RUTAS SR"
             		+ " INNER JOIN SINTRANST_CONTROL_RUTAS SCR ON SCR.ID_RUTA = SR.ID_RUTA"
@@ -28,7 +28,7 @@ public interface ReasignacionEccoRepository extends JpaRepository<ReasignacionEc
             		+ " LEFT JOIN SINTRANST_ASIGNACIONES SA ON SA.ID_VEHICULO = SCR.ID_VEHICULO"
             		+ " WHERE SR.IND_ACTIVO = 1 AND SCR.IND_ACTIVO = 1 AND SV.IND_ACTIVO = 1 "
             		+ " AND SCR.IND_SISTEMA = 1 "
-            		+ " AND SCR.FEC_INICIO_ASIGNA = CURRENT_DATE()"
+					+ " AND SV.DES_TIPO_SERVICIO IN ('9', '10', '11') AND SA.ID_ASIGNACION IS NOT NULL"
             ,nativeQuery = true)
     List<ReasignacionEccoEntity> getEcco();
 

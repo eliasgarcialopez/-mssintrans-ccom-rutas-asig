@@ -671,16 +671,14 @@ public Respuesta<ControlRutasTotalesResponse> consultarTotalesVehiculos() {
 	    ControlRutasTotalesResponse rutasResponse=new ControlRutasTotalesResponse();
 	   Optional<ModuloAmbulancia> opModulo=moAmbulanciaRepository.findByIdOOADAndActivoEquals(idOOAD, true);
 		if(opModulo.isPresent()) {
-			
 			ModuloAmbulancia moduloAmbulancia=opModulo.get();
 			Optional<UnidadAdscripcion> unidad=unidadAdscripcionRepository.findByNombre(moduloAmbulancia.getDesNombre());
+			Integer idUnidad=unidad.get().getIdUnidadAdscripcion();
+			Integer totalVA = vehiculoRepository.countTotalVehiculoAsignadosByUnidad(idUnidad);
+
 			Optional<ZonaAtencion> zonaOp=   zonaAtencionRepository.findByIdModuloAndActivoEquals(moduloAmbulancia.getIdModulo(),true);
 			if(zonaOp.isPresent()) {
-				Integer idUnidad=unidad.get().getIdUnidadAdscripcion();
 				Integer idZona = zonaOp.get().getIdZona();
-				
-				Integer totalVA = vehiculoRepository.countTotalVehiculoAsignadosByUnidad(idUnidad);
-				
 				rutasResponse.setTotalVehiculosAsignados(totalVA!=null?totalVA:0);
 					
 				Integer totalVD = vehiculoRepository.countTotalVehiculoDisponiblesByUnidad(idUnidad);

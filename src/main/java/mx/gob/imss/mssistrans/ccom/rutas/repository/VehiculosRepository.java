@@ -141,7 +141,7 @@ public interface VehiculosRepository extends JpaRepository<Vehiculos, Integer> {
 			+ "where v.ID_UNIDAD_ADSCRIPCION = ?1 "
 			+ "and v.IND_ACTIVO = 1 "
 			+ "and v.DES_TIPO_SERVICIO IN ('9', '10', '11') "
-			+ "and v.DES_ESTATUS_VEHICULO in ('8') "
+			+ "and v.DES_ESTATUS_VEHICULO in ('8','9') "
 			, nativeQuery = true)
 	Integer countTotalVehiculoDisponiblesByUnidad(Integer idUnidad);
 	 

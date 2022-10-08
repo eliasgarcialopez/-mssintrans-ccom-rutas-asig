@@ -69,6 +69,9 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 
 	@Autowired
 	private VehiculosRepository vehiculosRepository;
+
+	@Autowired
+	private DetalleReAsignacionRutasRepository detalleReAsignacionRutasRepository;
 	
 	@Override
 	public <T> Response<?> consultaVistaRapida(Integer pagina, Integer tamanio, String orden, String columna,
@@ -264,28 +267,28 @@ public class ReasignacionRutasServiceImpl implements ReasignacionRutasService {
 		// TODO Auto-generated method stub
 		Response<T> respuesta = new Response<>();
 		try {
-				if(desSiniestro != null && idVehiculoSust != null && desMotivoReasignacion != null)
-					if(!desSiniestro.equals("") && !idVehiculoSust.equals("") && !desMotivoReasignacion.equals(""))
-						reAsignacionRutasRepository.update(desSiniestro, idVehiculoSust, desMotivoReasignacion, idVehiculo, idRuta, idChofer);
-				else if(idVehiculoSust != null && desMotivoReasignacion != null)
-					if(!idVehiculoSust.equals("") && !desMotivoReasignacion.equals(""))
-						reAsignacionRutasRepository.update(idVehiculoSust, desMotivoReasignacion, idVehiculo, idRuta, idChofer);
-				if(desSiniestro != null && desMotivoReasignacion != null)
-					if(!desSiniestro.equals("") && !desMotivoReasignacion.equals(""))
-						reAsignacionRutasRepository.update(desSiniestro, desMotivoReasignacion, idVehiculo, idRuta, idChofer);
-				if(desSiniestro != null && idVehiculoSust != null )
-					if(!desSiniestro.equals("") && !idVehiculoSust.equals(""))
-						reAsignacionRutasRepository.update(desSiniestro, idVehiculoSust, idVehiculo, idRuta, idChofer);
-				if(desSiniestro != null )
-					if(!desSiniestro.equals(""))
-						reAsignacionRutasRepository.update(desSiniestro, idVehiculo, idRuta, idChofer);
-				if( idVehiculoSust != null)
-					if(!idVehiculoSust.equals("") )
-						reAsignacionRutasRepository.update(idVehiculoSust, idVehiculo, idRuta, idChofer);
-				if(desMotivoReasignacion != null)
-					if( !desMotivoReasignacion.equals(""))
-						reAsignacionRutasRepository.updateReasig(desMotivoReasignacion, idVehiculo, idRuta, idChofer);
-			datosRepository.flush();
+			DetalleReAsignacionRutasEntity reasignacion=detalleReAsignacionRutasRepository.getReasignacionByVehiculoChoferRuta(idVehiculo,idRuta,idChofer);
+			if(reasignacion!=null && reasignacion.getIdReasignacion()!=null){
+				if(desSiniestro!=null && desSiniestro.trim().length()>0) {
+					reasignacion.setDesSiniestro(desSiniestro);
+				}
+				if(idVehiculoSust!=null && idVehiculoSust>0){
+					reasignacion.setIdVehiculoSust(idVehiculoSust);
+				}
+				if(desMotivoReasignacion!=null && desMotivoReasignacion.trim().length()>0){
+					reasignacion.setDesMotivoReasig(desMotivoReasignacion);
+				}
+				if(idVehiculo!=null && idVehiculo>0){
+					reasignacion.setIdVehiculo(idVehiculo);
+				}
+				if(idRuta!=null && idRuta>0){
+					reasignacion.setIdRuta(idRuta);
+				}
+				if(idChofer!=null && idChofer>0){
+					reasignacion.setIdChofer(idChofer);
+				}
+				detalleReAsignacionRutasRepository.save(reasignacion);
+			}
 			Vehiculos vehiculo=vehiculosRepository.getById(idVehiculo);
 			if(vehiculo!=null && vehiculo.getIdVehiculo()!=null){
 				if(!desSiniestro.equals("1")) {
