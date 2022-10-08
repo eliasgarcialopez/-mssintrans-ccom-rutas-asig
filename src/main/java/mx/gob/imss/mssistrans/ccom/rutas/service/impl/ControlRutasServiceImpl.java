@@ -678,7 +678,7 @@ public Respuesta<ControlRutasTotalesResponse> consultarTotalesVehiculos() {
 				Integer idUnidad=unidad.get().getIdUnidadAdscripcion();
 				Integer idZona = zonaOp.get().getIdZona();
 				
-				Integer totalVA = vehiculoRepository.countTotalVehiculoAsignados(idUnidad);
+				Integer totalVA = vehiculoRepository.countTotalVehiculoAsignadosByUnidad(idUnidad);
 				
 				rutasResponse.setTotalVehiculosAsignados(totalVA!=null?totalVA:0);
 					
