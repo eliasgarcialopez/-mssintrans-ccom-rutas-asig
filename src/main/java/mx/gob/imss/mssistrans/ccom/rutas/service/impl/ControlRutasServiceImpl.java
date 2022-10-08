@@ -405,7 +405,7 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 			 Asignacion asignacion = new Asignacion();
 			 asignacion.setIdVehiculo(rutas.getIdVehiculo());
 			 asignacion.setDesEstatus("1");
-			 asignaciones.registraAsignacion(null, datosUsuarios);
+			 asignaciones.registraAsignacion(asignacion, datosUsuarios);
 			 
 			 Vehiculos vehiculo = vehiculoRepository.getById(controlRutas.getIdVehiculo().getIdVehiculo());
 			 
