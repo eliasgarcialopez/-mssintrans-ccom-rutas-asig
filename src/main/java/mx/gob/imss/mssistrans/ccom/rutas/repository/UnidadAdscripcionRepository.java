@@ -6,6 +6,7 @@ import java.util.Optional;
 import mx.gob.imss.mssistrans.ccom.rutas.model.UnidadAdscripcion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface UnidadAdscripcionRepository  extends JpaRepository<UnidadAdscripcion, Integer> {
 
@@ -62,6 +63,15 @@ public interface UnidadAdscripcionRepository  extends JpaRepository<UnidadAdscri
 		
 			)
     List<UnidadAdscripcion> findAllUnidadAdscripcionActivo();
+
+
+	/**
+	 * Recupera una UnidadAdscripcion activa por su Id.
+	 *
+	 * @return
+	 */
+	@Query( value="SELECT u FROM UnidadAdscripcion u  WHERE  u.nomUnidadAdscripcion=:nombre")
+	Optional<UnidadAdscripcion> findByNombre(@Param("nombre") String nombre);
     
    
 

@@ -667,26 +667,27 @@ public Respuesta<ControlRutasTotalesResponse> consultarTotalesVehiculos() {
 		if(opModulo.isPresent()) {
 			
 			ModuloAmbulancia moduloAmbulancia=opModulo.get();
+			Optional<UnidadAdscripcion> unidad=unidadAdscripcionRepository.findByNombre(moduloAmbulancia.getDesNombre());
 			Optional<ZonaAtencion> zonaOp=   zonaAtencionRepository.findByIdModuloAndActivoEquals(moduloAmbulancia.getIdModulo(),true);
 			if(zonaOp.isPresent()) {
-				
+				Integer idUnidad=unidad.get().getIdUnidadAdscripcion();
 				Integer idZona = zonaOp.get().getIdZona();
 				
-				Integer totalVA = vehiculoRepository.countTotalVehiculoAsignados(idZona);
+				Integer totalVA = vehiculoRepository.countTotalVehiculoAsignados(idUnidad);
 				
-				rutasResponse.setTotalVehiculosAsignados(opModulo.get().getNumAmbulanciasAsignadas());
+				rutasResponse.setTotalVehiculosAsignados(totalVA!=null?totalVA:0);
 					
-				Integer totalVD = vehiculoRepository.countTotalVehiculoDisponibles(idZona);
+				Integer totalVD = vehiculoRepository.countTotalVehiculoDisponiblesByUnidad(idUnidad);
 			
-				rutasResponse.setTotalVehiculosDisponibles(totalVD);
+				rutasResponse.setTotalVehiculosDisponibles(totalVD!=null?totalVD:0);
 					
-				Integer totalMan = vehiculoRepository.countTotalVehiculoMantenimiento(idZona);
+				Integer totalMan = vehiculoRepository.countTotalVehiculoMantenimientoByUnidad(idUnidad);
 		
-				rutasResponse.setTotalVehiculosMantenimiento(totalMan);
+				rutasResponse.setTotalVehiculosMantenimiento(totalMan!=null?totalMan:0);
 				
-				Integer totalSin = vehiculoRepository.countTotalVehiculoSiniestrados(idZona);
+				Integer totalSin = vehiculoRepository.countTotalVehiculoSiniestradosByUnidad(idUnidad);
 			
-				rutasResponse.setTotalVehiculosSiniestrados(totalSin);
+				rutasResponse.setTotalVehiculosSiniestrados(totalSin!=null?totalSin:0);
 				   
 	        	response.setDatos(rutasResponse);
 		            response.setError(false);
