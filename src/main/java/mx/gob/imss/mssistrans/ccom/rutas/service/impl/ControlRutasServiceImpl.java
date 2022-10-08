@@ -405,7 +405,8 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 			 Asignacion asignacion = new Asignacion();
 			 asignacion.setIdVehiculo(rutas.getIdVehiculo());
 			 asignacion.setDesEstatus("1");
-			 asignaciones.registraAsignacion(asignacion, datosUsuarios);
+			 RespuestaAsig<AsignacionesEntity> aa = asignaciones.registraAsignacion(asignacion, datosUsuarios);
+			 AsignacionesEntity asignacionEntity = aa.getDatos();
 			 
 			 Vehiculos vehiculo = vehiculoRepository.getById(controlRutas.getIdVehiculo().getIdVehiculo());
 			 
@@ -415,7 +416,7 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 			    bitacoraServiciosEntity.setNumBitacora(numBitacora);
 			    bitacoraServiciosEntity.setFecBitacora(new Date());
 			    bitacoraServiciosEntity.setIdOoad(vehiculo.getUnidad().getOoad().getIdOoad());  // validar
-			    bitacoraServiciosEntity.setAsignacion(null);  // setear dato
+			    bitacoraServiciosEntity.setAsignacion(asignacionEntity);  // setear dato
 			    bitacoraServiciosEntity.setMatricula(datosUsuarios.getMatricula());
 			    bitacoraServiciosEntity.setFechaAlta(new Date());
 			    bitacoraServiciosEntity.setIndActivo(true);
