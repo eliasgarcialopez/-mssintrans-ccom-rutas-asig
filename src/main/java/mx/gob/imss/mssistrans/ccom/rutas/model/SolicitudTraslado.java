@@ -4,8 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import javax.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -16,6 +14,12 @@ import java.time.LocalTime;
 @Getter
 @Setter
 public class SolicitudTraslado implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8264976003982361617L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_SOLICITUD")
@@ -165,10 +169,6 @@ public class SolicitudTraslado implements Serializable {
     @Column(name = "CVE_MATRICULA_DOCTOR_RECIBE")
     private String cveMatriculaRecibe;
     
-//    @Basic
-//    @Column(name = "DES_NOMBRE_DOCTOR_RECIBE")
-//    private String desNomDoctorRecibe;
-    
     
     @Basic
     @Column(name = "NUM_FOLIO_ACEPTACION")
@@ -177,13 +177,7 @@ public class SolicitudTraslado implements Serializable {
     
     @Basic
     @Column(name = "CVE_MATRICULA_DOCTOR_AUTORIZA")
-    private String numMatriculaAutoriza;
-    
-//    
-//    @Basic
-//    @Column(name = "DES_NOMBRE_DOCTOR_AUTORIZA")
-//    private String desNomDoctorAutoriza;
-//    
+    private String numMatriculaAutoriza;   
     
     @Basic
     @Column(name = "DES_ESTATUS_SOLICITUD")
@@ -196,6 +190,14 @@ public class SolicitudTraslado implements Serializable {
     @Basic
     @Column(name = "CVE_MATRICULA")
     private String cveMatricula;
+    
+    @Basic
+    @Column(name = "CVE_MATRICULA_MODIFICA")
+    private String cveMatriculaModifica;
+    
+    @Basic
+    @Column(name = "CVE_MATRICULA_BAJA")
+    private String cveMatriculaBaja;
 
     
     @Basic

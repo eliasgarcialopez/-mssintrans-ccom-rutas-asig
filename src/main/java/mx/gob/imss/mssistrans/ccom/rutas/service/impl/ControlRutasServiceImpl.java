@@ -23,6 +23,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -397,7 +398,6 @@ public class ControlRutasServiceImpl implements ControlRutasService {
     @Transactional
 	public Respuesta<Integer> editarRuta(Integer idControlRuta, ControlRutasRequest rutaDTO) {
 		Respuesta<Integer> response = new Respuesta<>();
-		
 		try {
 			
 			String user = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -410,12 +410,12 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 				return response;
 			}
 			log.info("Actualizando ruta");
-			Optional<ControlRutas> crutaOp=   controlRutasRepository.findByIdControlRuta(idControlRuta);
+			Optional<ControlRutas> crutaOp = controlRutasRepository.findByIdControlRuta(idControlRuta);
 			
 			if(crutaOp.isPresent()) {
-			ControlRutas contRuta= crutaOp.get();
+			ControlRutas contRuta = crutaOp.get();
 			
-			Rutas ruta=  contRuta.getRuta();
+			Rutas ruta = contRuta.getRuta();
 			
 			ruta.setActivo(true);
 			ruta.setCveMatriculaModifica(rutaDTO.getCveMatricula());		
@@ -438,6 +438,8 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 				//Ponemos esta solicitud en asiganda
 				
 				solicitudTraslado.setDesEstatusSolicitud("4");
+				solicitudTraslado.setCveMatriculaModifica(rutaDTO.getCveMatricula());
+				solicitudTraslado.setFechaActualizacion(LocalDate.now());
 				solRepository.save(solicitudTraslado);
 				
 				
@@ -464,6 +466,7 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 			log.info("destinos agregados");
 			ruta.getDestinos().clear();
 			ruta.getDestinos().add(destinos);
+			ruta.setCveMatriculaModifica(rutaDTO.getCveMatricula());
 			ruta.setFechaActualizacion(LocalDate.now());
 			rutasRepository.save(ruta);
 			log.info("Ruta Actualizada");
@@ -475,6 +478,8 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 				 Vehiculos vehiculo=veOp.get();
 				 contRuta.setIdVehiculo(vehiculo);
 				 vehiculo.setDesEstatusVehiculo("9");//en transito.
+				 vehiculo.setCveMatriculaModifica(rutaDTO.getCveMatricula());
+				 vehiculo.setFecActualizacion(new Date());
 				 vehiculoRepository.save(vehiculo);
 				 log.info("Vehiculo Asignado"+ vehiculo);
 				 
@@ -538,18 +543,19 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 				return response;
 			}
 			log.info("Eliminando la asignacion ruta");
+			Gson gson = new Gson();
+			DatosUsuario datosUsuarios = gson.fromJson(user, DatosUsuario.class);
 			ControlRutas rutas = controlRutasRepository.findById(idControlRuta).orElseThrow(Exception::new);
 			rutas.setFechaBaja(LocalDate.now());
 			rutas.setActivo(false);
-
-			Gson gson = new Gson();
-			DatosUsuario datosUsuarios = gson.fromJson(user, DatosUsuario.class);
 			rutas.setCveMatriculaBaja(datosUsuarios.getMatricula());
 			
             Optional<Vehiculos> veOp = vehiculoRepository.findById(rutas.getIdVehiculo().getIdVehiculo());
             if (veOp.isPresent()) {
                 Vehiculos ve = veOp.get();
                 ve.setDesEstatusVehiculo("8");
+                ve.setCveMatriculaModifica(datosUsuarios.getMatricula());
+                ve.setFecActualizacion(new Date());
                 vehiculoRepository.save(ve);
                 log.info(" Se cambio estatus de vehiculo a 8");
 
@@ -559,6 +565,8 @@ public class ControlRutasServiceImpl implements ControlRutasService {
             if (solicitud.isPresent()) {
                 SolicitudTraslado solicitudTraslado = solicitud.get();
                 solicitudTraslado.setDesEstatusSolicitud("1");
+                solicitudTraslado.setCveMatriculaModifica(datosUsuarios.getMatricula());
+                solicitudTraslado.setFechaActualizacion(LocalDate.now());
                 solRepository.save(solicitudTraslado);
             } else log.info("Solicitud no encontrado" + rutas.getIdSolcitud().getIdSolicitud());
 			
@@ -569,7 +577,7 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 			Rutas ruta = rutasRepository.findById(rutas.getRuta().getIdRuta()).orElseThrow(Exception::new);
 			ruta.setFechaBaja(LocalDate.now());
 			ruta.setActivo(false);
-			rutas.setCveMatriculaBaja(datosUsuarios.getMatricula());
+			ruta.setCveMatriculaBaja(datosUsuarios.getMatricula());
 			
 			
 			rutasRepository.save(ruta);
