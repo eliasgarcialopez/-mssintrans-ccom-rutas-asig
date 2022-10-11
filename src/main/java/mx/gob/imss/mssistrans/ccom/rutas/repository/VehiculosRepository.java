@@ -47,11 +47,12 @@ public interface VehiculosRepository extends JpaRepository<Vehiculos, Integer> {
 	        + "and v.IND_ARRENDADO = 0 ",nativeQuery =true)
 	List<Vehiculos> findVehiculoAsignables(Integer idZona);
 
-	@Query(value = "select v.* from SINTRANST_VEHICULOS v "
-			+ "where v.IND_ACTIVO = 1 "
-			+ "and v.DES_ESTATUS_VEHICULO in ('8') "
-			+ "and v.DES_TIPO_SERVICIO IN ('9', '10', '11') "
-			+ "and v.IND_ASIGNADO=0 ",nativeQuery =true)
+	@Query(value = "SELECT v.* " +
+			" FROM SINTRANST_MODULO_AMBULANCIA MA " +
+			" INNER JOIN SINTRANSC_UNIDADES_ADSCRIPCION UA ON (MA.DES_NOMBRE=UA.NOM_UNIDAD_ADSCRIPCION) " +
+			" INNER JOIN SINTRANST_VEHICULOS v ON (v.ID_UNIDAD_ADSCRIPCION=UA.ID_UNIDAD_ADSCRIPCION) " +
+			" where MA.IND_ACTIVO =1 AND v.IND_ACTIVO =1 AND UA.ID_OOAD=?1 " +
+			" and v.IND_ASIGNADO=0 and v.DES_ESTATUS_VEHICULO in ('8') and v.DES_TIPO_SERVICIO in ('9', '10', '11')",nativeQuery =true)
 	List<Vehiculos> findVehiculoAsignablesByOaad(Integer idOaad);
 
 	 /**
