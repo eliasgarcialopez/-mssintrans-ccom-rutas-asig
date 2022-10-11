@@ -47,6 +47,13 @@ public interface VehiculosRepository extends JpaRepository<Vehiculos, Integer> {
 	        + "and v.IND_ARRENDADO = 0 ",nativeQuery =true)
 	List<Vehiculos> findVehiculoAsignables(Integer idZona);
 
+	@Query(value = "select v.* from SINTRANST_VEHICULOS v "
+			+ "where v.IND_ACTIVO = 1 "
+			+ "and v.DES_ESTATUS_VEHICULO in ('8') "
+			+ "and v.DES_TIPO_SERVICIO IN ('9', '10', '11') "
+			+ "and v.IND_ASIGNADO=0 ",nativeQuery =true)
+	List<Vehiculos> findVehiculoAsignablesByOaad(Integer idOaad);
+
 	 /**
      * los vehiculos que se trengan asignados al mismo centracom o modulo de la misma OOAD PENDIENTE
      * se incorpora status de
