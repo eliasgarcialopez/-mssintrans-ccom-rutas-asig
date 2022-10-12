@@ -608,8 +608,18 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
             ruta.setActivo(false);
             ruta.setCveMatriculaBaja(datosUsuarios.getMatricula());
 
-
             rutasRepository.save(ruta);
+            
+            final Viaticos viaticosRecuperados = viaticosRepository
+                    .findByControlRutasIdControlRuta(rutas.getIdControlRuta());
+            
+            Viaticos viaticos = new Viaticos();
+            viaticos.setIdViaticos(viaticosRecuperados.getIdViaticos());
+            viaticos.setFecBaja(LocalDate.now());
+            viaticos.setIndActivo(false);
+            viaticos.setCveMatriculaBaja(datosUsuarios.getMatricula());
+            
+            viaticosRepository.save(viaticos);
 
             response.setCodigo(HttpStatus.OK.value());
             response.setMensaje("Exito");
