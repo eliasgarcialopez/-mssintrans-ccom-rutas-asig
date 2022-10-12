@@ -183,6 +183,9 @@ public class Vehiculos {
 	
 	@Column(name = "IND_SISTEMA", unique = false, nullable = true)
 	private boolean indSistema;
+
+	@Column(name = "IND_ASIGNADO", unique = false, nullable = true)
+	private boolean indAsignado;
 	
 }
 

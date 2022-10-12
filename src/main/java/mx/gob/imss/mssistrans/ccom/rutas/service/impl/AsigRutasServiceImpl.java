@@ -227,7 +227,6 @@ public class AsigRutasServiceImpl implements AsigRutasService {
                 rutaOrigen.setHoraFin(params.getHoraFinOrigen());
                 rutaDestino.setTimHoraInicio(params.getHoraInicioDestino());
                 rutaDestino.setTimHoraFin(params.getHoraFinDestino());
-
                 rutasRepository.save(rutaOrigen);
                 rutasDestinoRepository.save(rutaDestino);
 
@@ -255,6 +254,7 @@ public class AsigRutasServiceImpl implements AsigRutasService {
                             .orElseThrow(() -> new Exception("No se ha encontrado el vehiculo con id: " + idVehiculo));
                     // colocar el estatus 8 hace que el vehiculo pueda ser asignado nuevamente para atender otra solicitud
                     vehiculo.setDesEstatusVehiculo("8");
+                    vehiculo.setIndAsignado(false);
                     vehiculosRepository.save(vehiculo);
                 }
             }
