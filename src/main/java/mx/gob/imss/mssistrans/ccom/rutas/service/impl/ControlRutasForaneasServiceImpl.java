@@ -22,6 +22,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -312,7 +313,8 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                 // todo - estatus para solicitudes de traslado
                 // todo - cambiar tambien en asignacion normal
                 solicitudTraslado.setDesEstatusSolicitud(EstatusSolicitudesEnum.Asignada.getValor()); // estatus asignada
-
+                solicitudTraslado.setCveMatriculaModifica(params.getCveMatricula());
+                solicitudTraslado.setFechaActualizacion(LocalDate.now());
                 solicitudTrasladoRepository.save(solicitudTraslado);
 
             } else log.info("Solicitud no encontrado" + params.getIdSolicitudTraslado());
@@ -328,8 +330,6 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
             destinos.setRuta(ruta);
 
             ruta.getDestinos().add(destinos);
-
-//            rutasRepository.save(ruta);
 
 
             Gson gson = new Gson();
@@ -365,6 +365,8 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
 
                 log.info("ajustando vehiculo a asignado");
                 ve.setDesEstatusVehiculo("9");
+                ve.setCveMatriculaModifica(params.getCveMatricula());
+                ve.setFecActualizacion(new Date());
                 vehiculoRepository.save(ve);
                 log.info(" vehiculo a asignado");
                 ruta.setDesServicio(ve.getDesTipoServicio());
@@ -461,8 +463,9 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
 
                     //Ponemos esta solicitud en asiganda
                     // todo - hacer un enum para los estatus de la so
-//                    solicitudTraslado.setDesEstatusSolicitud("4");
                     solicitudTraslado.setDesEstatusSolicitud(EstatusSolicitudesEnum.Asignada.getValor());
+                    solicitudTraslado.setCveMatriculaModifica(rutaDTO.getCveMatricula());
+                    solicitudTraslado.setFechaActualizacion(LocalDate.now());
                     solicitudTrasladoRepository.save(solicitudTraslado);
                 }
                 //borrando  destinos existentes
@@ -571,18 +574,20 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                 return response;
             }
             log.info("Eliminando la asignacion ruta");
+            Gson gson = new Gson();
+            DatosUsuario datosUsuarios = gson.fromJson(user, DatosUsuario.class);
+            
             ControlRutas rutas = controlRutasForaneasRepository.findById(idControlRuta).orElseThrow(Exception::new);
             rutas.setFechaBaja(LocalDate.now());
             rutas.setActivo(false);
-
-            Gson gson = new Gson();
-            DatosUsuario datosUsuarios = gson.fromJson(user, DatosUsuario.class);
             rutas.setCveMatriculaBaja(datosUsuarios.getMatricula());
 
             Optional<Vehiculos> veOp = vehiculoRepository.findById(rutas.getIdVehiculo().getIdVehiculo());
             if (veOp.isPresent()) {
                 Vehiculos ve = veOp.get();
                 ve.setDesEstatusVehiculo(EstatusVehiculosEnum.En_Operacion.getValor()); // 8 - En Operacion
+                ve.setCveMatriculaModifica(datosUsuarios.getMatricula());
+                ve.setFecActualizacion(new Date());
                 vehiculoRepository.save(ve);
                 log.info(" Se cambio estatus de vehiculo a 8");
 
