@@ -1,6 +1,7 @@
 package mx.gob.imss.mssistrans.ccom.rutas.service.impl;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.*;
 import mx.gob.imss.mssistrans.ccom.rutas.model.*;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.*;
@@ -19,6 +20,7 @@ import java.util.*;
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Transactional(rollbackOn = SQLException.class)
 @AllArgsConstructor
+@Slf4j
 @Service
 public class AsigRutasServiceImpl implements AsigRutasService {
 
@@ -73,6 +75,18 @@ public class AsigRutasServiceImpl implements AsigRutasService {
         try {
             // todo - hay que regresar al paso anterior la asignacion de ruta
             //      - en este punto cuando se elmin
+            try {
+                final Optional<ControlRutas> controlRutas = controlRutasRepository.findByIdControlRuta(Integer.parseInt(idControlRuta));
+                if(controlRutas.isPresent()){
+                    controlRutas.get().setActivo(false);
+                    controlRutas.get().getIdSolcitud().setActivo(false);
+                    //controlRutas.getTripulacion().setActivo(false);
+                    controlRutasRepository.save(controlRutas.get());
+                }
+            } catch (Exception e){
+                log.error("Error al eliminar el control de ruta {}", e);
+            }
+
             asigRutasRepository.delete(idControlRuta);
             asigRutasRepository.flush();
             return ValidaDatos.resp(respuesta, "Exito", null);
