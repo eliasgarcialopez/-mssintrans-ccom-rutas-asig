@@ -235,7 +235,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                         rutasResponse.setTripulacion(tripRes);
                     } else {
                         log.info("No se econtro la tripulacion por id vehiculo " + ruta.getIdVehiculo().getIdVehiculo());
-                        response.setDatos(null);
+                        response.setDatos(new ControlRutasForaneasResponse());
                         response.setError(false);
                         response.setMensaje("Exito");
                         response.setCodigo(HttpStatus.OK.value());
@@ -261,7 +261,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
 
                 response.setDatos(rutasResponse);
             } else {
-                response.setDatos(null);
+                response.setDatos(new ControlRutasForaneasResponse());
             }
             response.setError(false);
             response.setMensaje("Exito");
