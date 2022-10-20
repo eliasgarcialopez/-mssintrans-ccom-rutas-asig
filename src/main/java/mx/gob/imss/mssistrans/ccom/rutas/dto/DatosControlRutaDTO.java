@@ -1,11 +1,6 @@
 package mx.gob.imss.mssistrans.ccom.rutas.dto;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

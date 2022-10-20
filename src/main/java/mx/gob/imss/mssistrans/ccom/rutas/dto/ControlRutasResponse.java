@@ -12,7 +12,7 @@ import mx.gob.imss.mssistrans.ccom.rutas.model.Vehiculos;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ControlRutasResponse {
+public class ControlRutasResponse extends ControlRutasForaneasResponse {
 	private Integer totalVehiculosAsignados;
 	private Integer totalVehiculosMantenimiento;
 	private Integer totalVehiculosSiniestrados;

@@ -1,17 +1,13 @@
 package mx.gob.imss.mssistrans.ccom.rutas.dto;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.Data;
+
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RutasResponse {
-    private Integer idRuta;	
+    private Integer idRuta;
     private Integer idSolicitudTraslado;
     private String origen;
     private String modulo;
@@ -25,5 +21,5 @@ public class RutasResponse {
     private String matriculaCamillero2;
     private String ecco;
     private String fechaRuta;
-    
+
 }

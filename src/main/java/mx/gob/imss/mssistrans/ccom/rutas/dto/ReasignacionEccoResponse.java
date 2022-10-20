@@ -28,8 +28,8 @@ public class ReasignacionEccoResponse {
 	private String idRuta;
 
 	@JsonProperty
-	private String IdSolicitud;
+	private String idSolicitud;
 
 	@JsonProperty
-	private String IdAsignacion;
+	private String idAsignacion;
 }
