@@ -1,17 +1,14 @@
 package mx.gob.imss.mssistrans.ccom.rutas.service;
 
 import mx.gob.imss.mssistrans.ccom.rutas.dto.ModuloResponse;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.Respuesta;
+import mx.gob.imss.mssistrans.ccom.rutas.dto.Response;
 
 
 public interface ModuloService {
 	  /**
      * Consulta el modulo disponible por idOOAD
      *
-     * @param idControlRuta
      * @return
      */
-	Respuesta<ModuloResponse> busquedaModulo();
-	  
-
+	Response<ModuloResponse> busquedaModulo();
 }

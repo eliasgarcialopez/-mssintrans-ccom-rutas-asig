@@ -47,13 +47,4 @@ public interface ControlRutasService {
      */
     Respuesta<Integer> eliminarRutas(Integer idControlRuta);
 
-
-    /**
-     * Libera los recursos que se asignaron al control de rutas
-     *
-     * @param idRuta
-     * @param params
-     * @return
-     */
-    Respuesta<?> liberarControlRuta(Integer idRuta, LiberarControlRutasRequest params);
 }

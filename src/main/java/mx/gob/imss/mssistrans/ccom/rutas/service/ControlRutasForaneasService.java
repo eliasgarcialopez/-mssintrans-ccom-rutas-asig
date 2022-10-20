@@ -12,14 +12,7 @@ public interface ControlRutasForaneasService {
      * @return
      */
     Respuesta<Page<ControlRutasTablaResponse>> consultarRutas(Pageable pageable);
-    /**
-     * Consulta los totales del vehiculos por modulo 
-     *
-     * @param idControlRuta
-     * @return
-     */
-    Respuesta<ControlRutasTotalesResponse> consultarTotalesVehiculos();
-    
+
     /**
      * Consulta una ruta y su control por el Identificador
      *
