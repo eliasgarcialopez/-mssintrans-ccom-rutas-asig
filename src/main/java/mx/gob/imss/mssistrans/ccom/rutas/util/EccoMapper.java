@@ -11,12 +11,13 @@ import mx.gob.imss.mssistrans.ccom.rutas.model.EccoEntity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.ReasignacionEccoEntity;
 
 
-
 @Mapper
 public interface EccoMapper {
-	EccoMapper INSTANCE = Mappers.getMapper(EccoMapper.class);
-	//List<VehiculosArrendadosCromaticaResponse> formatearListaArrendados ( List<VehiculosArrendadosCromaticaEntity> consulta );
+    EccoMapper INSTANCE = Mappers.getMapper(EccoMapper.class);
 
-	List<EccoResponse> EntityAJson ( List<EccoEntity> consultaGeneral );
-	List<ReasignacionEccoResponse> EntityToJson ( List<ReasignacionEccoEntity> consultaGeneral );
+    List<EccoResponse> eccoEntityToJson(List<EccoEntity> consultaGeneral);
+    EccoResponse eccoEntityToJson(EccoEntity entitty);
+
+    List<ReasignacionEccoResponse> entityToJson(List<ReasignacionEccoEntity> consultaGeneral);
+    ReasignacionEccoResponse entityToJson(ReasignacionEccoEntity consultaGeneral);
 }

@@ -1,8 +1,8 @@
 package mx.gob.imss.mssistrans.ccom.rutas.util;
 
 import lombok.extern.slf4j.Slf4j;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.RecuperarImagenesRequest;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.Respuesta;
+import mx.gob.imss.mssistrans.ccom.rutas.dto.Response;
+import mx.gob.imss.mssistrans.ccom.rutas.exceptions.RequestUtilException;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -12,13 +12,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 @Component
 @Slf4j
 public class RestTemplateUtil {
 
+    private static final String REQUEST_ERROR_MESSAGE = "Ha ocurrido un error al guardar el archivo";
+    private static final String GENERIC_ERROR_MESSAGE = "Fallo al consumir el servicio, {}";
     private final RestTemplate restTemplate;
 
     public RestTemplateUtil(RestTemplate restTemplate) {
@@ -32,21 +33,15 @@ public class RestTemplateUtil {
      * @param clazz
      * @return
      */
-    public Respuesta<?> sendGetRequest(String url, Class<?> clazz) {
-        // todo - crear headers para el tema de seguridad
-        Respuesta<?> response = new Respuesta<>();
+    public <T> Response<T> sendGetRequest(String url) {
+        Response<T> response = new Response<>();
         try {
-            final ResponseEntity<?> responseEntity = restTemplate.getForEntity(url, clazz);
-            if (responseEntity.getStatusCode() == HttpStatus.OK) {
-                response = (Respuesta<?>) responseEntity.getBody();
-            } else {
-                throw new Exception();
-            }
+            //noinspection unchecked
+            final ResponseEntity<T> responseEntity = (ResponseEntity<T>) restTemplate
+                    .getForEntity(url, Response.class);
+            response = validaRespuesta(responseEntity);
         } catch (Exception e) {
-            log.error("Ha ocurrido un error al hacer la peticion. {}", e.getMessage());
-            response.setError(true);
-            response.setCodigo(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            response.setMensaje("Ha ocurrido un error al hacer la peticion");
+            crearErrorResponse(e, response);
         }
         return response;
     }
@@ -58,51 +53,12 @@ public class RestTemplateUtil {
      * @param clazz
      * @return
      */
-    public Respuesta<?> sendPostRequest(String url, Object body, Class<?> clazz) throws IOException {
-        Respuesta<?> responseBody = new Respuesta<>();
+    public <T> Response<T> sendPostRequest(String url, T body, Class<T> clazz) throws RequestUtilException {
+        Response<T> responseBody = new Response<>();
         HttpHeaders headers = RestTemplateUtil.createHttpHeaders();
 
-        HttpEntity<Object> request = new HttpEntity<>(body, headers);
-        ResponseEntity<?> responseEntity = null;
-        try {
-            responseEntity = (ResponseEntity<?>) restTemplate
-                    .postForEntity(
-                            url,
-                            request,
-                            clazz
-                    );
-            if (responseEntity.getStatusCode() == HttpStatus.OK &&
-                    responseEntity.getBody() != null) {
-                //noinspection unchecked
-                responseBody = (Respuesta<List<String>>) responseEntity.getBody();
-            } else {
-                throw new IOException("Ha ocurrido un error al guardar el archivo");
-            }
-        } catch (IOException ioException) {
-            throw ioException;
-        } catch (Exception e) {
-            log.error("Fallo al consumir el servicio, {}", e.getMessage());
-            responseBody.setCodigo(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            responseBody.setError(true);
-            responseBody.setMensaje(e.getMessage());
-        }
-
-        return responseBody;
-    }
-
-    /**
-     * Env&iacute;a una petici&oacute;n con Body.
-     *
-     * @param url
-     * @param clazz
-     * @return
-     */
-    public Respuesta<?> sendPostRequestByteArray(String url, RecuperarImagenesRequest body, Class<?> clazz) throws IOException {
-        Respuesta<?> responseBody = new Respuesta<>();
-        HttpHeaders headers = RestTemplateUtil.createHttpHeaders();
-
-        HttpEntity<Object> request = new HttpEntity<>(body, headers);
-        ResponseEntity<?> responseEntity = null;
+        HttpEntity<T> request = new HttpEntity<>(body, headers);
+        ResponseEntity<T> responseEntity;
         try {
             responseEntity = restTemplate
                     .postForEntity(
@@ -113,30 +69,94 @@ public class RestTemplateUtil {
             if (responseEntity.getStatusCode() == HttpStatus.OK &&
                     responseEntity.getBody() != null) {
                 //noinspection unchecked
-                responseBody = (Respuesta<List<String>>) responseEntity.getBody();
+                responseBody = (Response<T>) responseEntity.getBody();
             } else {
-                throw new IOException("Ha ocurrido un error al guardar el archivo");
+                throw new RequestUtilException(REQUEST_ERROR_MESSAGE);
             }
-        } catch (IOException ioException) {
-            throw ioException;
+        } catch (RequestUtilException exception) {
+            throw exception;
         } catch (Exception e) {
-            log.error("Fallo al consumir el servicio, {}", e.getMessage());
-            responseBody.setCodigo(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            responseBody.setError(true);
-            responseBody.setMensaje(e.getMessage());
+            crearErrorResponse(e, responseBody);
         }
 
         return responseBody;
     }
 
-    public Respuesta<?> sendPostRequest(String url, Map<String, MultipartFile> mapaArchivos, Class<?> clazz) throws IOException {
-        Respuesta<?> responseBody = new Respuesta<>();
+    /**
+     * Env&iacute;a una petici&oacute;n con Body.
+     *
+     * @param url
+     * @param body
+     * @param <T>
+     * @param <G>
+     * @return
+     * @throws IOException
+     */
+    public <T, G extends Map<String, String>> Response<G> sendPostRequestByteArray(
+            String url, T body) throws RequestUtilException {
+        Response<G> responseBody = new Response<>();
+        HttpHeaders headers = RestTemplateUtil.createHttpHeaders();
+        HttpEntity<T> request = new HttpEntity<>(body, headers);
+        ResponseEntity<T> responseEntity;
+        try {
+            //noinspection unchecked
+            responseEntity = (ResponseEntity<T>) restTemplate
+                    .postForEntity(
+                            url,
+                            request,
+                            Response.class
+                    );
+            responseBody = validaRespuesta(responseEntity);
+        } catch (RequestUtilException ex) {
+            throw ex;
+        } catch (Exception e) {
+            crearErrorResponse(e, responseBody);
+        }
+        return responseBody;
+    }
+
+    /**
+     * Crea la respuesta de error para contestar al servicio
+     *
+     * @param e
+     * @param responseBody
+     * @param <G>
+     */
+    private <G> void crearErrorResponse(Exception e, Response<G> responseBody) {
+        final String errorMessage = e.getMessage();
+        log.error(GENERIC_ERROR_MESSAGE, errorMessage);
+        responseBody.setCodigo(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        responseBody.setError(true);
+        responseBody.setMensaje(e.getMessage());
+    }
+
+    /**
+     * Valida la respuesta del servicio que se consume.
+     *
+     * @param responseEntity
+     * @param <G>
+     * @param <T>
+     * @return
+     * @throws RequestUtilException
+     */
+    private <G, T> Response<G> validaRespuesta(ResponseEntity<T> responseEntity) throws RequestUtilException {
+        if (responseEntity.getStatusCode() == HttpStatus.OK &&
+                responseEntity.getBody() != null) {
+            //noinspection unchecked
+            return (Response<G>) responseEntity.getBody();
+        } else {
+            throw new RequestUtilException(REQUEST_ERROR_MESSAGE);
+        }
+    }
+
+    public <T> Response<T> sendPostRequest(
+            String url, Map<String, MultipartFile> mapaArchivos) throws IOException, RequestUtilException {
+        Response<T> responseBody = new Response<>();
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
         LinkedMultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-
 
         for (Map.Entry<String, MultipartFile> entry : mapaArchivos.entrySet()) {
             log.info(entry.getKey() + ":" + entry.getValue());
@@ -149,28 +169,20 @@ public class RestTemplateUtil {
         }
 
         HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(body, headers);
-        ResponseEntity<?> responseEntity = null;
+        ResponseEntity<T> responseEntity;
         try {
-            responseEntity = (ResponseEntity<?>) restTemplate
+            //noinspection unchecked
+            responseEntity = (ResponseEntity<T>) restTemplate
                     .postForEntity(
                             url,
                             request,
-                            clazz
+                            Response.class
                     );
-            if (responseEntity.getStatusCode() == HttpStatus.OK &&
-                    responseEntity.getBody() != null) {
-                //noinspection unchecked
-                responseBody = (Respuesta<List<String>>) responseEntity.getBody();
-            } else {
-                throw new IOException("Ha ocurrido un error al guardar el archivo");
-            }
-        } catch (IOException ioException) {
-            throw ioException;
+            responseBody = validaRespuesta(responseEntity);
+        } catch (RequestUtilException e) {
+            throw e;
         } catch (Exception e) {
-            log.error("Fallo al consumir el servicio, {}", e.getMessage());
-            responseBody.setCodigo(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            responseBody.setError(true);
-            responseBody.setMensaje(e.getMessage());
+            crearErrorResponse(e, responseBody);
         }
 
         return responseBody;
@@ -178,7 +190,6 @@ public class RestTemplateUtil {
 
     /**
      * Crea los headers para la petici&oacute;n
-     * todo - falta agregar el tema de seguridad para las peticiones
      *
      * @return
      */
@@ -197,33 +208,26 @@ public class RestTemplateUtil {
      * @param clazz
      * @return
      */
-    public Respuesta<?> sendDeleteRequest(String url, Object body, Class<?> clazz) throws IOException {
-        Respuesta<?> responseBody = new Respuesta<>();
+    public <T> Response<T> sendDeleteRequest(String url, T body, Class<T> clazz) throws IOException {
+        Response<T> responseBody = new Response<>();
         HttpHeaders headers = RestTemplateUtil.createHttpHeaders();
-        HttpEntity<Object> request = new HttpEntity<>(body, headers);
-        ResponseEntity<?> responseEntity = null;
+        HttpEntity<T> request = new HttpEntity<>(body, headers);
+        ResponseEntity<T> responseEntity;
         try {
             responseEntity = restTemplate.exchange(url, HttpMethod.DELETE, request, clazz);
             if (responseEntity.getStatusCode() == HttpStatus.OK &&
                     responseEntity.getBody() != null) {
-                //noinspection unchecked
-                responseBody = (Respuesta<List<String>>) responseEntity.getBody();
+                responseBody = (Response<T>) responseEntity.getBody();
             } else {
-                throw new IOException("Ha ocurrido un error al guardar el archivo");
+                throw new IOException(REQUEST_ERROR_MESSAGE);
             }
         } catch (IOException ioException) {
             throw ioException;
         } catch (Exception e) {
-            log.error("Fallo al consumir el servicio, {}", e.getMessage());
-            responseBody = new Respuesta<>();
-            responseBody.setCodigo(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            responseBody.setError(true);
-            responseBody.setMensaje(e.getMessage());
+            crearErrorResponse(e, responseBody);
         }
 
         return responseBody;
     }
 
-//    public Respuesta<?> sendPostRequest(String recuperar_streams_endpoint, Map<String, String> rutas) {
-//    }
 }

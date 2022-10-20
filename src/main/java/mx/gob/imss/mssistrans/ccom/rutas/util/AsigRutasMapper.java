@@ -1,26 +1,18 @@
 package mx.gob.imss.mssistrans.ccom.rutas.util;
 
 
-import java.util.List;
-
+import mx.gob.imss.mssistrans.ccom.rutas.dto.AsigRutasResponse;
+import mx.gob.imss.mssistrans.ccom.rutas.model.AsigRutasEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-import mx.gob.imss.mssistrans.ccom.rutas.dto.AsigRutasResponse;
-import mx.gob.imss.mssistrans.ccom.rutas.model.AsigRutasEntity;
+import java.util.List;
 
 @Mapper
 public interface AsigRutasMapper {
-	AsigRutasMapper INSTANCE = Mappers.getMapper(AsigRutasMapper.class);
-	
-	List<AsigRutasResponse> formatearListaArrendados ( List<AsigRutasEntity> consulta );
-	/*
-	VehiculosCromaticaResponse formatearListaResponse ( VehiculosArrendadosCromaticaEntity unidad );
-	VehiculosCromaticaResponse EntityAJson ( VehiculosCromaticaEntity generaPDF );
-	VehiculosCromaticaResponse EntityPDFToJson ( VehiculosCromaticaPDFEntity generaPDF );
+    AsigRutasMapper INSTANCE = Mappers.getMapper(AsigRutasMapper.class);
 
-	VehiculosCromaticaResponse entityAJson(VehiculosCromaticaEntity unidad);
-	
-	VehiculosCromaticaEntity JsonAEntity(VehiculosCromaticaResponse vehiculo);
-	*/
+    List<AsigRutasResponse> formatearListaArrendados(List<AsigRutasEntity> consulta);
+
+    AsigRutasResponse entityToJson(AsigRutasEntity entity);
 }

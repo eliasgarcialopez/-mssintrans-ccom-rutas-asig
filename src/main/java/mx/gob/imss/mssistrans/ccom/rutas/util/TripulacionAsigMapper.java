@@ -1,15 +1,15 @@
 package mx.gob.imss.mssistrans.ccom.rutas.util;
 
-import java.util.List;
-
+import mx.gob.imss.mssistrans.ccom.rutas.dto.TripulacionAsigResponse;
+import mx.gob.imss.mssistrans.ccom.rutas.model.TripulacionAsigGroupEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-import mx.gob.imss.mssistrans.ccom.rutas.dto.TripulacionAsigResponse;
-import mx.gob.imss.mssistrans.ccom.rutas.model.TripulacionAsigGroupEntity;
+import java.util.List;
 
 @Mapper
 public interface TripulacionAsigMapper {
-	TripulacionAsigMapper INSTANCE = Mappers.getMapper(TripulacionAsigMapper.class);
-	List<TripulacionAsigResponse> EntityAJson ( List<TripulacionAsigGroupEntity> consultaGeneral );
+    TripulacionAsigMapper INSTANCE = Mappers.getMapper(TripulacionAsigMapper.class);
+
+    List<TripulacionAsigResponse> entityAJson(List<TripulacionAsigGroupEntity> consultaGeneral);
 }

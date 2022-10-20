@@ -7,12 +7,21 @@ import java.io.InputStream;
 
 class MultipartInputStreamFileResource extends InputStreamResource {
 
-    // todo - el filename puede no ser necesario
     private final String filename;
 
     MultipartInputStreamFileResource(InputStream inputStream, String filename) {
         super(inputStream);
         this.filename = filename;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return super.equals(other);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 
     @Override
