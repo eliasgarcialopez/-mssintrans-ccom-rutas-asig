@@ -1,15 +1,15 @@
 package mx.gob.imss.mssistrans.ccom.rutas.repository;
 
-import java.util.List;
-import java.util.Optional;
-
 import mx.gob.imss.mssistrans.ccom.rutas.model.UnidadAdscripcion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-public interface UnidadAdscripcionRepository  extends JpaRepository<UnidadAdscripcion, Integer> {
+import java.util.List;
+import java.util.Optional;
 
- 
+public interface UnidadAdscripcionRepository extends JpaRepository<UnidadAdscripcion, Integer> {
+
+
     /**
      * Recupera una UnidadAdscripcion activa por su Id.
      *
@@ -22,47 +22,34 @@ public interface UnidadAdscripcionRepository  extends JpaRepository<UnidadAdscri
     /**
      * Recupera las UnidadAdscripcion activa, que sean pernocta y pertenezcan a la OOAD.
      *
-     * @param idOOAD
+     * @param idOoad
      * @return
      */
-    @Query( value=""
-			+ " SELECT	u "
-			+ " FROM	UnidadAdscripcion u   "
-			+ " WHERE   u.activo 	= '1'	"
-			+ " AND u.indUnidadPerNOCTA= '1' "
-			+ " AND  u.ooad.idOoad  = ?1"
-			)
-    List<UnidadAdscripcion> findAllUnidadAdscripcionPernoctaActivo(Integer idOOAD);
-    
+    @Query(value = "SELECT u " +
+            "FROM UnidadAdscripcion u WHERE u.activo = true " +
+            "AND u.pernocta = true " +
+            "AND u.ooad.idOoad = ?1")
+    List<UnidadAdscripcion> findAllUnidadAdscripcionPernoctaActivo(Integer idOoad);
+
     /**
      * Recupera las UnidadAdscripcion activa y pertenezcan a la OOAD.
      *
-     * @param idOOAD
+     * @param idOoad
      * @return
      */
-    @Query( value=""
-			+ " SELECT	u "
-			+ " FROM	UnidadAdscripcion u   "
-			+ " WHERE   u.activo 	= '1'	"
-		
-			+ " AND  u.ooad.idOoad  = ?1"
-			)
-    List<UnidadAdscripcion> findAllUnidadAdscripcionActivo(Integer idOOAD);
-    
+    @Query(value = "SELECT u " +
+            "FROM UnidadAdscripcion u " +
+            "WHERE u.activo = true " +
+            "AND u.ooad.idOoad = ?1")
+    List<UnidadAdscripcion> findAllUnidadAdscripcionActivo(Integer idOoad);
+
     /**
      * Recupera todas UnidadAdscripcion activa
      *
-     * @param idOOAD
      * @return
      */
-    @Query( value=""
-			+ " SELECT u"
-			+ " FROM	UnidadAdscripcion u   "
-			+ " WHERE   u.activo 	= '1'	"
-		
-			)
+    @Query(value = "SELECT u " +
+            "FROM UnidadAdscripcion u " +
+            "WHERE u.activo = true")
     List<UnidadAdscripcion> findAllUnidadAdscripcionActivo();
-    
-   
-
 }

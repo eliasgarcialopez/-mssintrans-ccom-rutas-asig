@@ -16,7 +16,6 @@ public interface ModuloAmbulanciaRepository extends JpaRepository<ModuloAmbulanc
      * @param activo
      * @return
      */
-
     Optional<ModuloAmbulancia> findByIdOOADAndActivoEquals(Integer idOOAD, boolean activo);
 
     /**
