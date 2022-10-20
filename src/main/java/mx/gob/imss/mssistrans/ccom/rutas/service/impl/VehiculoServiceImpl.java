@@ -68,12 +68,13 @@ private ZonaAtencionRepository zonaAtencionRepository;
 					ZonaAtencion zona=zonaOp.get();
 					log.info("zona atencion del modulo  , {}", zona.getIdZona());
 		            
-		             List<Vehiculos> result1 = vehiculosRepository.findVehiculoAsignables(zona.getIdZona());
-		             List<Vehiculos> result2 = vehiculosRepository.findVehiculoArrendadosAsignables(zona.getIdZona());
+		             //List<Vehiculos> result1 = vehiculosRepository.findVehiculoAsignables(zona.getIdZona());
+					List<Vehiculos> result1 = vehiculosRepository.findVehiculoAsignablesByOaad(datosUsuarios.getIDOOAD());
+		             //List<Vehiculos> result2 = vehiculosRepository.findVehiculoArrendadosAsignables(zona.getIdZona());
 
 		             List<Vehiculos> result = new ArrayList<>();
 		             result.addAll(result1);
-		             result.addAll(result2);
+		             //result.addAll(result2);
 
 		            log.info("vehiculos obtenidos , {}", result.size());
 		            List<VehiculoResponse> content = new ArrayList<VehiculoResponse>();

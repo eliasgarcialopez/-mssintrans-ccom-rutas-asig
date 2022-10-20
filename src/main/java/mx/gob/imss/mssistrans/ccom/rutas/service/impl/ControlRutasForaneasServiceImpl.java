@@ -3,6 +3,7 @@ package mx.gob.imss.mssistrans.ccom.rutas.service.impl;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.*;
+import mx.gob.imss.mssistrans.ccom.rutas.dto.Asignacion;
 import mx.gob.imss.mssistrans.ccom.rutas.model.*;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.*;
 import mx.gob.imss.mssistrans.ccom.rutas.service.ControlRutasForaneasService;
@@ -10,6 +11,7 @@ import mx.gob.imss.mssistrans.ccom.rutas.util.EstatusSolicitudesEnum;
 import mx.gob.imss.mssistrans.ccom.rutas.util.EstatusVehiculosEnum;
 import mx.gob.imss.mssistrans.ccom.rutas.util.Utility;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -40,6 +42,8 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
     private final ViaticosRepository viaticosRepository;
     private final RutasDestinosRepository destinosRepository;
     private final ZonaAtencionRepository zonaAtencionRepository;
+    @Autowired
+    private AsignacionesServiceImpl asignaciones;
 
     public ControlRutasForaneasServiceImpl(
             ControlRutasForaneasRepository controlRutasForaneasRepository,
@@ -231,7 +235,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                         rutasResponse.setTripulacion(tripRes);
                     } else {
                         log.info("No se econtro la tripulacion por id vehiculo " + ruta.getIdVehiculo().getIdVehiculo());
-                        response.setDatos(null);
+                        response.setDatos(new ControlRutasForaneasResponse());
                         response.setError(false);
                         response.setMensaje("Exito");
                         response.setCodigo(HttpStatus.OK.value());
@@ -257,7 +261,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
 
                 response.setDatos(rutasResponse);
             } else {
-                response.setDatos(null);
+                response.setDatos(new ControlRutasForaneasResponse());
             }
             response.setError(false);
             response.setMensaje("Exito");
@@ -412,6 +416,18 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
             viaticosRepository.save(viaticos);
 
             log.info("Ruta foranea asignada..");
+
+            /* Se crea la asignacion */
+            Asignacion asignacion = new Asignacion();
+            asignacion.setIdVehiculo(params.getIdVehiculo());
+            log.info("Chofer: {}", controlRutas.getTripulacion().getPersonalChofer().getChofer().getIdChofer().longValue());
+            log.info("Ruta: {}", controlRutas.getRuta().getIdRuta());
+            asignacion.setIdChofer(controlRutas.getTripulacion().getPersonalChofer().getChofer().getIdChofer().longValue());
+            asignacion.setIdRuta(controlRutas.getRuta().getIdRuta());
+            asignacion.setDesEstatus("1");
+            asignacion.setNumFolioTarjeta(controlRutas.getNumFolioTarjetaCombustible());
+            RespuestaAsig<AsignacionesEntity> aa = asignaciones.registraAsignacion(asignacion, datosUsuarios);
+            AsignacionesEntity asignacionEntity = aa.getDatos();
 
             response.setCodigo(HttpStatus.OK.value());
             response.setMensaje("Exito");

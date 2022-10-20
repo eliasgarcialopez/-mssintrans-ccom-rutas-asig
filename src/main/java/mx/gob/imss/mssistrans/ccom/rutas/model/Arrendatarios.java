@@ -26,7 +26,7 @@ public class Arrendatarios implements Serializable {
     private String nomArrendadora;
 
     @Column(name = "NUM_CONTRATO", unique = false, nullable = true)
-    private Long numContrato;
+    private String numContrato;
 
     @Column(name = "FEC_INI_CONTRATO", unique = false, nullable = true)
     private Date fecIniContrato;
@@ -57,7 +57,6 @@ public class Arrendatarios implements Serializable {
 
     @Column(name = "IND_SISTEMA", unique = false, nullable = true)
     private Integer indSistema;
-
 
 }
 

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.*;
+import mx.gob.imss.mssistrans.ccom.rutas.dto.Asignacion;
 import mx.gob.imss.mssistrans.ccom.rutas.model.*;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.*;
 import mx.gob.imss.mssistrans.ccom.rutas.service.ControlRutasService;
@@ -23,6 +24,8 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,6 +60,15 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 	
 	@Autowired	
 	 private TripulacionRepository triRepository;
+	
+	@Autowired
+	private AsignacionesServiceImpl asignaciones;
+	
+	@Autowired
+	private BitacoraServiciosRepository bitacoraRepository;
+	
+	@Autowired
+	private BitacoraServiciosAsigRepository bitacoraRepositoryAsig;
 
 	@Override
 	public Respuesta<Page<ControlRutasTablaResponse>> consultarRutas(Pageable pageable) {
@@ -389,7 +401,34 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 			 log.info("Ruta asignada..");
 			// As 
 			 
-			
+			 /* Se crea la asignacion */
+			 Asignacion asignacion = new Asignacion();
+			 asignacion.setIdVehiculo(rutas.getIdVehiculo());
+			 log.info("Chofer: {}", controlRutas.getTripulacion().getPersonalChofer().getChofer().getIdChofer().longValue());
+			 log.info("Ruta: {}", controlRutas.getRuta().getIdRuta());
+			 asignacion.setIdChofer(controlRutas.getTripulacion().getPersonalChofer().getChofer().getIdChofer().longValue());
+			 asignacion.setIdRuta(controlRutas.getRuta().getIdRuta());
+			 asignacion.setDesEstatus("1");
+			 asignacion.setNumFolioTarjeta(controlRutas.getNumFolioTarjetaCombustible());
+			 RespuestaAsig<AsignacionesEntity> aa = asignaciones.registraAsignacion(asignacion, datosUsuarios);
+			 AsignacionesEntity asignacionEntity = aa.getDatos();
+			 
+			 Vehiculos vehiculo = vehiculoRepository.getById(controlRutas.getIdVehiculo().getIdVehiculo());
+			 
+			 /* Crea la Bitacora con el id de asignacion */
+			 String numBitacora = getSigBitacora(vehiculo.getUnidad().getOoad().getIdOoad());  // validar
+			 BitacoraServiciosAsignacionEntity bitacoraServiciosEntity = new BitacoraServiciosAsignacionEntity();
+			    bitacoraServiciosEntity.setNumBitacora(numBitacora);
+			    bitacoraServiciosEntity.setFecBitacora(new Date());
+			    bitacoraServiciosEntity.setIdOoad(vehiculo.getUnidad().getOoad().getIdOoad());  // validar
+			    bitacoraServiciosEntity.setAsignacion(asignacionEntity);  // setear dato
+			    bitacoraServiciosEntity.setMatricula(datosUsuarios.getMatricula());
+			    bitacoraServiciosEntity.setFechaAlta(new Date());
+			    bitacoraServiciosEntity.setIndActivo(true);
+			    bitacoraServiciosEntity.setIndSistema(true);
+			    
+			    bitacoraRepositoryAsig.save(bitacoraServiciosEntity);
+			 
 			response.setCodigo(HttpStatus.OK.value());
 			response.setMensaje("Exito");
 			response.setError(false);
@@ -404,6 +443,18 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 		}
 		return response;
 	}
+    
+    private String getSigBitacora(Integer idOoad) {
+        String mes = String.format("%02d", Calendar.getInstance().get(Calendar.MONTH) + 1);
+        String ooad = String.format("%02d", idOoad);
+        String ultimoFolio = bitacoraRepository.findUltimoFolioByMesOoad(idOoad, mes);
+        if (ultimoFolio == null) {
+            ultimoFolio = "0000";
+        }
+
+        return mes + '-' + ooad + '-' + String.format("%04d", Integer.parseInt(ultimoFolio) + 1);
+    }
+    
 @Transactional
 	public Respuesta<Integer> editarRuta(Integer idControlRuta, ControlRutasRequest rutaDTO) {
 Respuesta<Integer> response = new Respuesta<>();
@@ -509,7 +560,7 @@ Respuesta<Integer> response = new Respuesta<>();
 			
 			 
 			 
-			      controlRutasRepository.save(contRuta);
+			 controlRutasRepository.save(contRuta);
 			 log.info("Asignacion Actualizada");
 					
 			response.setCodigo(HttpStatus.OK.value());
@@ -620,28 +671,27 @@ public Respuesta<ControlRutasTotalesResponse> consultarTotalesVehiculos() {
 	    ControlRutasTotalesResponse rutasResponse=new ControlRutasTotalesResponse();
 	   Optional<ModuloAmbulancia> opModulo=moAmbulanciaRepository.findByIdOOADAndActivoEquals(idOOAD, true);
 		if(opModulo.isPresent()) {
-			
 			ModuloAmbulancia moduloAmbulancia=opModulo.get();
+			Optional<UnidadAdscripcion> unidad=unidadAdscripcionRepository.findByNombre(moduloAmbulancia.getDesNombre());
+			Integer idUnidad=unidad.get().getIdUnidadAdscripcion();
+			Integer totalVA = vehiculoRepository.countTotalVehiculoAsignadosByUnidad(idUnidad);
+
 			Optional<ZonaAtencion> zonaOp=   zonaAtencionRepository.findByIdModuloAndActivoEquals(moduloAmbulancia.getIdModulo(),true);
 			if(zonaOp.isPresent()) {
-				
 				Integer idZona = zonaOp.get().getIdZona();
-				
-				Integer totalVA = vehiculoRepository.countTotalVehiculoAsignados(idZona);
-				
-				rutasResponse.setTotalVehiculosAsignados(totalVA);
+				rutasResponse.setTotalVehiculosAsignados(totalVA!=null?totalVA:0);
 					
-				Integer totalVD = vehiculoRepository.countTotalVehiculoDisponibles(idZona);
+				Integer totalVD = vehiculoRepository.countTotalVehiculoDisponiblesByUnidad(idUnidad);
 			
-				rutasResponse.setTotalVehiculosDisponibles(totalVD);
+				rutasResponse.setTotalVehiculosDisponibles(totalVD!=null?totalVD:0);
 					
-				Integer totalMan = vehiculoRepository.countTotalVehiculoMantenimiento(idZona);
+				Integer totalMan = vehiculoRepository.countTotalVehiculoMantenimientoByUnidad(idUnidad);
 		
-				rutasResponse.setTotalVehiculosMantenimiento(totalMan);
+				rutasResponse.setTotalVehiculosMantenimiento(totalMan!=null?totalMan:0);
 				
-				Integer totalSin = vehiculoRepository.countTotalVehiculoSiniestrados(idZona);
+				Integer totalSin = vehiculoRepository.countTotalVehiculoSiniestradosByUnidad(idUnidad);
 			
-				rutasResponse.setTotalVehiculosSiniestrados(totalSin);
+				rutasResponse.setTotalVehiculosSiniestrados(totalSin!=null?totalSin:0);
 				   
 	        	response.setDatos(rutasResponse);
 		            response.setError(false);

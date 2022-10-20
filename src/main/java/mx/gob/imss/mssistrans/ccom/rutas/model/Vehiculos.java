@@ -162,5 +162,7 @@ public class Vehiculos extends BaseEntity implements Serializable {
     @Column(name = "IND_ARRENDADO", unique = false, nullable = true)
     private Integer indArrendado;
 
+	@Column(name = "IND_ASIGNADO", unique = false, nullable = true)
+	private boolean indAsignado;
 }
 

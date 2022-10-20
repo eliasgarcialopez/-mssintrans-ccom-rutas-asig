@@ -23,29 +23,29 @@ public class DetalleReAsignacionRutasEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID_REASIGNACION", unique = false, nullable = true)
-	private String idReasignacion;
+	private Integer idReasignacion;
 
 	@Column(name = "ID_RUTA", unique = false, nullable = true)
-	private String idRuta;
+	private Integer idRuta;
 	@Column(name = "ID_CHOFER", unique = false, nullable = true)
-	private String idChofer;
+	private Integer idChofer;
 	@Column(name = "DES_MOTIVO_REASIGNACION", unique = false, nullable = true)
 	private String desMotivoReasig;
 	
 	@Column(name = "DES_SINIESTRO", unique = false, nullable = true)
 	private String desSiniestro;
 	@Column(name = "ID_VEHICULO_SUST", unique = false, nullable = true)
-	private String idVehiculoSust;
+	private Integer idVehiculoSust;
 	@Column(name = "ID_CHOFER_SUST", unique = false, nullable = true)
-	private String idChoferSust;
+	private Integer idChoferSust;
 	@Column(name = "ID_ASIGNACION", unique = false, nullable = true)
-	private String idAsignacion;
+	private Integer idAsignacion;
 	@Column(name = "CVE_MATRICULA", unique = false, nullable = true)
 	private String cveMatricula;
 	@Column(name = "FEC_ALTA", unique = false, nullable = true, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
 	private LocalDateTime  fecAlta;
 	@Column(name = "ID_VEHICULO", unique = false, nullable = true)
-	private String idVehiculo;
+	private Integer idVehiculo;
 	@Column(name = "IND_ACTIVO", unique = false, nullable = true)
 	private Integer indActivo;
 	@Column(name = "IND_SISTEMA", unique = false, nullable = true)

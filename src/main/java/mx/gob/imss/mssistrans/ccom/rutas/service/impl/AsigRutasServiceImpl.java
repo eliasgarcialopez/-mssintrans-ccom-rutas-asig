@@ -80,6 +80,20 @@ public class AsigRutasServiceImpl implements AsigRutasService {
         try {
             // todo - hay que regresar al paso anterior la asignacion de ruta
             //      - en este punto cuando se elmin
+            try {
+                final Optional<ControlRutas> controlRutas = controlRutasRepository.findByIdControlRuta(Integer.parseInt(idControlRuta));
+                if(controlRutas.isPresent()){
+                    controlRutas.get().setActivo(false);
+                    controlRutas.get().getIdSolcitud().setActivo(false);
+                    controlRutas.get().getIdVehiculo().setDesEstatusVehiculo("8");
+                    controlRutas.get().getIdVehiculo().setIndAsignado(false);
+                    //controlRutas.getTripulacion().setActivo(false);
+                    controlRutasRepository.save(controlRutas.get());
+                }
+            } catch (Exception e){
+                log.error("Error al eliminar el control de ruta {}", e);
+            }
+
             asigRutasRepository.delete(idControlRuta);
             asigRutasRepository.flush();
             return ResponseUtil.crearRespuestaExito(null);
@@ -229,7 +243,6 @@ public class AsigRutasServiceImpl implements AsigRutasService {
                 rutaOrigen.setHoraFin(params.getHoraFinOrigen());
                 rutaDestino.setTimHoraInicio(params.getHoraInicioDestino());
                 rutaDestino.setTimHoraFin(params.getHoraFinDestino());
-
                 rutasRepository.save(rutaOrigen);
                 rutasDestinoRepository.save(rutaDestino);
 
@@ -257,6 +270,7 @@ public class AsigRutasServiceImpl implements AsigRutasService {
                             .orElseThrow(() -> new Exception("No se ha encontrado el vehiculo con id: " + idVehiculo));
                     // colocar el estatus 8 hace que el vehiculo pueda ser asignado nuevamente para atender otra solicitud
                     vehiculo.setDesEstatusVehiculo("8");
+                    vehiculo.setIndAsignado(false);
                     vehiculosRepository.save(vehiculo);
                 }
             }

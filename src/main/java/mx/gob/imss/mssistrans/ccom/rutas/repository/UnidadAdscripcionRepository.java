@@ -3,6 +3,7 @@ package mx.gob.imss.mssistrans.ccom.rutas.repository;
 import mx.gob.imss.mssistrans.ccom.rutas.model.UnidadAdscripcion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -52,4 +53,16 @@ public interface UnidadAdscripcionRepository extends JpaRepository<UnidadAdscrip
             "FROM UnidadAdscripcion u " +
             "WHERE u.activo = true")
     List<UnidadAdscripcion> findAllUnidadAdscripcionActivo();
+
+
+	/**
+	 * Recupera una UnidadAdscripcion activa por su Id.
+	 *
+	 * @return
+	 */
+	@Query( value="SELECT u FROM UnidadAdscripcion u  WHERE  u.nomUnidadAdscripcion=:nombre")
+	Optional<UnidadAdscripcion> findByNombre(@Param("nombre") String nombre);
+
+   
+
 }
