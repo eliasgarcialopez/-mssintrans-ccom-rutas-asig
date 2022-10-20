@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.*;
 import mx.gob.imss.mssistrans.ccom.rutas.service.ControlRutasForaneasService;
+import mx.gob.imss.mssistrans.ccom.rutas.util.ControllersUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -40,10 +41,10 @@ public class ControlRutasForaneasController {
     public ResponseEntity<Respuesta<Page<ControlRutasTablaResponse>>> consultarRutas(
             @RequestParam Integer pagina,
             @RequestParam(defaultValue = "10") Integer tamanio,
-            @RequestParam String sort,
+            @RequestParam(value = "sort", defaultValue = "idControlRuta,desc") String[] sort,
             @RequestParam String columna) {
-        if (columna.equals("idRuta")) columna = "idControlRuta";
-        Pageable pageable = PageRequest.of(pagina, tamanio, Sort.by(new Sort.Order(Sort.Direction.fromString(sort), columna)));
+        log.info(columna);
+        Pageable pageable = PageRequest.of(pagina, tamanio, Sort.by(ControllersUtil.convertSort(sort)));
         Respuesta<Page<ControlRutasTablaResponse>> response = rutasForaneasService.consultarRutas(pageable);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo()));
     }
@@ -58,17 +59,6 @@ public class ControlRutasForaneasController {
     @GetMapping("/id/{idRuta}")
     public ResponseEntity<Respuesta<ControlRutasForaneasResponse>> consultarRuta(@PathVariable Integer idRuta) {
         Respuesta<ControlRutasForaneasResponse> response = rutasForaneasService.consultarRutas(idRuta);
-        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo()));
-    }
-
-    /**
-     * Endpoint para consultar total de vehiculos por ooad se obtiene del token
-     *
-     * @return
-     */
-    @GetMapping("/totales/")
-    public ResponseEntity<Respuesta<ControlRutasTotalesResponse>> consultarTotalesVehiculos() {
-        Respuesta<ControlRutasTotalesResponse> response = rutasForaneasService.consultarTotalesVehiculos();
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo()));
     }
 

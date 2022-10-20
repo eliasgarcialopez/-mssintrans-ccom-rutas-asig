@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static mx.gob.imss.mssistrans.ccom.rutas.util.ResponseUtil.sendResponse;
+import static mx.gob.imss.mssistrans.ccom.rutas.util.ResponseEntityUtil.sendResponse;
 
 @AllArgsConstructor
 @Slf4j

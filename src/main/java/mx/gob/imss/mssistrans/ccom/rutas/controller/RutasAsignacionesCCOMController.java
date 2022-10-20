@@ -1,226 +1,205 @@
 package mx.gob.imss.mssistrans.ccom.rutas.controller;
 
-import mx.gob.imss.mssistrans.ccom.rutas.dto.ActualizarControlRutaRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import mx.gob.imss.mssistrans.ccom.rutas.dto.*;
+import mx.gob.imss.mssistrans.ccom.rutas.exceptions.UserUnauthorizedException;
+import mx.gob.imss.mssistrans.ccom.rutas.service.AsigRutasService;
+import mx.gob.imss.mssistrans.ccom.rutas.util.ControllersUtil;
+import mx.gob.imss.mssistrans.ccom.rutas.util.ResponseUtil;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.google.gson.Gson;
+import java.util.List;
 
-import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosUsuarioDTO;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.RegistroRecorridoDTO;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.Response;
-import mx.gob.imss.mssistrans.ccom.rutas.service.impl.AsigRutasServiceImpl;
-import mx.gob.imss.mssistrans.ccom.rutas.util.ValidaDatos;
-
-import org.springframework.web.bind.annotation.RequestMethod;
+import static mx.gob.imss.mssistrans.ccom.rutas.util.ResponseEntityUtil.sendResponse;
 
 /**
  * @author opimentel
- *
  */
-@SuppressWarnings({ "rawtypes", "unused", "unchecked" })
 @RestController
-//@RequestMapping("/RutasAsignacionesCCOM")
+@Slf4j
 @RequestMapping("/control-rutas")
-@CrossOrigin(methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE })
+@AllArgsConstructor
+@CrossOrigin(methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 public class RutasAsignacionesCCOMController {
+    private final AsigRutasService asigRutasService;
 
-	@Autowired
-	AsigRutasServiceImpl asigRutasServiceImpl;
+    @GetMapping
+    public ResponseEntity<Response<Page<AsigRutasResponse>>> consultaGeneral(
+            @RequestParam(defaultValue = "0") Integer pagina,
+            @RequestParam(defaultValue = "10") Integer tamanio,
+            @RequestParam(defaultValue = "") String ordenCol,
+            @RequestParam(defaultValue = "idSolicitud,asc") String[] sort,
+            @RequestParam(required = false) String idRutaAsig,
+            @RequestParam(required = false) String idSolicitud) throws UserUnauthorizedException {
+        log.info("ordenCol: {}", ordenCol);
+        if (ResponseUtil.getAccess()) {
+            throw new UserUnauthorizedException();
+        } else {
+            Pageable pageable = PageRequest
+                    .of(pagina, tamanio, Sort.by(ControllersUtil.convertSort(sort)));
+            Response<Page<AsigRutasResponse>> response = asigRutasService
+                    .consultaVistaRapida(pageable, idRutaAsig, idSolicitud);
+            return sendResponse(response);
+        }
+    }
 
-	@GetMapping
-	public <T> ResponseEntity<Response> consultaGeneral(@RequestParam(defaultValue = "0") Integer pagina,
-			@RequestParam(defaultValue = "10") Integer tamanio, @RequestParam(defaultValue = "") String ordenCol,
-			@RequestParam(defaultValue = "ASC") String orden, @RequestParam(required = false) String idRutaAsig,
-			@RequestParam(required = false) String idSolicitud) {
-		// todo - validar que regrese los datos correctamente
-		Response<T> respuesta = new Response<>();
-		if (ValidaDatos.getAccess()) {
-			respuesta = ValidaDatos.noAutorizado(respuesta);
-			return new ResponseEntity<>(respuesta, HttpStatus.OK);
-		} else {
-			Response response = asigRutasServiceImpl.consultaVistaRapida(pagina, tamanio, orden, ordenCol, idRutaAsig,
-					idSolicitud);
-			return new ResponseEntity<>(response, HttpStatus.OK);
-		}
-	}
+    @DeleteMapping(path = "{idControlRuta}")
+    public ResponseEntity<Response<Integer>> delete(@PathVariable String idControlRuta) throws UserUnauthorizedException {
+        if (ResponseUtil.getAccess()) {
+            throw new UserUnauthorizedException();
+        } else {
+            Response<Integer> response = asigRutasService.delete(idControlRuta);
+            return sendResponse(response);
+        }
+    }
 
-	@DeleteMapping(path = "{idControlRuta}")
-	public <T> ResponseEntity<Response> delete(@PathVariable String idControlRuta) {
-		// todo - revisar funcionalidad
-		Response<T> respuesta = new Response<>();
-		if (ValidaDatos.getAccess()) {
-			respuesta = ValidaDatos.noAutorizado(respuesta);
-			return new ResponseEntity<>(respuesta, HttpStatus.OK);
-		} else {
-			Response response = asigRutasServiceImpl.delete(idControlRuta);
-			return new ResponseEntity<>(response, HttpStatus.OK);
-		}
-	}
+    /****** HU006 - 26 **********/
+    @GetMapping(path = "/getRutas")
+    public ResponseEntity<Response<List<DatosAsigRutasResponse>>> obtenerRuta() throws UserUnauthorizedException {
+        if (ResponseUtil.getAccess()) {
+            throw new UserUnauthorizedException();
+        } else {
+            DatosUsuarioDTO datosUsuario = ResponseUtil.datosUsuarios();
+            Response<List<DatosAsigRutasResponse>> response = asigRutasService
+                    .getRutas(datosUsuario.getIdOoad(), datosUsuario.getRol());
+            return sendResponse(response);
+        }
+    }
 
-	/****** HU006 - 26 **********/
-	@GetMapping(path = "/getRutas")
-	public <T> ResponseEntity<Response> obtenerRuta() {
-		// todo - hacer que se regrese un objeto con la estructura para la pantalla
+    @GetMapping(path = "/getSolTraslado/{idRuta}")
+    public ResponseEntity<Response<List<SolTrasladoResponse>>> getSolicitudTraslado(@PathVariable Integer idRuta) throws UserUnauthorizedException {
 
-		Response<T> respuesta = new Response<>();
-		if (ValidaDatos.getAccess()) {
-			respuesta = ValidaDatos.noAutorizado(respuesta);
-			return new ResponseEntity<>(respuesta, HttpStatus.OK);
-		} else {
-			DatosUsuarioDTO datosUsuario = ValidaDatos.datosUsuarios();
-			Response response = asigRutasServiceImpl.getRutas(datosUsuario.getIDOOAD(), datosUsuario.getRol());
-			return new ResponseEntity<>(response, HttpStatus.OK);
-		}
-	}
+        if (ResponseUtil.getAccess()) {
+            throw new UserUnauthorizedException();
+        } else {
+            DatosUsuarioDTO datosUsuario = ResponseUtil.datosUsuarios();
+            Response<List<SolTrasladoResponse>> response = asigRutasService
+                    .getSolicitudTraslado(datosUsuario, idRuta);
+            return sendResponse(response);
+        }
+    }
 
-	@GetMapping(path = "/getSolTraslado/{idRuta}")
-	public <T> ResponseEntity<Response> getSolicitudTraslado(@PathVariable Integer idRuta) {
+    @GetMapping(path = "/ecco/{idRuta}")
+    public ResponseEntity<Response<List<EccoResponse>>> getEcco(
+            @PathVariable Integer idRuta) throws UserUnauthorizedException {
 
-		Response<T> respuesta = new Response<>();
-		if (ValidaDatos.getAccess()) {
-			respuesta = ValidaDatos.noAutorizado(respuesta);
-			return new ResponseEntity<>(respuesta, HttpStatus.OK);
-		} else {
-			DatosUsuarioDTO datosUsuario = ValidaDatos.datosUsuarios();
-			Response response = asigRutasServiceImpl.getSolicitudTraslado(datosUsuario, idRuta);
-			return new ResponseEntity<>(response, HttpStatus.OK);
-		}
-	}
+        if (ResponseUtil.getAccess()) {
+            throw new UserUnauthorizedException();
+        } else {
+            DatosUsuarioDTO datosUsuario = ResponseUtil.datosUsuarios();
+            Response<List<EccoResponse>> response = asigRutasService.getEcco(datosUsuario, idRuta);
+            return sendResponse(response);
+        }
+    }
 
-	@GetMapping(path = "/ecco/{idRuta}")
-	public <T> ResponseEntity<Response> getEcco(@PathVariable Integer idRuta) {
-		Response<T> respuesta = new Response<>();
-		if (ValidaDatos.getAccess()) {
-			respuesta = ValidaDatos.noAutorizado(respuesta);
-			return new ResponseEntity<>(respuesta, HttpStatus.OK);
-		} else {
-			DatosUsuarioDTO datosUsuario = ValidaDatos.datosUsuarios();
-			Response response = asigRutasServiceImpl.getEcco(datosUsuario, idRuta);
-			return new ResponseEntity<>(response, HttpStatus.OK);
-		}
-	}
+    @GetMapping(path = "/getDatosAsignacion")
+    public ResponseEntity<Response<DatosAsigResponse>> getDatosAsignacion(
+            @RequestParam(required = false) Integer idControlRuta,
+            @RequestParam(required = false) Integer idRuta,
+            @RequestParam(required = false) Integer idSolicitud,
+            @RequestParam(required = false) Integer idVehiculo) throws UserUnauthorizedException {
 
-	@GetMapping(path = "/getDatosAsignacion")
-	public <T> ResponseEntity<Response> getDatosAsignacion(@RequestParam(required = false) Integer idControlRuta
-			, @RequestParam(required = false) Integer idRuta, @RequestParam(required = false) Integer idSolicitud
-			, @RequestParam(required = false) Integer idVehiculo) {
-		// todo - revisar cada endpoint para ver si se estan usando todos
-		Response<T> respuesta = new Response<>();
-		if (ValidaDatos.getAccess()) {
-			respuesta = ValidaDatos.noAutorizado(respuesta);
-			return new ResponseEntity<>(respuesta, HttpStatus.OK);
-		} else {
-			DatosUsuarioDTO datosUsuarios = ValidaDatos.datosUsuarios();
-			Response response = asigRutasServiceImpl.getDatosAsignacion(idControlRuta, idRuta, idSolicitud, idVehiculo);
-			return new ResponseEntity<>(response, HttpStatus.OK);
-		}
-	}
+        if (ResponseUtil.getAccess()) {
+            throw new UserUnauthorizedException();
+        } else {
+            Response<DatosAsigResponse> response = asigRutasService.getDatosAsignacion(idControlRuta, idRuta, idSolicitud, idVehiculo);
+            return sendResponse(response);
+        }
+    }
 
-	@GetMapping(path = "/getTripulacionAsignada")
-	public <T> ResponseEntity<Response> getTripulacionAsignada(@RequestParam(required = false) Integer idControlRuta
-			, @RequestParam(required = false) Integer idRuta, @RequestParam(required = false) Integer idSolicitud
-			, @RequestParam(required = false) Integer idVehiculo)  {
+    @GetMapping(path = "/getTripulacionAsignada")
+    public ResponseEntity<Response<List<TripulacionAsigResponse>>> getTripulacionAsignada(
+            @RequestParam(required = false) Integer idControlRuta,
+            @RequestParam(required = false) Integer idRuta,
+            @RequestParam(required = false) Integer idSolicitud,
+            @RequestParam(required = false) Integer idVehiculo) throws UserUnauthorizedException {
 
-		Response<T> respuesta = new Response<>();
-		if (ValidaDatos.getAccess()) {
-			respuesta = ValidaDatos.noAutorizado(respuesta);
-			return new ResponseEntity<>(respuesta, HttpStatus.OK);
-		} else {
-			Response response = asigRutasServiceImpl.getTripulacionAsignada(idControlRuta, idRuta, idSolicitud, idVehiculo);
-			return new ResponseEntity<>(response, HttpStatus.OK);
-		}
-	}
+        if (ResponseUtil.getAccess()) {
+            throw new UserUnauthorizedException();
+        } else {
+            Response<List<TripulacionAsigResponse>> response = asigRutasService
+                    .getTripulacionAsignada(idControlRuta, idRuta, idSolicitud, idVehiculo);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+    }
 
-	@GetMapping(path = "/getRegRecorrido")
-	public <T> ResponseEntity<Response> getRegRecorrido(@RequestParam(required = false) Integer idControlRuta
-			, @RequestParam(required = false) Integer idRuta, @RequestParam(required = false) Integer idSolicitud
-			, @RequestParam(required = false) Integer idVehiculo) {
+    @GetMapping(path = "/getRegRecorrido")
+    public ResponseEntity<Response<DatosRegistroRecorridoDTO>> getRegRecorrido(
+            @RequestParam(required = false) Integer idControlRuta,
+            @RequestParam(required = false) Integer idRuta,
+            @RequestParam(required = false) Integer idSolicitud,
+            @RequestParam(required = false) Integer idVehiculo) throws UserUnauthorizedException {
 
-		// todo - modificar el servicio para que regrese una lista de 2 elementos, ruta origen y ruta destino
-		// 		-
-		Response<T> respuesta = new Response<>();
-		if (ValidaDatos.getAccess()) {
-			respuesta = ValidaDatos.noAutorizado(respuesta);
-			return new ResponseEntity<>(respuesta, HttpStatus.OK);
-		} else {
-			Response response = asigRutasServiceImpl.getRegistroRecorrido(idControlRuta, idRuta, idSolicitud, idVehiculo);
-			return new ResponseEntity<>(response, HttpStatus.OK);
-		}
-	}
+        if (ResponseUtil.getAccess()) {
+            throw new UserUnauthorizedException();
+        } else {
+            Response<DatosRegistroRecorridoDTO> response = asigRutasService
+                    .getRegistroRecorrido(idControlRuta, idRuta, idSolicitud, idVehiculo);
 
-	@PutMapping(path = "/")
-	public <T> ResponseEntity<Response> update(@RequestBody ActualizarControlRutaRequest datosRecorrido) {
+            return sendResponse(response);
+        }
+    }
 
-		Response<?> respuesta = new Response<>();
-		if (ValidaDatos.getAccess()) {
-			ValidaDatos.noAutorizado(respuesta);
-			return new ResponseEntity<>(respuesta, HttpStatus.OK);
-		} else {
-			Response response = asigRutasServiceImpl.update(datosRecorrido);
-			return new ResponseEntity<>(response, HttpStatus.OK);
-		}
-	}
+    @PutMapping(path = "/")
+    public ResponseEntity<Response<Integer>> update(
+            @RequestBody ActualizarControlRutaRequest datosRecorrido) throws UserUnauthorizedException {
 
-	@GetMapping(path = "/getDetalleRutasyAsig")
-	public <T> ResponseEntity<Response> getDetalleRutasyAsig(@RequestParam Integer idControlRuta) {
+        if (ResponseUtil.getAccess()) {
+            throw new UserUnauthorizedException();
+        } else {
+            Response<Integer> response = asigRutasService.update(datosRecorrido);
+            return sendResponse(response);
+        }
+    }
 
-		Response<T> respuesta = new Response<>();
-		if (ValidaDatos.getAccess()) {
-			respuesta = ValidaDatos.noAutorizado(respuesta);
-			return new ResponseEntity<>(respuesta, HttpStatus.OK);
-		} else {
-			DatosUsuarioDTO datosUsuarios = ValidaDatos.datosUsuarios();
-			Response response = asigRutasServiceImpl.getDetalleRutasyAsig(idControlRuta);
-			return new ResponseEntity<>(response, HttpStatus.OK);
-		}
-	}
-	
-	@GetMapping(path = "/getControlRutas")
-	public <T> ResponseEntity<Response> getControlRutas(
-			@RequestParam(defaultValue = "0") Integer pagina,
-			@RequestParam(defaultValue = "10") Integer tamanio, 
-			@RequestParam(defaultValue = "") String ordenCol,
-			@RequestParam(defaultValue = "ASC") String orden, 
-			@RequestParam(required = false) String idAsignacion,
-			@RequestParam(required = false) String idSolicitud) {
+    @GetMapping(path = "/getDetalleRutasyAsig")
+    public ResponseEntity<Response<List<DetRutasAsignacionesResponse>>> getDetalleRutasyAsig(@RequestParam Integer idControlRuta) throws UserUnauthorizedException {
 
-		Response<T> respuesta = new Response<>();
-		if (ValidaDatos.getAccess()) {
-			respuesta = ValidaDatos.noAutorizado(respuesta);
-			return new ResponseEntity<>(respuesta, HttpStatus.NOT_ACCEPTABLE);
-		} else {
-			Response response = asigRutasServiceImpl.getControlRutas(pagina, tamanio, orden, ordenCol, idAsignacion,
-					idSolicitud);
-			return new ResponseEntity<>(response, HttpStatus.OK);
-		}
-	}
-	
-	@GetMapping(path = "/getDatosControlRutaById")
-	public <T> ResponseEntity<Response> getDatosControlRutaById(
-			@RequestParam(required = false) Integer idControlRuta) {
+        if (ResponseUtil.getAccess()) {
+            throw new UserUnauthorizedException();
+        } else {
+            Response<List<DetRutasAsignacionesResponse>> response = asigRutasService.getDetalleRutasyAsig(idControlRuta);
+            return sendResponse(response);
+        }
+    }
 
-		Response<T> respuesta = new Response<>();
-		if (ValidaDatos.getAccess()) {
-			respuesta = ValidaDatos.noAutorizado(respuesta);
-			return new ResponseEntity<>(respuesta, HttpStatus.OK);
-		} else {
-			DatosUsuarioDTO datosUsuarios = ValidaDatos.datosUsuarios();
-			Response response = asigRutasServiceImpl.getDatosControlRutaById(idControlRuta);
-			return new ResponseEntity<>(response, HttpStatus.OK);
-		}
-	}
+    @GetMapping(path = "/getControlRutas")
+    public ResponseEntity<Response<Page<AsigRutasResponse>>> getControlRutas(
+            @RequestParam(defaultValue = "0") Integer pagina,
+            @RequestParam(defaultValue = "10") Integer tamanio,
+            @RequestParam(defaultValue = "") String ordenCol,
+            @RequestParam(defaultValue = "idSolicitud,asc") String[] sort,
+            @RequestParam(required = false) String idAsignacion,
+            @RequestParam(required = false) String idSolicitud) throws UserUnauthorizedException {
+        log.info("ordenCol, {}", ordenCol);
+        if (ResponseUtil.getAccess()) {
+            throw new UserUnauthorizedException();
+        }
+
+        Pageable pageable = PageRequest.of(pagina, tamanio, Sort.by(ControllersUtil.convertSort(sort)));
+
+        Response<Page<AsigRutasResponse>> response = asigRutasService
+                .getControlRutas(pageable, idAsignacion, idSolicitud);
+        return sendResponse(response);
+    }
+
+    @GetMapping(path = "/getDatosControlRutaById")
+    public ResponseEntity<Response<DatosControlRutaDTO>> getDatosControlRutaById(
+            @RequestParam(required = false) Integer idControlRuta) throws UserUnauthorizedException {
+
+        if (ResponseUtil.getAccess()) {
+            throw new UserUnauthorizedException();
+        } else {
+            Response<DatosControlRutaDTO> response = asigRutasService.getDatosControlRutaById(idControlRuta);
+            return sendResponse(response);
+        }
+    }
 
 }

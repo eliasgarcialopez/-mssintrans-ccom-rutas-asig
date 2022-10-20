@@ -1,27 +1,21 @@
 package mx.gob.imss.mssistrans.ccom.rutas.controller;
 
 import com.google.gson.Gson;
+import lombok.AllArgsConstructor;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosBitacora;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosUsuario;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.Respuesta;
+import mx.gob.imss.mssistrans.ccom.rutas.dto.Response;
+import mx.gob.imss.mssistrans.ccom.rutas.exceptions.UserUnauthorizedException;
 import mx.gob.imss.mssistrans.ccom.rutas.service.BitacoraService;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.security.core.context.SecurityContextHolder;
-
-import java.io.IOException;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 
-import lombok.AllArgsConstructor;
+import java.io.IOException;
+
+import static mx.gob.imss.mssistrans.ccom.rutas.util.ResponseEntityUtil.sendResponse;
 
 @AllArgsConstructor
 @RestController
@@ -37,54 +31,63 @@ public class BitacoraServiciosController {
      * @return
      */
     @GetMapping("/ecco/{ecco}")
-    public ResponseEntity<Respuesta<DatosBitacora>> consultaVehiculoEcco(@PathVariable String ecco) {
+    public ResponseEntity<Response<DatosBitacora>> consultaVehiculoEcco(@PathVariable String ecco) {
 
         String usuario = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Respuesta<DatosBitacora> response = new Respuesta<>();
+        Response<DatosBitacora> response = new Response<>();
         if (usuario.equals("denegado")) {
             response.setError(false);
             response.setCodigo(HttpStatus.UNAUTHORIZED.value());
             response.setMensaje(usuario);
-            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+            return sendResponse(response);
         }
 
         Gson gson = new Gson();
         DatosUsuario datosUsuario = gson.fromJson(usuario, DatosUsuario.class);
-        datosUsuario.getIDOOAD();
+        datosUsuario.getIdOoad();
         datosUsuario.getRol();
 
-        response = bitacoraService.buscaVehiculo(ecco, datosUsuario.getRol().equals("Administrador") ? 0 : datosUsuario.getIDOOAD());
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        response = bitacoraService.buscaVehiculo(ecco, datosUsuario.getRol().equals("Administrador") ? 0 : datosUsuario.getIdOoad());
+        return sendResponse(response);
     }
 
     /**
      * Endpoint para generar la bitacora de servicios
      *
-     * @param bitacoraServicio
+     * @param idOoad
+     * @param idControlRuta
+     * @param fechaResguardo
      * @return
      */
-    @PostMapping(path = "/genera/{idOoad}/{idControlRuta}/{fechaResg}")
-    public ResponseEntity<Object> bitacoraServicio(@PathVariable Integer idOoad, @PathVariable Integer idControlRuta, @PathVariable String fechaResg) throws IOException {
+    @PostMapping(path = "/genera/{idOoad}/{idControlRuta}/{fechaResguardo}")
+    public ResponseEntity<byte[]> bitacoraServicio(
+            @PathVariable Integer idOoad,
+            @PathVariable Integer idControlRuta,
+            @PathVariable String fechaResguardo) throws IOException, UserUnauthorizedException {
 
         String usuario = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Respuesta<byte[]> response = new Respuesta<>();
-        if (usuario.equals("denegado")) {
-            response.setError(false);
-            response.setCodigo(HttpStatus.UNAUTHORIZED.value());
-            response.setMensaje(usuario);
-            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-        }
+        Response<byte[]> response = new Response<>();
+        validarUsuario(usuario, response);
 
         Gson gson = new Gson();
         DatosUsuario datosUsuarios = gson.fromJson(usuario, DatosUsuario.class);
-        datosUsuarios.getIDOOAD();
-        datosUsuarios.getRol();
 
-        response = bitacoraService.generaBitacora(idOoad, idControlRuta, fechaResg, datosUsuarios.getMatricula());
+        response = bitacoraService.generaBitacora(
+                idOoad, idControlRuta,
+                fechaResguardo, datosUsuarios.getMatricula());
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, "application/pdf")
                 .header(HttpHeaders.CONTENT_DISPOSITION,
                         "attachment; filename=formato-bitacora-servicio.pdf")
                 .body(response.getDatos());
+    }
+
+    private static void validarUsuario(String usuario, Response<byte[]> response) throws UserUnauthorizedException {
+        if (usuario.equals("denegado")) {
+            response.setError(false);
+            response.setCodigo(HttpStatus.UNAUTHORIZED.value());
+            response.setMensaje(usuario);
+            throw new UserUnauthorizedException();
+        }
     }
 
 }
