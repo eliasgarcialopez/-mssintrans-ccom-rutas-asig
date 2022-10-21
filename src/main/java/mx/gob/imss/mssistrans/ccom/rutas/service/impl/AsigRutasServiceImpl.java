@@ -85,8 +85,8 @@ public class AsigRutasServiceImpl implements AsigRutasService {
                 if(controlRutas.isPresent()){
                     controlRutas.get().setActivo(false);
                     controlRutas.get().getIdSolcitud().setActivo(false);
-                    controlRutas.get().getIdVehiculo().setDesEstatusVehiculo("8");
-                    controlRutas.get().getIdVehiculo().setIndAsignado(false);
+                    controlRutas.get().getVehiculo().setDesEstatusVehiculo("8");
+                    controlRutas.get().getVehiculo().setIndAsignado(false);
                     //controlRutas.getTripulacion().setActivo(false);
                     controlRutasRepository.save(controlRutas.get());
                 }

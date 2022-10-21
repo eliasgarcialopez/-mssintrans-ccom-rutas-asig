@@ -104,8 +104,6 @@ public interface AsigRutasRepository extends JpaRepository<AsigRutasEntity, Inte
             , nativeQuery = true)
     Page<AsigRutasEntity> consultaGeneral(Pageable page);
 
-    Page<Object> consultaGeneral(Pageable pageable, String idAsignacion, String idSolicitud, String idRuta);
-
     @Query(value = "SELECT SR.ID_RUTA, SR.NUM_FOLIO_RUTA AS NUM_FOLIO_RUTA, SCR.ID_SOLICITUD AS ID_SOLICITUD, SV.CVE_ECCO AS CVE_ECCO"
             + " , SCR.DES_ESTATUS_ASIGNA AS DES_ESTATUS_ASIGNA, SCR.ID_CONTROL_RUTA AS ID_CONTROL_RUTA, SV.ID_VEHICULO AS ID_VEHICULO, " +
             "NULL AS ID_REASIGNACION"

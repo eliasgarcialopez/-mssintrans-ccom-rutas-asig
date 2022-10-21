@@ -2,13 +2,14 @@ package mx.gob.imss.mssistrans.ccom.rutas.service.impl;
 
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.*;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.Asignacion;
+import mx.gob.imss.mssistrans.ccom.rutas.dto.*;
 import mx.gob.imss.mssistrans.ccom.rutas.model.*;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.*;
 import mx.gob.imss.mssistrans.ccom.rutas.service.ControlRutasForaneasService;
 import mx.gob.imss.mssistrans.ccom.rutas.util.EstatusSolicitudesEnum;
 import mx.gob.imss.mssistrans.ccom.rutas.util.EstatusVehiculosEnum;
+import mx.gob.imss.mssistrans.ccom.rutas.util.ResponseUtil;
 import mx.gob.imss.mssistrans.ccom.rutas.util.Utility;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,80 +28,54 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@SuppressWarnings("SpringJavaAutowiredFieldsWarningInspection")
 @Service
 @Slf4j
 @Transactional
 public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasService {
-    private final ControlRutasForaneasRepository controlRutasForaneasRepository;
-    private final UnidadAdscripcionRepository unidadAdscripcionRepository;
-    private final ModuloAmbulanciaRepository moAmbulanciaRepository;
-    private final VehiculosRepository vehiculoRepository;
-    private final UsuarioRepository usuarioRepository;
-    private final SolicitudTrasladoRepository solicitudTrasladoRepository;
-    private final RutasRepository rutasRepository;
-    private final TripulacionRepository tripulacionRepository;
-    private final ViaticosRepository viaticosRepository;
-    private final RutasDestinosRepository destinosRepository;
-    private final ZonaAtencionRepository zonaAtencionRepository;
+    @Autowired
+    private ControlRutasForaneasRepository controlRutasForaneasRepository;
+    @Autowired
+    private UnidadAdscripcionRepository unidadAdscripcionRepository;
+    @Autowired
+    private ModuloAmbulanciaRepository moAmbulanciaRepository;
+    @Autowired
+    private VehiculosRepository vehiculoRepository;
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+    @Autowired
+    private SolicitudTrasladoRepository solicitudTrasladoRepository;
+    @Autowired
+    private RutasRepository rutasRepository;
+    @Autowired
+    private TripulacionRepository tripulacionRepository;
+    @Autowired
+    private ViaticosRepository viaticosRepository;
+    @Autowired
+    private ZonaAtencionRepository zonaAtencionRepository;
+    @Autowired
+    private RutasDestinosRepository destinosRepository;
     @Autowired
     private AsignacionesServiceImpl asignaciones;
 
-    public ControlRutasForaneasServiceImpl(
-            ControlRutasForaneasRepository controlRutasForaneasRepository,
-            UnidadAdscripcionRepository unidadAdscripcionRepository,
-            ModuloAmbulanciaRepository moAmbulanciaRepository,
-            VehiculosRepository vehiculoRepository,
-            UsuarioRepository usuarioRepository,
-            SolicitudTrasladoRepository solicitudTrasladoRepository,
-            RutasRepository rutasRepository,
-            TripulacionRepository tripulacionRepository,
-            ViaticosRepository viaticosRepository,
-            RutasDestinosRepository destinosRepository,
-            ZonaAtencionRepository zonaAtencionRepository) {
-        this.controlRutasForaneasRepository = controlRutasForaneasRepository;
-        this.unidadAdscripcionRepository = unidadAdscripcionRepository;
-        this.moAmbulanciaRepository = moAmbulanciaRepository;
-        this.vehiculoRepository = vehiculoRepository;
-        this.usuarioRepository = usuarioRepository;
-        this.solicitudTrasladoRepository = solicitudTrasladoRepository;
-        this.rutasRepository = rutasRepository;
-        this.tripulacionRepository = tripulacionRepository;
-        this.viaticosRepository = viaticosRepository;
-        this.destinosRepository = destinosRepository;
-        this.zonaAtencionRepository = zonaAtencionRepository;
-    }
-
     @Override
-    public Respuesta<Page<ControlRutasTablaResponse>> consultarRutas(Pageable pageable) {
-        Respuesta<Page<ControlRutasTablaResponse>> response = new Respuesta<>();
+    public Response<Page<ControlRutasTablaResponse>> consultarRutas(DatosUsuario datosUsuarios, Pageable pageable) {
         try {
-            String usuario = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            log.info("usuario {}", usuario);
-
-            if (usuario.equals("denegado")) {
-
-                response.setError(false);
-                response.setCodigo(HttpStatus.UNAUTHORIZED.value());
-                response.setMensaje(usuario);
-                return response;
-            }
             log.info("las rutas page number, {}", pageable.getPageNumber());
-
             log.info("los rutas, page size {}", pageable.getPageSize());
-            Gson gson = new Gson();
-            DatosUsuario datosUsuarios = gson.fromJson(usuario, DatosUsuario.class);
 
             //Validar si es adminsitrador...
-            final Page<ControlRutas> result = datosUsuarios.getRol().equals("Administrador") || datosUsuarios.getRol().equals("Normativo") || datosUsuarios.IDOOAD == 9 || datosUsuarios.IDOOAD == 39
+            final Page<ControlRutas> result = datosUsuarios.getRol().equals("Administrador") ||
+                    datosUsuarios.getRol().equals("Normativo") ||
+                    datosUsuarios.idOoad == 9 ||
+                    datosUsuarios.idOoad == 39
                     ? controlRutasForaneasRepository.findAll(pageable)
-                    : controlRutasForaneasRepository.findAll(pageable, datosUsuarios.getIDOOAD());
-
-            log.info("las rutas, {}", result.getContent().size());
+                    : controlRutasForaneasRepository.findAll(pageable, datosUsuarios.getIdOoad());
 
             List<ControlRutasTablaResponse> content = new ArrayList<>();
             for (ControlRutas rutas : result) {
                 ControlRutasTablaResponse rutasTabla = new ControlRutasTablaResponse();
-                rutasTabla.setEcco(rutas.getIdVehiculo().getCveEcco());
+                rutasTabla.setEcco(rutas.getVehiculo().getCveEcco());
                 rutasTabla.setIdControlRuta(rutas.getIdControlRuta());
                 rutasTabla.setIdRuta(rutas.getRuta().getIdRuta());
                 rutasTabla.setFolioRuta(rutas.getRuta().getNumFolioRuta());
@@ -110,29 +85,22 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                 Optional<UnidadAdscripcion> origen = unidadAdscripcionRepository
                         .findByIdUnidadAdscripcionAndActivoEquals(rutas.getIdSolcitud().getCveOrigen(), true);
 
-                if (origen.isPresent())
-                    rutasTabla.setOrigen(origen.get().getNomUnidadAdscripcion());
+                origen.ifPresent(
+                        unidadAdscripcion -> rutasTabla.setOrigen(unidadAdscripcion.getNomUnidadAdscripcion()));
                 content.add(rutasTabla);
             }
 
-            Page<ControlRutasTablaResponse> objetoMapeado = new PageImpl<>(content, pageable, result.getTotalElements());
-            response.setDatos(objetoMapeado);
-            response.setMensaje("Exito");
-            response.setCodigo(HttpStatus.OK.value());
+            Page<ControlRutasTablaResponse> objetoMapeado = new PageImpl<>(
+                    content, pageable, result.getTotalElements());
+            return ResponseUtil.crearRespuestaExito(objetoMapeado);
         } catch (Exception exception) {
 
             log.error("Ha ocurrido un error al consultar las rutas, {}", ExceptionUtils.getStackTrace(exception));
-            response.setError(true);
-            response.setCodigo(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            response.setMensaje(exception.getMessage());
+//            response.setError(true);
+//            response.setCodigo(HttpStatus.INTERNAL_SERVER_ERROR.value());
+//            response.setMensaje(exception.getMessage());
+            return ResponseUtil.errorException(exception);
         }
-        return response;
-    }
-
-    // todo - este se puede quedar del otro lado
-    @Override
-    public Respuesta<ControlRutasTotalesResponse> consultarTotalesVehiculos() {
-        return null;
     }
 
     @Override
@@ -151,23 +119,26 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
             log.info("Consultando la ruta");
             Gson gson = new Gson();
             DatosUsuario datosUsuarios = gson.fromJson(user, DatosUsuario.class);
-            Integer idOOAD = datosUsuarios.getIDOOAD();
+            Integer idOOAD = datosUsuarios.getIdOoad();
 
             Optional<ModuloAmbulancia> opModulo = moAmbulanciaRepository.findByIdOOADAndActivoEquals(idOOAD, true);
 
 
-            Optional<ControlRutas> result = controlRutasForaneasRepository.findByIdControlRuta(idControlRuta);
-            ControlRutasForaneasResponse rutasResponse = new ControlRutasForaneasResponse();
-            if (result.isPresent()) {
-                ControlRutas ruta = result.get();
+            ControlRutas result = controlRutasForaneasRepository.findByIdControlRuta(idControlRuta)
+                    .orElseThrow(() ->
+                            new Exception("No se ha encontrado el control de ruta con id: " + idControlRuta));
+            ControlRutasResponse rutasResponse = new ControlRutasResponse();
+            if (result != null) {
+                ControlRutas ruta = result;
 
+                // todo - mover la recuperacion del origen y el destino de un servicio de unidadAdscripcionService
                 Optional<UnidadAdscripcion> origen = unidadAdscripcionRepository
                         .findByIdUnidadAdscripcionAndActivoEquals(ruta.getIdSolcitud().getCveOrigen(), true);
-                if (origen.isPresent()) rutasResponse.setOrigen(origen.get());
+                origen.ifPresent(rutasResponse::setOrigen);
 
                 Optional<UnidadAdscripcion> destino = unidadAdscripcionRepository
                         .findByIdUnidadAdscripcionAndActivoEquals(ruta.getIdSolcitud().getCveDestino(), true);
-                if (destino.isPresent()) rutasResponse.setDestino(destino.get());
+                destino.ifPresent(rutasResponse::setDestino);
 
                 rutasResponse.setFechaRuta(ruta.getFechaInicioAsigna().toString());
                 rutasResponse.setHoraRuta(ruta.getTimInicioAsigna().toString());
@@ -176,16 +147,16 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                 rutasResponse.setNumFolioTarjeta(ruta.getNumFolioTarjetaCombustible());
                 rutasResponse.setRuta(ruta.getRuta());
 
-                //
-
+                // todo - recuperar modulo, pasar la logica al modulo de ambulanciaService
                 if (opModulo.isPresent()) {
-
                     ModuloAmbulancia moduloAmbulancia = opModulo.get();
+                    final Integer idModulo = moduloAmbulancia.getIdModulo();
+                    ZonaAtencion zonaAtencion = zonaAtencionRepository
+                            .findByIdModuloAndActivoEquals(idModulo, true)
+                            .orElseThrow(() ->
+                                    new Exception("No se ha encontrado la zona de atencion ligada al modulo: " + idModulo));
 
-                    Optional<ZonaAtencion> zonaAtencion = zonaAtencionRepository
-                            .findByIdModuloAndActivoEquals(moduloAmbulancia.getIdModulo(), true);
-
-                    Integer idZona = zonaAtencion.get().getIdZona();
+                    Integer idZona = zonaAtencion.getIdZona();
 
                     Integer totalVA = vehiculoRepository.countTotalVehiculoAsignados(idZona);
 
@@ -199,7 +170,6 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
 
                     rutasResponse.setTotalVehiculosMantenimiento(totalMan);
 
-
                     Integer totalSin = vehiculoRepository.countTotalVehiculoSiniestrados(idZona);
 
                     rutasResponse.setTotalVehiculosSiniestrados(totalSin);
@@ -207,7 +177,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
 
                 TripulacionResponse tripRes = new TripulacionResponse();
                 if (ruta.getTripulacion() != null) {
-                    TripulacionInterfaceResponse tripOp = tripulacionRepository.findTripulacionIdVehiculo(ruta.getIdVehiculo().getIdVehiculo());
+                    TripulacionInterfaceResponse tripOp = tripulacionRepository.findTripulacionIdVehiculo(ruta.getVehiculo().getIdVehiculo());
 
                     if (tripOp != null) {
 
@@ -215,26 +185,19 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                         tripRes.setIdTripulacion(tripOp.getidTripulacion());
                         tripRes.setIdVehiculo(tripOp.getidVehiculo());
 
-
                         tripRes.setCveMatriculaCamillero1(tripOp.getcveMatriculaCamillero1());
                         tripRes.setCveMatriculaCamillero2(tripOp.getcveMatriculaCamillero2());
                         tripRes.setCveMatriculaChofer(tripOp.getcveMatriculaChofer());
-
-                        //Usuario camillero1=usuarioRepository.getUsuario(tripulacion.getPersonalCamillero1().getCamillero().getCveMatricula());
                         tripRes.setNombreCamillero1(tripOp.getnombreCamillero1());
-
-                        //Usuario  camillero2=usuarioRepository.getUsuario(tripulacion.getPersonalCamillero2().getCamillero().getCveMatricula());
                         tripRes.setNombreCamillero2(tripOp.getnombreCamillero2());
-                        //Usuario  chofer=usuarioRepository.getUsuario(tripulacion.getPersonalChofer().getChofer().getMatriculaChofer());
                         tripRes.setNombreChofer(tripOp.getnombreChofer());
-
 
                         tripRes.setIdTripulacion(ruta.getTripulacion().getIdTripulacion());
                         tripRes.setIdVehiculo(ruta.getTripulacion().getIdVehiculo());
                         tripRes.setFecFecha(ruta.getTripulacion().getFecFecha().toString());
                         rutasResponse.setTripulacion(tripRes);
                     } else {
-                        log.info("No se econtro la tripulacion por id vehiculo " + ruta.getIdVehiculo().getIdVehiculo());
+                        log.info("No se econtro la tripulacion por id vehiculo " + ruta.getVehiculo().getIdVehiculo());
                         response.setDatos(new ControlRutasForaneasResponse());
                         response.setError(false);
                         response.setMensaje("Exito");
@@ -249,7 +212,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                     rutasResponse.setTurno(turno);
                 }
 
-                rutasResponse.setVehiculo(ruta.getIdVehiculo());
+                rutasResponse.setVehiculo(ruta.getVehiculo());
 
                 final Viaticos viaticos = viaticosRepository.findByControlRutasIdControlRuta(idControlRuta);
                 if (viaticos != null) {
@@ -259,13 +222,8 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                     rutasResponse.setViaticosCamillero2(String.valueOf(viaticos.getViaticosCamillero2()));
                 }
 
-                response.setDatos(rutasResponse);
-            } else {
-                response.setDatos(new ControlRutasForaneasResponse());
+                ResponseUtil.crearRespuestaExito(rutasResponse);
             }
-            response.setError(false);
-            response.setMensaje("Exito");
-            response.setCodigo(HttpStatus.OK.value());
 
         } catch (Exception exception) {
             log.info("Ha ocurrido un error al consultar la ruta con Id {}, error: {}", idControlRuta, ExceptionUtils.getStackTrace(exception));
@@ -278,7 +236,6 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
 
     @Override
     public Respuesta<Integer> crearRuta(ControlRutasForaneasRequest params) {
-        // todo - puede que existan solicitudes que no tengan destino
         Respuesta<Integer> response = new Respuesta<>();
         try {
             // Pendiente crear el campo foliador....
@@ -296,9 +253,9 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
 
             Rutas ruta = new Rutas();
             ruta.setActivo(true);
-            ruta.setCveMatricula(params.getCveMatricula());
+            ruta.setMatricula(params.getCveMatricula());
             ruta.setFechaAlta(LocalDate.now());
-            ruta.setIndiceSistema(true);
+            ruta.setSistema(true);
             ruta.setIndRutaForanea(true);
 
             log.info("Obtenemos solicitud");
@@ -316,8 +273,6 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                 ruta.setIdUnidadSolcitante(solicitudTraslado.getIdUnidadSolicitante());
 
                 log.info("Actualizando estatus a asignada ");
-                // todo - estatus para solicitudes de traslado
-                // todo - cambiar tambien en asignacion normal
                 solicitudTraslado.setDesEstatusSolicitud(EstatusSolicitudesEnum.Asignada.getValor()); // estatus asignada
 
                 solicitudTrasladoRepository.save(solicitudTraslado);
@@ -336,21 +291,17 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
 
             ruta.getDestinos().add(destinos);
 
-//            rutasRepository.save(ruta);
-
-
             Gson gson = new Gson();
             DatosUsuario datosUsuarios = gson.fromJson(user, DatosUsuario.class);
 
             //Asignadmos el OOAD ala que pertence el ususario
 
-            ruta.setIdOOADFiltro(datosUsuarios.getIDOOAD());
+            ruta.setIdOOADFiltro(datosUsuarios.getIdOoad());
 
             //Se obtiene el folio
 
-            Utility utility = new Utility();
             //pendiente definir las siglas ooad
-            String folio = utility.generateFolio("", ruta.getIdRuta()!=null?ruta.getIdRuta():1);
+            String folio = Utility.generateFolio("", ruta.getIdRuta() != null ? ruta.getIdRuta() : 1);
             //Actualizamos folio
 
             ruta.setNumFolioRuta(folio);
@@ -358,7 +309,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
             // Generamos registro de control de ruta
             ControlRutas controlRutas = new ControlRutas();
             controlRutas.setActivo(true);
-            controlRutas.setCveMatricula(ruta.getCveMatricula());
+            controlRutas.setMatricula(ruta.getMatricula());
             controlRutas.setFechaAlta(LocalDate.now());
 
             if (solicitud.isPresent()) controlRutas.setIdSolcitud(solicitud.get());
@@ -367,7 +318,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
 
             Optional<Vehiculos> veOp = vehiculoRepository.findById(params.getIdVehiculo());
             if (veOp.isPresent()) {
-                controlRutas.setIdVehiculo(veOp.get());
+                controlRutas.setVehiculo(veOp.get());
                 Vehiculos ve = veOp.get();
 
                 log.info("ajustando vehiculo a asignado");
@@ -379,7 +330,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
             } else log.info("Vehiculo no encontrado" + params.getIdVehiculo());
             //pendiente ver el catalog de status asignado
             controlRutas.setDesEstatusAsigna("1");
-            controlRutas.setIndiceSistema(true);
+            controlRutas.setSistema(true);
 
             rutasRepository.save(ruta);
 
@@ -416,7 +367,6 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
             viaticosRepository.save(viaticos);
 
             log.info("Ruta foranea asignada..");
-
             /* Se crea la asignacion */
             Asignacion asignacion = new Asignacion();
             asignacion.setIdVehiculo(params.getIdVehiculo());
@@ -428,13 +378,8 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
             asignacion.setNumFolioTarjeta(controlRutas.getNumFolioTarjetaCombustible());
             RespuestaAsig<AsignacionesEntity> aa = asignaciones.registraAsignacion(asignacion, datosUsuarios);
             AsignacionesEntity asignacionEntity = aa.getDatos();
-
-            response.setCodigo(HttpStatus.OK.value());
-            response.setMensaje("Exito");
-            response.setError(false);
-            response.setDatos(controlRutas.getIdControlRuta());
+            ResponseUtil.crearRespuestaExito(controlRutas.getIdControlRuta());
         } catch (Exception exception) {
-            exception.printStackTrace();
             log.error("Ha ocurrido un error al guardar la ruta, error: {}", ExceptionUtils.getStackTrace(exception));
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             response.setCodigo(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -457,18 +402,19 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                 return response;
             }
             log.info("Actualizando ruta");
-            Optional<ControlRutas> crutaOp = controlRutasForaneasRepository.findByIdControlRuta(idControlRuta);
+            Optional<ControlRutas> controlRutaForanea = controlRutasForaneasRepository
+                    .findByIdControlRuta(idControlRuta);
 
-            if (crutaOp.isPresent()) {
-                ControlRutas controlRuta = crutaOp.get();
+            if (controlRutaForanea.isPresent()) {
+                ControlRutas controlRuta = controlRutaForanea.get();
 
                 Rutas ruta = controlRuta.getRuta();
 
                 ruta.setActivo(true);
-                ruta.setCveMatricula(rutaDTO.getCveMatricula());
+                ruta.setMatricula(rutaDTO.getCveMatricula());
                 ruta.setFechaActualizacion(LocalDate.now());
                 ruta.setIndRutaForanea(true);
-                ruta.setIndiceSistema(true);
+                ruta.setSistema(true);
 
                 Optional<SolicitudTraslado> solicitud = solicitudTrasladoRepository.findById(rutaDTO.getIdSolicitudTraslado());
                 if (solicitud.isPresent()) {
@@ -479,8 +425,6 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                     controlRuta.setIdSolcitud(solicitudTraslado);
 
                     //Ponemos esta solicitud en asiganda
-                    // todo - hacer un enum para los estatus de la so
-//                    solicitudTraslado.setDesEstatusSolicitud("4");
                     solicitudTraslado.setDesEstatusSolicitud(EstatusSolicitudesEnum.Asignada.getValor());
                     solicitudTrasladoRepository.save(solicitudTraslado);
                 }
@@ -496,29 +440,21 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                 destinos.setActivo(true);
                 destinos.setIdUnidadDestino(ruta.getIdUnidadDestino());
                 destinos.setIndiceSistema(true);
-//                if (horas.size() == 2) {
-//                    destinos.setTimHoraInicio(horas.get(0));
-//                    destinos.setTimHoraFin(horas.get(1));
-//                }
                 destinos.setRuta(ruta);
-                //destinosRepository.save(destinos);
                 log.info("destinos agregados");
                 ruta.getDestinos().clear();
                 ruta.getDestinos().add(destinos);
                 ruta.setFechaActualizacion(LocalDate.now());
-
-//                rutasRepository.save(ruta);
-//                log.info("Ruta Actualizada");
 
                 controlRuta.setRuta(ruta);
                 Optional<Vehiculos> veOp = vehiculoRepository.findById(rutaDTO.getIdVehiculo());
                 if (veOp.isPresent()) {
 
                     Vehiculos vehiculo = veOp.get();
-                    controlRuta.setIdVehiculo(vehiculo);
-                    // todo - ver si se puede implementar el enum para los estatus
+                    controlRuta.setVehiculo(vehiculo);
                     vehiculo.setDesEstatusVehiculo(EstatusVehiculosEnum.En_Transito.getValor()); // 9 - En Transito.
                     vehiculoRepository.save(vehiculo);
+
                     log.info("Vehiculo Asignado" + vehiculo);
                     ruta.setDesServicio(vehiculo.getDesTipoServicio());
                 }
@@ -526,31 +462,25 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                 rutasRepository.save(ruta);
                 log.info("Ruta Actualizada");
 
-                controlRuta.setCveMatricula(rutaDTO.getCveMatricula());
+                controlRuta.setMatricula(rutaDTO.getCveMatricula());
                 controlRuta.setFechaActualizacion(LocalDate.now());
                 controlRuta.setNumFolioTarjetaCombustible("" + rutaDTO.getNumFolioTarjeta());
                 controlRuta.setTimInicioAsigna(LocalTime.parse(rutaDTO.getHoraRuta()));
                 controlRuta.setFechaInicioAsigna(LocalDate.parse(rutaDTO.getFechaRuta()));
 
 
-//                Optional<ModuloAmbulancia> moduloOp = moAmbulanciaRepository.findByIdOOADAndActivoEquals(rutaDTO.getIdModulo(), true);
                 Optional<ModuloAmbulancia> moduloOp = moAmbulanciaRepository.findByIdModuloAndActivoEquals(rutaDTO.getIdModulo(), true);
-                if (moduloOp.isPresent())
-                    controlRuta.setModulo(moduloOp.get());
+                moduloOp.ifPresent(controlRuta::setModulo);
 
                 Optional<Tripulacion> tripOp = tripulacionRepository.findById(rutaDTO.getIdTripulacion());
-                if (tripOp.isPresent()) controlRuta.setTripulacion(tripOp.get());
+                tripOp.ifPresent(controlRuta::setTripulacion);
 
 
                 controlRutasForaneasRepository.save(controlRuta);
                 log.info("Asignacion Actualizada");
 
-                // todo - guardar los viaticos
-                // todo - recuperar los viaticos anteriores y cargar los nuevos
                 final Viaticos viaticosRecuperados = viaticosRepository
                         .findByControlRutasIdControlRuta(controlRuta.getIdControlRuta());
-
-//                viaticosRepository.delete(viaticosRecuperados);
 
                 Viaticos viaticos = new Viaticos();
                 viaticos.setIdViaticos(viaticosRecuperados.getIdViaticos());
@@ -571,6 +501,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
 
 
             } else {
+                // todo - usar la utileria para crear el response de error
                 response.setDatos(null);
                 response.setError(false);
                 response.setMensaje("Exito");
@@ -608,21 +539,21 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
 
             Gson gson = new Gson();
             DatosUsuario datosUsuarios = gson.fromJson(user, DatosUsuario.class);
-            rutas.setCveMatricula(datosUsuarios.getMatricula());
+            rutas.setMatricula(datosUsuarios.getMatricula());
 
-            Optional<Vehiculos> veOp = vehiculoRepository.findById(rutas.getIdVehiculo().getIdVehiculo());
+            Optional<Vehiculos> veOp = vehiculoRepository.findById(rutas.getVehiculo().getIdVehiculo());
             if (veOp.isPresent()) {
                 Vehiculos ve = veOp.get();
                 ve.setDesEstatusVehiculo(EstatusVehiculosEnum.En_Operacion.getValor()); // 8 - En Operacion
                 vehiculoRepository.save(ve);
                 log.info(" Se cambio estatus de vehiculo a 8");
 
-            } else log.info("Vehiculo no encontrado" + rutas.getIdVehiculo());
+            } else log.info("Vehiculo no encontrado" + rutas.getVehiculo());
 
             Optional<SolicitudTraslado> solicitud = solicitudTrasladoRepository.findById(rutas.getIdSolcitud().getIdSolicitud());
             if (solicitud.isPresent()) {
                 SolicitudTraslado solicitudTraslado = solicitud.get();
-                solicitudTraslado.setDesEstatusSolicitud(EstatusSolicitudesEnum.Aceptada.getValor());
+                solicitudTraslado.setDesEstatusSolicitud(EstatusSolicitudesEnum.ACEPTADA.getValor());
                 solicitudTrasladoRepository.save(solicitudTraslado);
             } else log.info("Solicitud no encontrado" + rutas.getIdSolcitud().getIdSolicitud());
 
@@ -632,7 +563,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
             Rutas ruta = rutasRepository.findById(rutas.getRuta().getIdRuta()).orElseThrow(Exception::new);
             ruta.setFechaBaja(LocalDate.now());
             ruta.setActivo(false);
-            ruta.setCveMatricula(datosUsuarios.getMatricula());
+            ruta.setMatricula(datosUsuarios.getMatricula());
 
 
             rutasRepository.save(ruta);

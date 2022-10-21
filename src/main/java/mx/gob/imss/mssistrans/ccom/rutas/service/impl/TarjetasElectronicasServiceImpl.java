@@ -5,7 +5,7 @@ import java.util.List;
 
 import mx.gob.imss.mssistrans.ccom.rutas.dto.CatalogoGenerico;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosUsuario;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.Respuesta;
+import mx.gob.imss.mssistrans.ccom.rutas.dto.Response;
 import mx.gob.imss.mssistrans.ccom.rutas.model.TarjetasElectronicas;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 
-import ch.qos.logback.classic.Logger;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.ControlRutasRepository;
@@ -34,12 +33,11 @@ public class TarjetasElectronicasServiceImpl implements TarjetasElectronicasServ
 	private ControlRutasRepository controlRutasRepository;
 
 	@Override
-	public Respuesta<List<CatalogoGenerico>> busquedaTarjetasDigitales() {
-		Respuesta<List<CatalogoGenerico>> response = new Respuesta<>();
-        List<CatalogoGenerico> lstTarjetas = new ArrayList<CatalogoGenerico>();
+	public Response<List<CatalogoGenerico>> busquedaTarjetasDigitales() {
+		Response<List<CatalogoGenerico>> response = new Response<>();
+        List<CatalogoGenerico> lstTarjetas = new ArrayList<>();
 
         try {
-        	
         	String usuario = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 			log.info("usuario {}", usuario);
 			
@@ -54,11 +52,11 @@ public class TarjetasElectronicasServiceImpl implements TarjetasElectronicasServ
 			DatosUsuario datosUsuarios = gson.fromJson(usuario, DatosUsuario.class);
 			log.info("usuario {}", usuario);
 			
-            List<TarjetasElectronicas> tarjetaEntity = tarjetasRepository.findTarjetasDigitalesByOoad(datosUsuarios.getIDOOAD());
+            List<TarjetasElectronicas> tarjetaEntity = tarjetasRepository.findTarjetasDigitalesByOoad(datosUsuarios.getIdOoad());
             
             log.info("consultando folios "+tarjetaEntity);
 			
-            ArrayList<String> lstTarjetasUsadas = controlRutasRepository.findTarjetasByOoad(datosUsuarios.getIDOOAD()); // Para descartar tarjetas utilizadas
+            ArrayList<String> lstTarjetasUsadas = controlRutasRepository.findTarjetasByOoad(datosUsuarios.getIdOoad()); // Para descartar tarjetas utilizadas
             if(!tarjetaEntity.isEmpty()){
                 for(TarjetasElectronicas tarj: tarjetaEntity) {
 

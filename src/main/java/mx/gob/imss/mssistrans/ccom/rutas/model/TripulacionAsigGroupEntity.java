@@ -11,15 +11,13 @@ import lombok.Setter;
 @Getter
 @Setter
 public class TripulacionAsigGroupEntity {
-
-	private String idControlRuta;
-	private String nombreChofer;
-	private String matriculaChofer;
-	private String nombreCamillero1;
-	private String matriculaCamillero1;
-	private String nombreCamillero2;
-	private String matriculaCamillero2;
-	private String numTarjetaDig;
-	private String idPersonalAmbulancia;
+    private String idControlRuta;
+    private String nombreChofer;
+    private String matriculaChofer;
+    private String nombreCamillero1;
+    private String matriculaCamillero1;
+    private String nombreCamillero2;
+    private String matriculaCamillero2;
+    private String numTarjetaDig;
+    private String idPersonalAmbulancia;
 }
-

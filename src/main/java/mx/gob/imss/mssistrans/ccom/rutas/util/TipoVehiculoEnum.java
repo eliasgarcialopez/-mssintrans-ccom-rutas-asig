@@ -1,6 +1,6 @@
 package mx.gob.imss.mssistrans.ccom.rutas.util;
 
-public enum TipoVehEnum {
+public enum TipoVehiculoEnum {
 	
 	Automóvil(1),
 	SUV(2),
@@ -20,7 +20,7 @@ public enum TipoVehEnum {
 
 	private final int tipoVeh;
 
-	private TipoVehEnum(int tipoVeh) {
+	private TipoVehiculoEnum(int tipoVeh) {
 		this.tipoVeh = tipoVeh;
 	}
 	

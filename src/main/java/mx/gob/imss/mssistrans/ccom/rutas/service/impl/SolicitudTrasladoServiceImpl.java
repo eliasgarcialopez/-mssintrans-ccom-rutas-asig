@@ -1,28 +1,23 @@
 package mx.gob.imss.mssistrans.ccom.rutas.service.impl;
 
+import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosUsuario;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.Respuesta;
+import mx.gob.imss.mssistrans.ccom.rutas.dto.Response;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.SolicitudTrasladoResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.model.SolicitudTraslado;
 import mx.gob.imss.mssistrans.ccom.rutas.model.UnidadAdscripcion;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.SolicitudTrasladoRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.UnidadAdscripcionRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.service.SolicitudTrasladoService;
-import mx.gob.imss.mssistrans.ccom.rutas.util.Utility;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import com.google.gson.Gson;
-
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,9 +31,9 @@ public class SolicitudTrasladoServiceImpl implements SolicitudTrasladoService {
    @Autowired
    private UnidadAdscripcionRepository uAdscripcionRepository;
 	@Override
-	public Respuesta<List<SolicitudTrasladoResponse>> consultarSolicitudesByEstatus() {
-		 Respuesta<List<SolicitudTrasladoResponse>> response = new Respuesta<>();
-			
+	public Response<List<SolicitudTrasladoResponse>> consultarSolicitudesByEstatus() {
+		 Response<List<SolicitudTrasladoResponse>> response = new Response<>();
+
 	        try {
 	       	 String usuario = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 				log.info("usuario {}", usuario);
@@ -52,15 +47,11 @@ public class SolicitudTrasladoServiceImpl implements SolicitudTrasladoService {
 				}
 				Gson gson = new Gson();
 				DatosUsuario datosUsuario = gson.fromJson(usuario, DatosUsuario.class);
-	        	 log.info("consultando solicitudes de traslado aceptadas, {}");
+	        	 log.info("consultando solicitudes de traslado aceptadas.");
 
-				List<SolicitudTraslado> result = new ArrayList<SolicitudTraslado>();
-				final LocalDate fechaActual = LocalDate.now();
-				if (datosUsuario.rol.equals("Administrador") || datosUsuario.rol.equals("Normativo") || datosUsuario.IDOOAD == 9 || datosUsuario.IDOOAD == 39) {
-					result = solicitudTrasladoRepository.findSolicitudTrasladoAceptadasAdmin();
-				} else {
-					result = solicitudTrasladoRepository.findSolicitudTrasladoAceptadas(datosUsuario.IDOOAD);
-				}
+				List<SolicitudTraslado> result = datosUsuario.rol.equals("Administrador") || datosUsuario.rol.equals("Normativo") || datosUsuario.idOoad == 9 || datosUsuario.idOoad == 39 ?
+						solicitudTrasladoRepository.findSolicitudTrasladoAceptadasAdmin() :
+						solicitudTrasladoRepository.findSolicitudTrasladoAceptadas(datosUsuario.idOoad);
 
 	            log.info("solicitudes, {}", result.size());
 	            List<SolicitudTrasladoResponse> content = new ArrayList<>();

@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "SINTRANST_REASIGNACION_RUTAS")
 public class ReAsignacionRutasEntity {
-
+	// todo - hacer una sola clase para REASIGNACION_RUTAS
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID_CONTROL_RUTA", unique = false, nullable = true)

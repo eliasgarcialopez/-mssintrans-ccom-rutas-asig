@@ -16,10 +16,10 @@ import lombok.*;
 @Entity
 @Table(name = "SINTRANST_CONTROL_RUTAS")
 public class AsigRutasEntity {
+	// todo - cambiar a que sea un dto comun y corriente
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ID_CONTROL_RUTA", unique = false, nullable = true)
+	@Column(name = "ID_CONTROL_RUTA")
 	private String idControlRuta;
 	
 	@Column(name = "ID_SOLICITUD", unique = false, nullable = true)

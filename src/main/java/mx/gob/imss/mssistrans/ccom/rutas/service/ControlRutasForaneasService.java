@@ -11,7 +11,7 @@ public interface ControlRutasForaneasService {
      *
      * @return
      */
-    Respuesta<Page<ControlRutasTablaResponse>> consultarRutas(Pageable pageable);
+    Response<Page<ControlRutasTablaResponse>> consultarRutas(DatosUsuario usuario, Pageable pageable);
 
     /**
      * Consulta una ruta y su control por el Identificador
