@@ -1,20 +1,17 @@
 package mx.gob.imss.mssistrans.ccom.rutas.service.impl;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.*;
 import mx.gob.imss.mssistrans.ccom.rutas.model.*;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.*;
 import mx.gob.imss.mssistrans.ccom.rutas.service.AsigRutasService;
 import mx.gob.imss.mssistrans.ccom.rutas.util.*;
 import org.springframework.data.domain.*;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
-import com.google.gson.Gson;
 
 import javax.transaction.Transactional;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.*;
 
 /**
@@ -23,6 +20,7 @@ import java.util.*;
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Transactional(rollbackOn = SQLException.class)
 @AllArgsConstructor
+@Slf4j
 @Service
 public class AsigRutasServiceImpl implements AsigRutasService {
 
@@ -77,13 +75,21 @@ public class AsigRutasServiceImpl implements AsigRutasService {
         try {
             // todo - hay que regresar al paso anterior la asignacion de ruta
             //      - en este punto cuando se elmin
-        	String user = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-			if (user.equals("denegado")) {
-				return ValidaDatos.noAutorizado(respuesta);
-			}
-			Gson gson = new Gson();
-			DatosUsuario datosUsuarios = gson.fromJson(user, DatosUsuario.class);
-            asigRutasRepository.delete(datosUsuarios.getMatricula(), idControlRuta);
+            try {
+                final Optional<ControlRutas> controlRutas = controlRutasRepository.findByIdControlRuta(Integer.parseInt(idControlRuta));
+                if(controlRutas.isPresent()){
+                    controlRutas.get().setActivo(false);
+                    controlRutas.get().getIdSolcitud().setActivo(false);
+                    controlRutas.get().getIdVehiculo().setDesEstatusVehiculo("8");
+                    controlRutas.get().getIdVehiculo().setIndAsignado(false);
+                    //controlRutas.getTripulacion().setActivo(false);
+                    controlRutasRepository.save(controlRutas.get());
+                }
+            } catch (Exception e){
+                log.error("Error al eliminar el control de ruta {}", e);
+            }
+
+            asigRutasRepository.delete(idControlRuta);
             asigRutasRepository.flush();
             return ValidaDatos.resp(respuesta, "Exito", null);
         } catch (Exception e) {
@@ -211,7 +217,7 @@ public class AsigRutasServiceImpl implements AsigRutasService {
 
 
     @Override
-    public Response<?> update(ActualizarControlRutaRequest params, DatosUsuario datosUsuarios) {
+    public Response<?> update(ActualizarControlRutaRequest params) {
 
         Response<ActualizarControlRutaRequest> respuesta = new Response<>();
         try {
@@ -237,7 +243,6 @@ public class AsigRutasServiceImpl implements AsigRutasService {
                 rutaOrigen.setHoraFin(params.getHoraFinOrigen());
                 rutaDestino.setTimHoraInicio(params.getHoraInicioDestino());
                 rutaDestino.setTimHoraFin(params.getHoraFinDestino());
-
                 rutasRepository.save(rutaOrigen);
                 rutasDestinoRepository.save(rutaDestino);
 
@@ -255,8 +260,6 @@ public class AsigRutasServiceImpl implements AsigRutasService {
                 controlRutas.setDesEstatusAsigna(estatusAsignacion);
                 // todo - agregar un enum para el tipo de incidente cuando se tenga el catalogo
                 controlRutas.setDesTipoIncidente(params.getIdTipoIncidente());
-                controlRutas.setCveMatriculaModifica(datosUsuarios.getMatricula());
-                controlRutas.setFechaActualizacion(LocalDate.now());
                 controlRutasRepository.save(controlRutas);
 
                 // se libera solo cuando esta terminada o cancelada
@@ -267,8 +270,7 @@ public class AsigRutasServiceImpl implements AsigRutasService {
                             .orElseThrow(() -> new Exception("No se ha encontrado el vehiculo con id: " + idVehiculo));
                     // colocar el estatus 8 hace que el vehiculo pueda ser asignado nuevamente para atender otra solicitud
                     vehiculo.setDesEstatusVehiculo("8");
-                    vehiculo.setCveMatriculaModifica(datosUsuarios.getMatricula());
-                    vehiculo.setFecActualizacion(new Date());
+                    vehiculo.setIndAsignado(false);
                     vehiculosRepository.save(vehiculo);
                 }
             }
@@ -376,7 +378,8 @@ public class AsigRutasServiceImpl implements AsigRutasService {
         }
 
     }
-    
+
+    @SuppressWarnings("unlikely-arg-type")
     @Override
     public <T> Response getDatosControlRutaById(Integer idControlRuta) {
         Response<T> respuesta = new Response<>();

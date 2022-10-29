@@ -22,7 +22,7 @@ public interface ControlRutasRepository extends JpaRepository<ControlRutas, Inte
      * @return
      */
     @Query(value = "SELECT CR FROM ControlRutas CR "
-            + "WHERE CR.activo = true and CR.indiceSistema = true"
+            + "WHERE CR.activo = true and CR.sistema = true"
             + " AND  CR.idControlRuta = ?1"
             + " and CR.activo = true"
     )
@@ -35,7 +35,7 @@ public interface ControlRutasRepository extends JpaRepository<ControlRutas, Inte
      * @return
      */
     @Query(value = "SELECT CR FROM ControlRutas CR "
-            + "WHERE CR.activo = true and CR.indiceSistema = true"
+            + "WHERE CR.activo = true and CR.sistema = true"
             + " AND  CR.idSolcitud = ?1 " +
             "and CR.activo = true"
     )
@@ -85,8 +85,8 @@ public interface ControlRutasRepository extends JpaRepository<ControlRutas, Inte
      * @param idOoad
      * @return
      */
-    @Query(value = "select cr from ControlRutas cr join cr.idVehiculo v join v.unidad u "
-            + "where v.cveEcco = ?1 and u.ooad.idOoad = ?2 and v.indActivo = 1 "
+    @Query(value = "select cr from ControlRutas cr join cr.vehiculo v join v.unidad u "
+            + "where v.cveEcco = ?1 and u.ooad.idOoad = ?2 and v.activo = true "
             + "order by cr.fechaAlta desc")
     ArrayList<ControlRutas> findVehiculoByEcco(String ecco, Integer idOoad);
 
@@ -97,8 +97,8 @@ public interface ControlRutasRepository extends JpaRepository<ControlRutas, Inte
      * @param idOoad
      * @return
      */
-    @Query(value = "select cr from ControlRutas cr join cr.idVehiculo v join v.unidad u "
-            + "where v.cveEcco = ?1 and v.indActivo = 1 "
+    @Query(value = "select cr from ControlRutas cr left join cr.vehiculo v left join v.unidad u "
+            + "where v.cveEcco = ?1 and v.activo = true "
             + "order by cr.fechaAlta desc")
     ArrayList<ControlRutas> findVehiculoByEccoAdm(String ecco);
 

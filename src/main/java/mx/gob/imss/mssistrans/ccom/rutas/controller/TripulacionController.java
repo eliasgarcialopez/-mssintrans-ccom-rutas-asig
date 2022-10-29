@@ -22,9 +22,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mx.gob.imss.mssistrans.ccom.rutas.service.TripulacionService;
 
-
-
-
 @AllArgsConstructor
 @Slf4j
 @RestController
@@ -65,4 +62,5 @@ public class TripulacionController {
 		});
 		return response;
 	}
+	
 }

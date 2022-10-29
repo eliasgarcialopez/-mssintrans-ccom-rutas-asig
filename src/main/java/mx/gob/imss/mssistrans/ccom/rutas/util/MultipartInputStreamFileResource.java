@@ -16,6 +16,16 @@ class MultipartInputStreamFileResource extends InputStreamResource {
     }
 
     @Override
+    public boolean equals(Object other) {
+        return super.equals(other);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
     public String getFilename() {
         return this.filename;
     }

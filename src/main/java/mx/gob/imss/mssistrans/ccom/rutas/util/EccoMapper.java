@@ -11,7 +11,6 @@ import mx.gob.imss.mssistrans.ccom.rutas.model.EccoEntity;
 import mx.gob.imss.mssistrans.ccom.rutas.model.ReasignacionEccoEntity;
 
 
-
 @Mapper
 public interface EccoMapper {
 	EccoMapper INSTANCE = Mappers.getMapper(EccoMapper.class);

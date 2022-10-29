@@ -8,10 +8,7 @@ public interface ModuloService {
 	  /**
      * Consulta el modulo disponible por idOOAD
      *
-     * @param idControlRuta
      * @return
      */
 	Respuesta<ModuloResponse> busquedaModulo();
-	  
-
 }

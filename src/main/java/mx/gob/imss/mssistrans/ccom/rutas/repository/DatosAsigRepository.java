@@ -1,15 +1,13 @@
 package mx.gob.imss.mssistrans.ccom.rutas.repository;
 
 
+import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosControlRutaDTO;
+import mx.gob.imss.mssistrans.ccom.rutas.model.DatosAsigEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosControlRutaDTO;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosRegistroRecorridoDTO;
-import mx.gob.imss.mssistrans.ccom.rutas.model.DatosAsigEntity;
 
 @Repository
 public interface DatosAsigRepository extends JpaRepository<DatosAsigEntity, Integer> {

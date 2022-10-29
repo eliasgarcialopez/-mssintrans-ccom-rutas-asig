@@ -1,14 +1,12 @@
 package mx.gob.imss.mssistrans.ccom.rutas.repository;
 
-import java.time.LocalDate;
-import java.util.List;
-
 import mx.gob.imss.mssistrans.ccom.rutas.model.SolicitudTraslado;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalTime;
+import java.util.List;
 
 @Repository
 public interface SolicitudTrasladoRepository extends JpaRepository<SolicitudTraslado, Integer> {

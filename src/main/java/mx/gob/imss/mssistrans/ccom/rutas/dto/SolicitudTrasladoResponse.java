@@ -1,7 +1,5 @@
 package mx.gob.imss.mssistrans.ccom.rutas.dto;
 
-
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import mx.gob.imss.mssistrans.ccom.rutas.model.UnidadAdscripcion;
@@ -16,7 +14,6 @@ private String fecSolicitud;
 
 private String timSolicitud;
 
- 
 private Integer idUnidadSolicitante;
 
 private Integer idUnidadAdscripcion;
@@ -51,17 +48,8 @@ private String numTelDestino;
 private String nomFamiliar;
 private String telFamiliar;
 private String cveMatriculaRecibe;
-
-//@Basic
-//@Column(name = "DES_NOMBRE_DOCTOR_RECIBE")
-//private String desNomDoctorRecibe;
 private Integer nomFolioAceptacion;
 private String numMatriculaAutoriza;
-//
-//@Basic
-//@Column(name = "DES_NOMBRE_DOCTOR_AUTORIZA")
-//private String desNomDoctorAutoriza;
-//
 private String desEstatusSolicitud;
 private String desMotivoCancelacion;
 private String cveMatricula;    

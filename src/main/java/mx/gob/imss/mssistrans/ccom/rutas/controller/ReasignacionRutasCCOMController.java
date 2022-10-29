@@ -27,7 +27,6 @@ import mx.gob.imss.mssistrans.ccom.rutas.util.ValidaDatos;
 
 import org.springframework.web.bind.annotation.RequestMethod;
 
-
 /**
  * @author opimentel
  *
@@ -139,7 +138,7 @@ public class ReasignacionRutasCCOMController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-
+	
 	@PutMapping(path = "/")
 	public ResponseEntity<Response> update(@RequestParam(required = false) String desSiniestro
 			,@RequestParam(required = false) Integer idVehiculoSust
@@ -151,5 +150,4 @@ public class ReasignacionRutasCCOMController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	
 }

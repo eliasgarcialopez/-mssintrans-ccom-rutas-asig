@@ -21,7 +21,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mx.gob.imss.mssistrans.ccom.rutas.service.ModuloService;
 
-
 @AllArgsConstructor
 @Slf4j
 @RestController
@@ -46,7 +45,6 @@ public class ModuloAmbulanciaController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public Respuesta<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException exception) {

@@ -1,9 +1,9 @@
 package mx.gob.imss.mssistrans.ccom.rutas.service;
 
-import java.io.IOException;
-
 import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosBitacora;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.Respuesta;
+
+import java.io.IOException;
 
 public interface BitacoraService {
 	

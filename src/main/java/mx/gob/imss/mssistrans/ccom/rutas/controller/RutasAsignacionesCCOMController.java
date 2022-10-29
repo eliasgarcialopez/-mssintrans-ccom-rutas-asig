@@ -174,7 +174,7 @@ public class RutasAsignacionesCCOMController {
 		} else {
 			Gson gson = new Gson();
 			DatosUsuario datosUsuarios = gson.fromJson(user, DatosUsuario.class);
-			Response response = asigRutasServiceImpl.update(datosRecorrido, datosUsuarios);
+			Response response = asigRutasServiceImpl.update(datosRecorrido);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	}

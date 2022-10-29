@@ -13,12 +13,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class RutasDestinos implements Serializable {
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 389043993860977285L;
-
-	@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_DESTINO")
     private Integer idDestino;

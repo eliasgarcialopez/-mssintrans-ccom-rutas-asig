@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.*;
+import mx.gob.imss.mssistrans.ccom.rutas.dto.Asignacion;
 import mx.gob.imss.mssistrans.ccom.rutas.model.*;
 import mx.gob.imss.mssistrans.ccom.rutas.repository.*;
 import mx.gob.imss.mssistrans.ccom.rutas.service.ControlRutasService;
@@ -23,6 +24,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -56,6 +58,15 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 	
 	@Autowired	
 	 private TripulacionRepository triRepository;
+	
+	@Autowired
+	private AsignacionesServiceImpl asignaciones;
+	
+	@Autowired
+	private BitacoraServiciosRepository bitacoraRepository;
+	
+	@Autowired
+	private BitacoraServiciosAsigRepository bitacoraRepositoryAsig;
 
 	@Override
 	public Respuesta<Page<ControlRutasTablaResponse>> consultarRutas(Pageable pageable) {
@@ -128,6 +139,13 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 				return response;
 			}
             log.info("Consultando la ruta");
+            Gson gson = new Gson();
+			DatosUsuario datosUsuarios = gson.fromJson(user, DatosUsuario.class);
+		    
+		    
+		//  Optional<ModuloAmbulancia> opModulo=moAmbulanciaRepository.findByIdOOADAndActivoEquals(idOOAD, true);
+		    
+		    
 		     
              Optional<ControlRutas>  result=controlRutasRepository.findByIdControlRuta(idControlRuta);            
              ControlRutasResponse rutasResponse=new ControlRutasResponse();
@@ -195,11 +213,13 @@ public class ControlRutasServiceImpl implements ControlRutasService {
   		        	tripRes.setCveMatriculaCamillero1(tripOp.getcveMatriculaCamillero1());
   		        	tripRes.setCveMatriculaCamillero2(tripOp.getcveMatriculaCamillero2());
   		        	tripRes.setCveMatriculaChofer(tripOp.getcveMatriculaChofer());
-
+  		        	
+  		        	//Usuario camillero1=usuarioRepository.getUsuario(tripulacion.getPersonalCamillero1().getCamillero().getCveMatricula());
   		        	tripRes.setNombreCamillero1(tripOp.getnombreCamillero1());
-  		        	
+
+  		        	//Usuario  camillero2=usuarioRepository.getUsuario(tripulacion.getPersonalCamillero2().getCamillero().getCveMatricula());
   		        	tripRes.setNombreCamillero2(tripOp.getnombreCamillero2());
-  		        	
+  		        	//Usuario  chofer=usuarioRepository.getUsuario(tripulacion.getPersonalChofer().getChofer().getMatriculaChofer());
   		        	tripRes.setNombreChofer(tripOp.getnombreChofer());
   					
 
@@ -249,8 +269,8 @@ public class ControlRutasServiceImpl implements ControlRutasService {
         }
         return response;
 	}
-	
     @Transactional
+
 	public Respuesta<Integer> crearRuta(ControlRutasRequest rutas) {
 		Respuesta<Integer> response = new Respuesta<>();
 		try {// Pendiente crear el campo foliador....
@@ -379,7 +399,34 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 			 log.info("Ruta asignada..");
 			// As 
 			 
-			
+			 /* Se crea la asignacion */
+			 Asignacion asignacion = new Asignacion();
+			 asignacion.setIdVehiculo(rutas.getIdVehiculo());
+			 log.info("Chofer: {}", controlRutas.getTripulacion().getPersonalChofer().getChofer().getIdChofer().longValue());
+			 log.info("Ruta: {}", controlRutas.getRuta().getIdRuta());
+			 asignacion.setIdChofer(controlRutas.getTripulacion().getPersonalChofer().getChofer().getIdChofer().longValue());
+			 asignacion.setIdRuta(controlRutas.getRuta().getIdRuta());
+			 asignacion.setDesEstatus("1");
+			 asignacion.setNumFolioTarjeta(controlRutas.getNumFolioTarjetaCombustible());
+			 RespuestaAsig<AsignacionesEntity> aa = asignaciones.registraAsignacion(asignacion, datosUsuarios);
+			 AsignacionesEntity asignacionEntity = aa.getDatos();
+			 
+			 Vehiculos vehiculo = vehiculoRepository.getById(controlRutas.getIdVehiculo().getIdVehiculo());
+			 
+			 /* Crea la Bitacora con el id de asignacion */
+			 String numBitacora = getSigBitacora(vehiculo.getUnidad().getOoad().getIdOoad());  // validar
+			 BitacoraServiciosAsignacionEntity bitacoraServiciosEntity = new BitacoraServiciosAsignacionEntity();
+			    bitacoraServiciosEntity.setNumBitacora(numBitacora);
+			    bitacoraServiciosEntity.setFecBitacora(new Date());
+			    bitacoraServiciosEntity.setIdOoad(vehiculo.getUnidad().getOoad().getIdOoad());  // validar
+			    bitacoraServiciosEntity.setAsignacion(asignacionEntity);  // setear dato
+			    bitacoraServiciosEntity.setMatricula(datosUsuarios.getMatricula());
+			    bitacoraServiciosEntity.setFechaAlta(new Date());
+			    bitacoraServiciosEntity.setIndActivo(true);
+			    bitacoraServiciosEntity.setIndSistema(true);
+			    
+			    bitacoraRepositoryAsig.save(bitacoraServiciosEntity);
+			 
 			response.setCodigo(HttpStatus.OK.value());
 			response.setMensaje("Exito");
 			response.setError(false);
@@ -395,9 +442,21 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 		return response;
 	}
     
-    @Transactional
+    private String getSigBitacora(Integer idOoad) {
+        String mes = String.format("%02d", Calendar.getInstance().get(Calendar.MONTH) + 1);
+        String ooad = String.format("%02d", idOoad);
+        String ultimoFolio = bitacoraRepository.findUltimoFolioByMesOoad(idOoad, mes);
+        if (ultimoFolio == null) {
+            ultimoFolio = "0000";
+        }
+
+        return mes + '-' + ooad + '-' + String.format("%04d", Integer.parseInt(ultimoFolio) + 1);
+    }
+    
+@Transactional
 	public Respuesta<Integer> editarRuta(Integer idControlRuta, ControlRutasRequest rutaDTO) {
-		Respuesta<Integer> response = new Respuesta<>();
+Respuesta<Integer> response = new Respuesta<>();
+		
 		try {
 			
 			String user = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -410,15 +469,15 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 				return response;
 			}
 			log.info("Actualizando ruta");
-			Optional<ControlRutas> crutaOp = controlRutasRepository.findByIdControlRuta(idControlRuta);
+			Optional<ControlRutas> crutaOp=   controlRutasRepository.findByIdControlRuta(idControlRuta);
 			
 			if(crutaOp.isPresent()) {
-			ControlRutas contRuta = crutaOp.get();
+			ControlRutas contRuta= crutaOp.get();
 			
-			Rutas ruta = contRuta.getRuta();
+			Rutas ruta=  contRuta.getRuta();
 			
 			ruta.setActivo(true);
-			ruta.setCveMatriculaModifica(rutaDTO.getCveMatricula());		
+			ruta.setCveMatricula(rutaDTO.getCveMatricula());			
 			ruta.setFechaActualizacion(LocalDate.now());
 			ruta.setIndiceSistema(true);
 			ArrayList<String> horas= Utility.getHorarioStringByTurno(rutaDTO.getTurno());
@@ -438,8 +497,6 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 				//Ponemos esta solicitud en asiganda
 				
 				solicitudTraslado.setDesEstatusSolicitud("4");
-				solicitudTraslado.setCveMatriculaModifica(rutaDTO.getCveMatricula());
-				solicitudTraslado.setFechaActualizacion(LocalDate.now());
 				solRepository.save(solicitudTraslado);
 				
 				
@@ -456,6 +513,7 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 			RutasDestinos destinos=new RutasDestinos();
 			destinos.setActivo(true);
 			destinos.setIdUnidadDestino(ruta.getIdUnidadDestino());
+			;
 			destinos.setIndiceSistema(true);
 			if(horas.size()==2) {
 				destinos.setTimHoraInicio(horas.get(0));
@@ -466,7 +524,6 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 			log.info("destinos agregados");
 			ruta.getDestinos().clear();
 			ruta.getDestinos().add(destinos);
-			ruta.setCveMatriculaModifica(rutaDTO.getCveMatricula());
 			ruta.setFechaActualizacion(LocalDate.now());
 			rutasRepository.save(ruta);
 			log.info("Ruta Actualizada");
@@ -478,15 +535,14 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 				 Vehiculos vehiculo=veOp.get();
 				 contRuta.setIdVehiculo(vehiculo);
 				 vehiculo.setDesEstatusVehiculo("9");//en transito.
-				 vehiculo.setCveMatriculaModifica(rutaDTO.getCveMatricula());
-				 vehiculo.setFecActualizacion(new Date());
 				 vehiculoRepository.save(vehiculo);
 				 log.info("Vehiculo Asignado"+ vehiculo);
 				 
 				
 			 
 			 }
-			 contRuta.setCveMatriculaModifica(rutaDTO.getCveMatricula());
+			 
+			 contRuta.setCveMatricula(rutaDTO.getCveMatricula());
 			 contRuta.setFechaActualizacion(LocalDate.now());
 			 contRuta.setNumFolioTarjetaCombustible(""+rutaDTO.getNumFolioTarjeta());
 			 contRuta.setTimInicioAsigna(LocalTime.parse(rutaDTO.getHoraRuta()));
@@ -502,7 +558,7 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 			
 			 
 			 
-			      controlRutasRepository.save(contRuta);
+			 controlRutasRepository.save(contRuta);
 			 log.info("Asignacion Actualizada");
 					
 			response.setCodigo(HttpStatus.OK.value());
@@ -528,8 +584,8 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 		}
 		return response;
 	}
-    
-    @Transactional
+@Transactional
+	
 	public Respuesta<Integer> eliminarRutas(Integer idControlRuta) {
 		Respuesta<Integer> response = new Respuesta<>();
 		try {
@@ -543,19 +599,18 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 				return response;
 			}
 			log.info("Eliminando la asignacion ruta");
-			Gson gson = new Gson();
-			DatosUsuario datosUsuarios = gson.fromJson(user, DatosUsuario.class);
 			ControlRutas rutas = controlRutasRepository.findById(idControlRuta).orElseThrow(Exception::new);
 			rutas.setFechaBaja(LocalDate.now());
 			rutas.setActivo(false);
-			rutas.setCveMatriculaBaja(datosUsuarios.getMatricula());
+
+			Gson gson = new Gson();
+			DatosUsuario datosUsuarios = gson.fromJson(user, DatosUsuario.class);
+			rutas.setCveMatricula(datosUsuarios.getMatricula());
 			
             Optional<Vehiculos> veOp = vehiculoRepository.findById(rutas.getIdVehiculo().getIdVehiculo());
             if (veOp.isPresent()) {
                 Vehiculos ve = veOp.get();
                 ve.setDesEstatusVehiculo("8");
-                ve.setCveMatriculaModifica(datosUsuarios.getMatricula());
-                ve.setFecActualizacion(new Date());
                 vehiculoRepository.save(ve);
                 log.info(" Se cambio estatus de vehiculo a 8");
 
@@ -565,8 +620,6 @@ public class ControlRutasServiceImpl implements ControlRutasService {
             if (solicitud.isPresent()) {
                 SolicitudTraslado solicitudTraslado = solicitud.get();
                 solicitudTraslado.setDesEstatusSolicitud("1");
-                solicitudTraslado.setCveMatriculaModifica(datosUsuarios.getMatricula());
-                solicitudTraslado.setFechaActualizacion(LocalDate.now());
                 solRepository.save(solicitudTraslado);
             } else log.info("Solicitud no encontrado" + rutas.getIdSolcitud().getIdSolicitud());
 			
@@ -576,8 +629,8 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 			log.info("Eliminando la  ruta");
 			Rutas ruta = rutasRepository.findById(rutas.getRuta().getIdRuta()).orElseThrow(Exception::new);
 			ruta.setFechaBaja(LocalDate.now());
-			ruta.setActivo(false);
-			ruta.setCveMatriculaBaja(datosUsuarios.getMatricula());
+			ruta.setActivo(false);	
+			ruta.setCveMatricula(datosUsuarios.getMatricula());
 			
 			
 			rutasRepository.save(ruta);
@@ -597,7 +650,7 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 	}
 
 	@Override
-	public Respuesta<ControlRutasTotalesResponse> consultarTotalesVehiculos() {
+public Respuesta<ControlRutasTotalesResponse> consultarTotalesVehiculos() {
 	Respuesta<ControlRutasTotalesResponse> response = new Respuesta<>();
     try {
     	String user = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -616,28 +669,26 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 	    ControlRutasTotalesResponse rutasResponse=new ControlRutasTotalesResponse();
 	   Optional<ModuloAmbulancia> opModulo=moAmbulanciaRepository.findByIdOOADAndActivoEquals(idOOAD, true);
 		if(opModulo.isPresent()) {
-			
 			ModuloAmbulancia moduloAmbulancia=opModulo.get();
+			Optional<UnidadAdscripcion> unidad=unidadAdscripcionRepository.findByNombre(moduloAmbulancia.getDesNombre());
+			Integer idUnidad=unidad.get().getIdUnidadAdscripcion();
+			Integer totalVA = vehiculoRepository.countTotalVehiculoAsignadosByUnidad(idUnidad);
+
 			Optional<ZonaAtencion> zonaOp=   zonaAtencionRepository.findByIdModuloAndActivoEquals(moduloAmbulancia.getIdModulo(),true);
 			if(zonaOp.isPresent()) {
-				
-				Integer idZona = zonaOp.get().getIdZona();
-				
-				Integer totalVA = vehiculoRepository.countTotalVehiculoAsignados(idZona);
-				
-				rutasResponse.setTotalVehiculosAsignados(totalVA);
+				rutasResponse.setTotalVehiculosAsignados(totalVA!=null?totalVA:0);
 					
-				Integer totalVD = vehiculoRepository.countTotalVehiculoDisponibles(idZona);
+				Integer totalVD = vehiculoRepository.countTotalVehiculoDisponiblesByUnidad(idUnidad);
 			
-				rutasResponse.setTotalVehiculosDisponibles(totalVD);
+				rutasResponse.setTotalVehiculosDisponibles(totalVD!=null?totalVD:0);
 					
-				Integer totalMan = vehiculoRepository.countTotalVehiculoMantenimiento(idZona);
+				Integer totalMan = vehiculoRepository.countTotalVehiculoMantenimientoByUnidad(idUnidad);
 		
-				rutasResponse.setTotalVehiculosMantenimiento(totalMan);
+				rutasResponse.setTotalVehiculosMantenimiento(totalMan!=null?totalMan:0);
 				
-				Integer totalSin = vehiculoRepository.countTotalVehiculoSiniestrados(idZona);
+				Integer totalSin = vehiculoRepository.countTotalVehiculoSiniestradosByUnidad(idUnidad);
 			
-				rutasResponse.setTotalVehiculosSiniestrados(totalSin);
+				rutasResponse.setTotalVehiculosSiniestrados(totalSin!=null?totalSin:0);
 				   
 	        	response.setDatos(rutasResponse);
 		            response.setError(false);

@@ -1,12 +1,12 @@
 package mx.gob.imss.mssistrans.ccom.rutas.service;
 
-import mx.gob.imss.mssistrans.ccom.rutas.dto.ActualizarControlRutaRequest;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosUsuario;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosUsuarioDTO;
-import mx.gob.imss.mssistrans.ccom.rutas.dto.Response;
+import mx.gob.imss.mssistrans.ccom.rutas.dto.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 
-@SuppressWarnings("rawtypes")
 public interface AsigRutasService {
 
 	<T>Response<?> getControlRutas (Integer pagina, Integer tamanio, String orden, String columna, String idAsignacion, String idSolicitud);
@@ -26,7 +26,7 @@ public interface AsigRutasService {
 	 * @param datosRecorrido
 	 * @return
 	 */
-	Response<?> update(ActualizarControlRutaRequest datosRecorrido, DatosUsuario datosUsuarios);
+	Response<?> update(ActualizarControlRutaRequest datosRecorrido);
 	
 	<T>Response getDetalleRutasyAsig(Integer idControlRuta);
 	

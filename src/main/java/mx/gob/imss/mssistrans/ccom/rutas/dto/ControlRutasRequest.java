@@ -1,11 +1,5 @@
 package mx.gob.imss.mssistrans.ccom.rutas.dto;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.Basic;
-import javax.persistence.Column;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 

@@ -1,28 +1,23 @@
 package mx.gob.imss.mssistrans.ccom.rutas.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
+
 import javax.persistence.*;
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity 
+@Entity
 @Table(name = "SINTRANST_RUTAS")
 @Getter
 @Setter
-public class Rutas implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -5949896740070481496L;
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+public class Rutas extends BaseEntity implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_RUTA")
     private Integer idRuta;
     @Basic
@@ -37,10 +32,10 @@ public class Rutas implements Serializable {
     @Basic
     @Column(name = "ID_ORIGEN")
     private Integer idOrigen;
-	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    @JoinColumn(name = "ID_RUTA") 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "ID_RUTA")
     @JsonManagedReference
-	private List<RutasDestinos> destinos=new ArrayList<>();
+    private List<RutasDestinos> destinos = new ArrayList<>();
     @Basic
     @Column(name = "DES_CODIGO_POSTAL")
     private String desCodigoPostal;
@@ -116,12 +111,6 @@ public class Rutas implements Serializable {
     @Basic
     @Column(name = "CVE_MATRICULA")
     private String cveMatricula;
-    @Basic
-    @Column(name = "CVE_MATRICULA_MODIFICA")
-    private String cveMatriculaModifica;
-    @Basic
-    @Column(name = "CVE_MATRICULA_BAJA")
-    private String cveMatriculaBaja;
     @Basic
     @Column(name = "FEC_ALTA")
     private LocalDate fechaAlta;

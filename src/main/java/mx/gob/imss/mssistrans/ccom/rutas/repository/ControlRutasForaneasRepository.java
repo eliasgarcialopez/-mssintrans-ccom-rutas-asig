@@ -21,7 +21,7 @@ public interface ControlRutasForaneasRepository extends JpaRepository<ControlRut
      */
     @Query(value = "select CR from ControlRutas CR " +
             "where CR.activo = true " +
-            "and CR.indiceSistema = true " +
+            "and CR.sistema = true " +
             "and CR.ruta.indRutaForanea = true " +
             "and CR.idControlRuta = ?1")
     Optional<ControlRutas> findByIdControlRuta(Integer idControlRuta);
@@ -35,7 +35,7 @@ public interface ControlRutasForaneasRepository extends JpaRepository<ControlRut
      */
     @Query(value = "select a from ControlRutas a " +
             "where a.activo = true " +
-            "and a.indiceSistema = true " +
+            "and a.sistema = true " +
             "and a.ruta.indRutaForanea = true")
     Page<ControlRutas> findAll(Pageable pageable);
 
@@ -50,7 +50,7 @@ public interface ControlRutasForaneasRepository extends JpaRepository<ControlRut
             "where " +
             " a.modulo.idOOAD=?1 " +
             "and a.activo = true " +
-            "and a.indiceSistema = true " +
+            "and a.sistema = true " +
             "and a.ruta.indRutaForanea = true")
     Page<ControlRutas> findAll(Pageable pageable, Integer idOOAD);
 
@@ -64,20 +64,19 @@ public interface ControlRutasForaneasRepository extends JpaRepository<ControlRut
     @Query(value = "select a.numFolioTarjetaCombustible from ControlRutas a " +
             "where a.modulo.idOOAD = ?1 " +
             "and a.activo = true " +
-            "and a.indiceSistema = true " +
+            "and a.sistema = true " +
             "and a.ruta.indRutaForanea = true")
     ArrayList<String> findTarjetasByOoad(Integer idOoad);
 
     /**
-     * todo - falta filtrar por ruta foranea
      * Busca control de rutas por ecco
      *
      * @param ecco
      * @param idOoad
      * @return
      */
-    @Query(value = "select cr from ControlRutas cr join cr.idVehiculo v join v.unidad u "
-            + "where v.cveEcco = ?1 and u.ooad.idOoad = ?2 and v.indActivo = 1 "
+    @Query(value = "select cr from ControlRutas cr join cr.vehiculo v join v.unidad u "
+            + "where v.cveEcco = ?1 and u.ooad.idOoad = ?2 and v.activo = true and cr.ruta.indRutaForanea = true "
             + "order by cr.fechaAlta desc")
     ArrayList<ControlRutas> findVehiculoByEcco(String ecco, Integer idOoad);
 

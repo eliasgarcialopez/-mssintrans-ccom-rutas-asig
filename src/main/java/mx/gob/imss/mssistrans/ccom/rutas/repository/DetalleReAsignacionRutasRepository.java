@@ -1,21 +1,22 @@
 package mx.gob.imss.mssistrans.ccom.rutas.repository;
 
+import mx.gob.imss.mssistrans.ccom.rutas.model.DetalleReAsignacionRutasEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import mx.gob.imss.mssistrans.ccom.rutas.dto.ReAsignacionRutasDTO;
-import mx.gob.imss.mssistrans.ccom.rutas.model.DetalleReAsignacionRutasEntity;
-import mx.gob.imss.mssistrans.ccom.rutas.model.ReAsignacionRutasEntity;
 
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
 @Repository
 public interface DetalleReAsignacionRutasRepository extends JpaRepository<DetalleReAsignacionRutasEntity, Integer> {
+	@Query(value = "SELECT REAR.* FROM SINTRANST_REASIGNACION_RUTAS REAR\n" +
+			"WHERE REAR.ID_VEHICULO =:idVehiculo AND REAR.ID_RUTA=:idRuta AND REAR.ID_CHOFER=:idChofer AND REAR.IND_ACTIVO =1"
+			,nativeQuery = true)
+	DetalleReAsignacionRutasEntity getReasignacionByVehiculoChoferRuta(@Param("idVehiculo") Integer idVehiculo, @Param("idRuta") Integer idRuta, @Param("idChofer") Integer idChofer);
 
     @Query(value = "SELECT SR.NUM_FOLIO_RUTA, SCR.ID_SOLICITUD"
     		+ ", SV.CVE_ECCO, SCR.DES_ESTATUS_ASIGNA AS DES_ESTATUS_ASIGNA, SRR.ID_REASIGNACION AS ID_REASIGNACION"

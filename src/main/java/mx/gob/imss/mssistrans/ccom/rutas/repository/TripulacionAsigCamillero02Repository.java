@@ -32,6 +32,6 @@ public interface TripulacionAsigCamillero02Repository extends JpaRepository<Trip
     		+ " WHERE SCR.IND_ACTIVO = 1  AND SCR.IND_SISTEMA = 1 "
     		+ " AND SCR.ID_RUTA = ? AND SCR.ID_SOLICITUD = ? AND SCR.ID_VEHICULO = ?"
             ,nativeQuery = true)
-    TripulacionAsigCam02Entity getCamillero2ByIdVehiculo(Integer idRuta, Integer idSolicitud, Integer idVehiculo);;
+    TripulacionAsigCam02Entity getCamillero2ByIdVehiculo(Integer idRuta, Integer idSolicitud, Integer idVehiculo);
     
 }

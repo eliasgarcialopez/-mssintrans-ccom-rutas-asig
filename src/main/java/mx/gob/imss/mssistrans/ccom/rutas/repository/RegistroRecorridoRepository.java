@@ -51,7 +51,7 @@ public interface RegistroRecorridoRepository extends JpaRepository<RegistroRecor
 			, String estatusTraslado, String idVehiculo, String idRuta);
 
     @Query("SELECT new mx.gob.imss.mssistrans.ccom.rutas.dto.DatosRegistroRecorridoDTO("
-            + " cr.idVehiculo.idVehiculo, cr.fechaInicioAsigna, cr.timInicioAsigna, cr.desEstatusAsigna, "
+            + " cr.vehiculo.idVehiculo, cr.fechaInicioAsigna, cr.timInicioAsigna, cr.desEstatusAsigna, "
             + " rd.idDestino, "
             + " (SELECT uni.nomUnidadAdscripcion FROM UnidadAdscripcion uni where uni.idUnidadAdscripcion = ru.idUnidadDestino ) as nomUnidadDestino, "
             + " (SELECT CONCAT(sol.desColonia,', ',sol.desCalle,', ',sol.numExterior,', ',sol.numInterior) FROM SolicitudTraslado sol WHERE sol.idSolicitud = cr.idSolcitud) as destinoParticular, "
@@ -63,12 +63,12 @@ public interface RegistroRecorridoRepository extends JpaRepository<RegistroRecor
             + " INNER JOIN RutasDestinos AS rd ON rd.ruta.idRuta = cr.ruta.idRuta "
             + " WHERE cr.ruta.idRuta = :idRuta "
             + " AND cr.idSolcitud.idSolicitud = :idSolicitud "
-            + " AND cr.idVehiculo.idVehiculo = :idVehiculo ")
-    DatosRegistroRecorridoDTO getRegistroRecorridoByIdRutaIdSolicitudIdVehiculo(@Param("idRuta") Integer idRuta, 
-            @Param("idSolicitud") Integer idSolicitud, @Param("idVehiculo") Integer idVehiculo);
-    
+            + " AND cr.vehiculo.idVehiculo = :idVehiculo ")
+    DatosRegistroRecorridoDTO getRegistroRecorridoByIdRutaIdSolicitudIdVehiculo(@Param("idRuta") Integer idRuta,
+                                                                                @Param("idSolicitud") Integer idSolicitud, @Param("idVehiculo") Integer idVehiculo);
+
     @Query("SELECT new mx.gob.imss.mssistrans.ccom.rutas.dto.DatosRegistroRecorridoDTO("
-            + " cr.idVehiculo.idVehiculo, cr.fechaInicioAsigna, cr.timInicioAsigna, cr.desEstatusAsigna, "
+            + " cr.vehiculo.idVehiculo, cr.fechaInicioAsigna, cr.timInicioAsigna, cr.desEstatusAsigna, "
             + " rd.idDestino, "
             + " (SELECT uni.nomUnidadAdscripcion FROM UnidadAdscripcion uni where uni.idUnidadAdscripcion = ru.idUnidadDestino ) as nomUnidadDestino, "
             + " (SELECT CONCAT(sol.desColonia,', ',sol.desCalle,', ',sol.numExterior,', ',sol.numInterior) FROM SolicitudTraslado sol WHERE sol.idSolicitud = cr.idSolcitud) as destinoParticular, "
@@ -80,5 +80,5 @@ public interface RegistroRecorridoRepository extends JpaRepository<RegistroRecor
             + " INNER JOIN RutasDestinos AS rd ON rd.ruta.idRuta = cr.ruta.idRuta "
             + " WHERE cr.idControlRuta = :idControlRuta ")
     DatosRegistroRecorridoDTO getRegistroRecorridoByRuta(@Param("idControlRuta") Integer idControlRuta);
-    
+
 }

@@ -1,34 +1,31 @@
 package mx.gob.imss.mssistrans.ccom.rutas.model;
 
-import lombok.Getter;
-import lombok.Setter;
-import javax.persistence.*;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.*;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-@Entity 
+@Entity
 @Table(name = "SINTRANST_MODULO_AMBULANCIA")
 @Getter
 @Setter
-public class ModuloAmbulancia implements Serializable {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+public class ModuloAmbulancia extends BaseEntity implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_MODULO_AMBULANCIA")
     private Integer idModulo;
 
     @Basic
     @Column(name = "DES_NOMBRE")
     private String desNombre;
-    
-	@JsonBackReference
-	@Basic
-	 @OneToOne(cascade = CascadeType.ALL)
-		@JoinColumn(name = "ID_MODULO_AMBULANCIA", unique = false, nullable = true)
-	private ZonaAtencion zona;
- 
+
+    @JsonBackReference
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "ID_MODULO_AMBULANCIA", unique = false, nullable = true)
+    private ZonaAtencion zona;
+
     @Basic
     @Column(name = "CVE_PRESUPUESTAL")
     private String cvePresupuestal;
@@ -47,11 +44,11 @@ public class ModuloAmbulancia implements Serializable {
     @Basic
     @Column(name = "ID_OOAD")
     private Integer idOOAD;
-     
+
     @Basic
     @Column(name = "CVE_MATRICULA")
     private String cveMatricula;
-    
+
     @Basic
     @Column(name = "DES_TIPO_MODULO")
     private String desTipoModulo;

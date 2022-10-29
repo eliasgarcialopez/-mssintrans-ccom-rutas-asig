@@ -1,18 +1,17 @@
 package mx.gob.imss.mssistrans.ccom.rutas.repository;
 
-import java.util.Optional;
-
 import mx.gob.imss.mssistrans.ccom.rutas.dto.TripulacionInterfaceResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.model.Tripulacion;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface TripulacionRepository extends JpaRepository<Tripulacion, Integer> {
-	 
+
     /**
      * Recupera la tripulacion por id Vehiculo activa .
      *
@@ -21,7 +20,7 @@ public interface TripulacionRepository extends JpaRepository<Tripulacion, Intege
      * @return
      */
 	@Query(value = "select t from Tripulacion t "
-			     + "where t.idVehiculo = ?1 and t.activo = 1 and t.indiceSistema=1 ")
+			     + "where t.idVehiculo = ?1 and t.activo = true and t.sistema = true")
 	Optional<Tripulacion> findByIdVehiculo(Integer idVehiculo);
 	
 	

@@ -21,9 +21,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mx.gob.imss.mssistrans.ccom.rutas.service.VehiculoService;
 
-
-
-
 @AllArgsConstructor
 @Slf4j
 @RestController
@@ -31,6 +28,7 @@ import mx.gob.imss.mssistrans.ccom.rutas.service.VehiculoService;
 @CrossOrigin(methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE })
 
 public class VehiculoController {
+	
 	@Autowired
 	private VehiculoService vehiculoService;
 
@@ -64,4 +62,5 @@ public class VehiculoController {
 		});
 		return response;
 	}
+	
 }

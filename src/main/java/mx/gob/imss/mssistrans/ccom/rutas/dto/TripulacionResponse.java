@@ -1,16 +1,5 @@
 package mx.gob.imss.mssistrans.ccom.rutas.dto;
 
-
-
-
-import java.time.LocalDate;
-
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
@@ -25,7 +14,6 @@ public class TripulacionResponse {
 	private Integer idTripulacion;
 
 	private String fecFecha;
-
 	
 	private Integer idVehiculo;
 
@@ -36,7 +24,5 @@ public class TripulacionResponse {
 	private String nombreCamillero2;
 	private String cveMatriculaCamillero2;
 
-
-	    
 }
  
