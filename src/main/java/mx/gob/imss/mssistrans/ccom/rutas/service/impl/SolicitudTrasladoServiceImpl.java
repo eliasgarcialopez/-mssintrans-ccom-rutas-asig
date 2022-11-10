@@ -31,8 +31,9 @@ public class SolicitudTrasladoServiceImpl implements SolicitudTrasladoService {
 	private SolicitudTrasladoRepository solicitudTrasladoRepository;
    @Autowired
    private UnidadAdscripcionRepository uAdscripcionRepository;
+   
 	@Override
-	public Respuesta<List<SolicitudTrasladoResponse>> consultarSolicitudesByEstatus() {
+	public Respuesta<List<SolicitudTrasladoResponse>> obtenerSolicitudesByEstatus(Integer ruta) {
 		 Respuesta<List<SolicitudTrasladoResponse>> response = new Respuesta<>();
 			
 	        try {
@@ -51,12 +52,21 @@ public class SolicitudTrasladoServiceImpl implements SolicitudTrasladoService {
 	        	 log.info("consultando solicitudes de traslado aceptadas, {}");
 
 				List<SolicitudTraslado> result = new ArrayList<SolicitudTraslado>();
-				if (datosUsuario.rol.equals("Administrador") || datosUsuario.rol.equals("Normativo") || datosUsuario.IDOOAD == 9 || datosUsuario.IDOOAD == 39) {
-					result = solicitudTrasladoRepository.findSolicitudTrasladoAceptadasAdmin();
+				
+				if (ruta == 0) {
+					if (datosUsuario.rol.equals("Administrador") || datosUsuario.rol.equals("Normativo") || datosUsuario.IDOOAD == 9 || datosUsuario.IDOOAD == 39) {
+						result = solicitudTrasladoRepository.findSolicitudTrasladoAceptadasAdminLocal();
+					} else {
+						result = solicitudTrasladoRepository.findSolicitudTrasladoAceptadasLocal(datosUsuario.IDOOAD);
+					}
 				} else {
-					result = solicitudTrasladoRepository.findSolicitudTrasladoAceptadas(datosUsuario.IDOOAD);
+					if (datosUsuario.rol.equals("Administrador") || datosUsuario.rol.equals("Normativo") || datosUsuario.IDOOAD == 9 || datosUsuario.IDOOAD == 39) {
+						result = solicitudTrasladoRepository.findSolicitudTrasladoAceptadasAdminForanea();
+					} else {
+						result = solicitudTrasladoRepository.findSolicitudTrasladoAceptadasForanea(datosUsuario.IDOOAD);
+					}
 				}
-
+				
 	            log.info("solicitudes, {}", result.size());
 	            List<SolicitudTrasladoResponse> content = new ArrayList<>();
 	            for (SolicitudTraslado solicitudTraslado : result) {
@@ -98,5 +108,4 @@ public class SolicitudTrasladoServiceImpl implements SolicitudTrasladoService {
 	        }
 	        return response;
 	}
-
 }

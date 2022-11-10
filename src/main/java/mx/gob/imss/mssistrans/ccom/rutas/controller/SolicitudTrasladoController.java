@@ -32,7 +32,7 @@ public class SolicitudTrasladoController {
 	private SolicitudTrasladoService solicitudTrasladoService;
 
 	/**
-	 * Consultar las solicitudes de traslado por turno y que sean aceptadas
+	 * Consultar las solicitudes de traslado por turno y que sean aceptadas de rutas local
 	 *
 	 * @param pagina
 	 * @param tamanio
@@ -41,9 +41,23 @@ public class SolicitudTrasladoController {
 	 * @return
 	 */
 	@GetMapping
-	public ResponseEntity<Respuesta<?>> consultarSolicitudesTraslado() {
+	public ResponseEntity<Respuesta<?>> consultarSolicitudesTrasladoLocal() {
+	Respuesta<?> response =solicitudTrasladoService.obtenerSolicitudesByEstatus(0);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
 	
-	Respuesta<?> response =solicitudTrasladoService.consultarSolicitudesByEstatus();
+	/**
+	 * Consultar las solicitudes de traslado por turno y que sean aceptadas de rutas local
+	 *
+	 * @param pagina
+	 * @param tamanio
+	 * @param sort
+	 * @param column
+	 * @return
+	 */
+	@GetMapping(path = "/foraneas")
+	public ResponseEntity<Respuesta<?>> consultarSolicitudesTrasladoForanea() {
+	Respuesta<?> response =solicitudTrasladoService.obtenerSolicitudesByEstatus(1);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 

@@ -8,10 +8,9 @@ import java.util.List;
 
 public interface SolicitudTrasladoService {
     /**
-     * Consulta todas las solicitudes de traslado aceptadas
+     * Consulta todas las solicitudes de traslado aceptadas rutas locales
      *
      * @return
      */
-    Respuesta<List<SolicitudTrasladoResponse>> consultarSolicitudesByEstatus();
-
+    Respuesta<List<SolicitudTrasladoResponse>> obtenerSolicitudesByEstatus(Integer ruta);
 }
