@@ -53,19 +53,19 @@ public class SolicitudTrasladoServiceImpl implements SolicitudTrasladoService {
 
 				List<SolicitudTraslado> result = new ArrayList<SolicitudTraslado>();
 				
-				if (ruta == 0) {
+				//if (ruta == 0) {
 					if (datosUsuario.rol.equals("Administrador") || datosUsuario.rol.equals("Normativo") || datosUsuario.IDOOAD == 9 || datosUsuario.IDOOAD == 39) {
 						result = solicitudTrasladoRepository.findSolicitudTrasladoAceptadasAdminLocal();
 					} else {
 						result = solicitudTrasladoRepository.findSolicitudTrasladoAceptadasLocal(datosUsuario.IDOOAD);
 					}
-				} else {
-					if (datosUsuario.rol.equals("Administrador") || datosUsuario.rol.equals("Normativo") || datosUsuario.IDOOAD == 9 || datosUsuario.IDOOAD == 39) {
-						result = solicitudTrasladoRepository.findSolicitudTrasladoAceptadasAdminForanea();
-					} else {
-						result = solicitudTrasladoRepository.findSolicitudTrasladoAceptadasForanea(datosUsuario.IDOOAD);
-					}
-				}
+				//} else {
+				//	if (datosUsuario.rol.equals("Administrador") || datosUsuario.rol.equals("Normativo") || datosUsuario.IDOOAD == 9 || datosUsuario.IDOOAD == 39) {
+				//		result = solicitudTrasladoRepository.findSolicitudTrasladoAceptadasAdminForanea();
+				//	} else {
+				//		result = solicitudTrasladoRepository.findSolicitudTrasladoAceptadasForanea(datosUsuario.IDOOAD);
+				//	}
+				//}
 				
 	            log.info("solicitudes, {}", result.size());
 	            List<SolicitudTrasladoResponse> content = new ArrayList<>();

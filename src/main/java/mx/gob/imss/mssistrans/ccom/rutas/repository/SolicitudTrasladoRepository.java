@@ -38,18 +38,18 @@ public interface SolicitudTrasladoRepository extends JpaRepository<SolicitudTras
 			+ "JOIN SINTRANSC_UNIDADES_ADSCRIPCION UA ON SO.ID_UNIDAD_ADSCRIPCION = UA.ID_UNIDAD_ADSCRIPCION " 
 			+ "WHERE UA.ID_OOAD = ?1 "
 			+ "AND SO.IND_ACTIVO = 1 "
-			+ "AND SO.DES_ESTATUS_SOLICITUD = '1' "
-			+ "AND SO.IND_SOLICITUD_FORANEA = 0 ", nativeQuery = true)
+			+ "AND SO.DES_ESTATUS_SOLICITUD = '1' ", nativeQuery = true)
+			//+ "AND SO.IND_SOLICITUD_FORANEA = 0 ", nativeQuery = true)
 	List<SolicitudTraslado> findSolicitudTrasladoAceptadasLocal(Integer idOoad);
 
 	@Query(value = "SELECT SO.* FROM SINTRANST_SOLICITUD_TRASLADO SO "
 			+ "JOIN SINTRANSC_UNIDADES_ADSCRIPCION UA ON SO.ID_UNIDAD_ADSCRIPCION = UA.ID_UNIDAD_ADSCRIPCION "
 			+ "WHERE SO.IND_ACTIVO = 1 "
-			+ "AND SO.DES_ESTATUS_SOLICITUD = '1' "
-			+ "AND SO.IND_SOLICITUD_FORANEA = 0 ", nativeQuery = true)
+			+ "AND SO.DES_ESTATUS_SOLICITUD = '1' ", nativeQuery = true)
+			//+ "AND SO.IND_SOLICITUD_FORANEA = 0 ", nativeQuery = true)
 	List<SolicitudTraslado> findSolicitudTrasladoAceptadasAdminLocal();
 	
-	@Query(value = "SELECT SO.* FROM SINTRANST_SOLICITUD_TRASLADO SO "
+	/*@Query(value = "SELECT SO.* FROM SINTRANST_SOLICITUD_TRASLADO SO "
 			+ "JOIN SINTRANSC_UNIDADES_ADSCRIPCION UA ON SO.ID_UNIDAD_ADSCRIPCION = UA.ID_UNIDAD_ADSCRIPCION " 
 			+ "WHERE UA.ID_OOAD = ?1 "
 			+ "AND SO.IND_ACTIVO = 1 "
@@ -62,6 +62,6 @@ public interface SolicitudTrasladoRepository extends JpaRepository<SolicitudTras
 			+ "WHERE SO.IND_ACTIVO = 1 "
 			+ "AND SO.DES_ESTATUS_SOLICITUD = '1' "
 			+ "AND SO.IND_SOLICITUD_FORANEA = 1 ", nativeQuery = true)
-	List<SolicitudTraslado> findSolicitudTrasladoAceptadasAdminForanea();
+	List<SolicitudTraslado> findSolicitudTrasladoAceptadasAdminForanea();*/
 	
 }
