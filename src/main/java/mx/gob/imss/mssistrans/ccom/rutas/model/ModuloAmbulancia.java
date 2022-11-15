@@ -50,7 +50,7 @@ public class ModuloAmbulancia extends BaseEntity implements Serializable {
     private String cveMatricula;
 
     @Basic
-    @Column(name = "DES_TIPO_MODULO")
+    @Column(name = "REF_TIPO_MODULO")
     private String desTipoModulo;
 	
     @Basic
