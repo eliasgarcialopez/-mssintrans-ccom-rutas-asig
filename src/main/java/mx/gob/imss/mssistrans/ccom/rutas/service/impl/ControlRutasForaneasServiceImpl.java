@@ -294,9 +294,9 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
 
             Rutas ruta = new Rutas();
             ruta.setActivo(true);
-            ruta.setMatricula(params.getCveMatricula());
+            ruta.setCveMatricula(params.getCveMatricula());
             ruta.setFechaAlta(LocalDate.now());
-            ruta.setSistema(true);
+            ruta.setIndiceSistema(true);
             ruta.setIndRutaForanea(true);
 
             log.info("Obtenemos solicitud");
@@ -356,7 +356,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
             // Generamos registro de control de ruta
             ControlRutas controlRutas = new ControlRutas();
             controlRutas.setActivo(true);
-            controlRutas.setCveMatricula(ruta.getMatricula());
+            controlRutas.setCveMatricula(ruta.getCveMatricula());
             controlRutas.setFechaAlta(LocalDate.now());
 
             if (solicitud.isPresent()) controlRutas.setIdSolcitud(solicitud.get());
@@ -463,10 +463,10 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
                 Rutas ruta = controlRuta.getRuta();
 
                 ruta.setActivo(true);
-                ruta.setMatricula(rutaDTO.getCveMatricula());
+                ruta.setCveMatricula(rutaDTO.getCveMatricula());
                 ruta.setFechaActualizacion(LocalDate.now());
                 ruta.setIndRutaForanea(true);
-                ruta.setSistema(true);
+                ruta.setIndiceSistema(true);
 
                 Optional<SolicitudTraslado> solicitud = solicitudTrasladoRepository.findById(rutaDTO.getIdSolicitudTraslado());
                 if (solicitud.isPresent()) {
@@ -630,7 +630,7 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
             Rutas ruta = rutasRepository.findById(rutas.getRuta().getIdRuta()).orElseThrow(Exception::new);
             ruta.setFechaBaja(LocalDate.now());
             ruta.setActivo(false);
-            ruta.setMatricula(datosUsuarios.getMatricula());
+            ruta.setCveMatricula(datosUsuarios.getMatricula());
 
 
             rutasRepository.save(ruta);
