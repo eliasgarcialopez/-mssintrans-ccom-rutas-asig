@@ -108,22 +108,4 @@ public class Rutas extends BaseEntity implements Serializable {
     @Basic
     @Column(name = "NUM_TELEFONO_RESPONSABLE")
     private String numTelefonoResponsable;
-    @Basic
-    @Column(name = "CVE_MATRICULA")
-    private String cveMatricula;
-    @Basic
-    @Column(name = "FEC_ALTA")
-    private LocalDate fechaAlta;
-    @Basic
-    @Column(name = "FEC_ACTUALIZACION")
-    private LocalDate fechaActualizacion;
-    @Basic
-    @Column(name = "FEC_BAJA")
-    private LocalDate fechaBaja;
-    @Basic
-    @Column(name = "IND_ACTIVO")
-    private boolean activo;
-    @Basic
-    @Column(name = "IND_SISTEMA")
-    private boolean indiceSistema;
 }

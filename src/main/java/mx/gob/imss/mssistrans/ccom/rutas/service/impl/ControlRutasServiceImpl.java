@@ -286,10 +286,10 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 			//Creando la ruta
 			
 			Rutas ruta=new Rutas();
-			//ruta.setActivo(true);
-			ruta.setCveMatricula(rutas.getCveMatricula());			
+			ruta.setActivo(true);
+			ruta.setMatricula(rutas.getCveMatricula());
 			ruta.setFechaAlta(LocalDate.now());
-			ruta.setIndiceSistema(true);
+			ruta.setSistema(true);
 			ArrayList<String> horas= Utility.getHorarioStringByTurno(rutas.getTurno());
 			if(horas.size()==2) {
 				ruta.setTimHorarioInicial(horas.get(0));
@@ -351,7 +351,7 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 			
 			ControlRutas controlRutas=new ControlRutas();
 			controlRutas.setActivo(true);
-			controlRutas.setCveMatricula(ruta.getCveMatricula());
+			controlRutas.setCveMatricula(ruta.getMatricula());
 			controlRutas.setFechaAlta(LocalDate.now());
 			
 			 if(solicitud.isPresent()) 	controlRutas.setIdSolcitud(solicitud.get());
@@ -477,9 +477,9 @@ Respuesta<Integer> response = new Respuesta<>();
 			Rutas ruta=  contRuta.getRuta();
 			
 			ruta.setActivo(true);
-			ruta.setCveMatricula(rutaDTO.getCveMatricula());			
+			ruta.setMatricula(rutaDTO.getCveMatricula());
 			ruta.setFechaActualizacion(LocalDate.now());
-			ruta.setIndiceSistema(true);
+			ruta.setSistema(true);
 			ArrayList<String> horas= Utility.getHorarioStringByTurno(rutaDTO.getTurno());
 			if(horas.size()==2) {
 				ruta.setTimHorarioInicial(horas.get(0));
@@ -630,7 +630,7 @@ Respuesta<Integer> response = new Respuesta<>();
 			Rutas ruta = rutasRepository.findById(rutas.getRuta().getIdRuta()).orElseThrow(Exception::new);
 			ruta.setFechaBaja(LocalDate.now());
 			ruta.setActivo(false);	
-			ruta.setCveMatricula(datosUsuarios.getMatricula());
+			ruta.setMatricula(datosUsuarios.getMatricula());
 			
 			
 			rutasRepository.save(ruta);
