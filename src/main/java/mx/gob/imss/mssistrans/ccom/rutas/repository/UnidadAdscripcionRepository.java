@@ -62,7 +62,4 @@ public interface UnidadAdscripcionRepository extends JpaRepository<UnidadAdscrip
 	 */
 	@Query( value="SELECT u FROM UnidadAdscripcion u  WHERE  u.nomUnidadAdscripcion=:nombre")
 	Optional<UnidadAdscripcion> findByNombre(@Param("nombre") String nombre);
-
-   
-
 }

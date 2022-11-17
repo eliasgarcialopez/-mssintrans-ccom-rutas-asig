@@ -670,35 +670,40 @@ public Respuesta<ControlRutasTotalesResponse> consultarTotalesVehiculos() {
 	   Optional<ModuloAmbulancia> opModulo=moAmbulanciaRepository.findByIdOOADAndActivoEquals(idOOAD, true);
 		if(opModulo.isPresent()) {
 			ModuloAmbulancia moduloAmbulancia=opModulo.get();
-			Optional<UnidadAdscripcion> unidad=unidadAdscripcionRepository.findByNombre(moduloAmbulancia.getDesNombre());
-			Integer idUnidad=unidad.get().getIdUnidadAdscripcion();
-			Integer totalVA = vehiculoRepository.countTotalVehiculoAsignadosByUnidad(idUnidad);
-
-			Optional<ZonaAtencion> zonaOp=   zonaAtencionRepository.findByIdModuloAndActivoEquals(moduloAmbulancia.getIdModulo(),true);
-			if(zonaOp.isPresent()) {
-				rutasResponse.setTotalVehiculosAsignados(totalVA!=null?totalVA:0);
-					
-				Integer totalVD = vehiculoRepository.countTotalVehiculoDisponiblesByUnidad(idUnidad);
-			
-				rutasResponse.setTotalVehiculosDisponibles(totalVD!=null?totalVD:0);
-					
-				Integer totalMan = vehiculoRepository.countTotalVehiculoMantenimientoByUnidad(idUnidad);
-		
-				rutasResponse.setTotalVehiculosMantenimiento(totalMan!=null?totalMan:0);
+			if (null != moduloAmbulancia && null != moduloAmbulancia.getUnidadAdscripcion() &&  null != moduloAmbulancia.getUnidadAdscripcion().getIdUnidadAdscripcion() && moduloAmbulancia.getUnidadAdscripcion().getIdUnidadAdscripcion() != 0 ) {
 				
-				Integer totalSin = vehiculoRepository.countTotalVehiculoSiniestradosByUnidad(idUnidad);
-			
-				rutasResponse.setTotalVehiculosSiniestrados(totalSin!=null?totalSin:0);
-				   
-	        	response.setDatos(rutasResponse);
-		            response.setError(false);
-		            response.setMensaje("Exito");
-		            response.setCodigo(HttpStatus.OK.value());
+				log.info("moduloAmbulancia.getUnidadAdscripcion().getIdUnidadAdscripcion(): " + moduloAmbulancia.getUnidadAdscripcion().getIdUnidadAdscripcion());
+				Integer totalVA = vehiculoRepository.countTotalVehiculoAsignadosByUnidad(moduloAmbulancia.getUnidadAdscripcion().getIdUnidadAdscripcion());
+	
+				Optional<ZonaAtencion> zonaOp=   zonaAtencionRepository.findByIdModuloAndActivoEquals(moduloAmbulancia.getIdModulo(),true);
+				if(zonaOp.isPresent()) {
+					rutasResponse.setTotalVehiculosAsignados(totalVA!=null?totalVA:0);
+						
+					Integer totalVD = vehiculoRepository.countTotalVehiculoDisponiblesByUnidad(moduloAmbulancia.getUnidadAdscripcion().getIdUnidadAdscripcion());
 				
+					rutasResponse.setTotalVehiculosDisponibles(totalVD!=null?totalVD:0);
+						
+					Integer totalMan = vehiculoRepository.countTotalVehiculoMantenimientoByUnidad(moduloAmbulancia.getUnidadAdscripcion().getIdUnidadAdscripcion());
+			
+					rutasResponse.setTotalVehiculosMantenimiento(totalMan!=null?totalMan:0);
+					
+					Integer totalSin = vehiculoRepository.countTotalVehiculoSiniestradosByUnidad(moduloAmbulancia.getUnidadAdscripcion().getIdUnidadAdscripcion());
+				
+					rutasResponse.setTotalVehiculosSiniestrados(totalSin!=null?totalSin:0);
+					   
+		        	response.setDatos(rutasResponse);
+			            response.setError(false);
+			            response.setMensaje("Exito");
+			            response.setCodigo(HttpStatus.OK.value());
+					
+				}
+			} else {
+	        	 response.setDatos(rutasResponse);
+	 	         response.setError(false);
+	 	         response.setMensaje("Exito");
+	 	         response.setCodigo(HttpStatus.OK.value()); 
 			}
-			
-		}
-	    else {
+		} else {
         	 response.setDatos(rutasResponse);
  	            response.setError(false);
  	            response.setMensaje("Exito");

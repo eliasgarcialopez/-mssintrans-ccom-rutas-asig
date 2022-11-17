@@ -3,6 +3,7 @@ package mx.gob.imss.mssistrans.ccom.rutas.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -12,7 +13,10 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class ModuloAmbulancia extends BaseEntity implements Serializable {
-    @Id
+	
+	private static final long serialVersionUID = 557392331621149264L;
+
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_MODULO_AMBULANCIA")
     private Integer idModulo;
@@ -68,4 +72,8 @@ public class ModuloAmbulancia extends BaseEntity implements Serializable {
     @Basic
     @Column(name = "IND_SISTEMA")
     private boolean indiceSistema;
+    
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "ID_UNIDAD_ADSCRIPCION", nullable = false)
+    private UnidadAdscripcion unidadAdscripcion;
 }
