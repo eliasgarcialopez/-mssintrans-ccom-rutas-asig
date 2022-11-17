@@ -54,7 +54,7 @@ public class ChoferesEntity implements Serializable {
     @Column(name = "DES_CATEGORIA", unique = false, nullable = true)
     private String categoria;
 
-    @Column(name = "ESTATUS_CHOFER", unique = false, nullable = true)
+    @Column(name = "REF_ESTATUS_CHOFER", unique = false, nullable = true)
     private String estatusChofer;
 
     @Column(name = "DES_MOTIVO", unique = false, nullable = true)

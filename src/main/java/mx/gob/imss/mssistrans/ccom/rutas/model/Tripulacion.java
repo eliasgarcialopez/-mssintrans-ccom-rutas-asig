@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Table(name = "SINTRANST_TRIPULACION")
 @Getter
 @Setter
-public class Tripulacion extends BaseEntity implements Serializable {
+public class Tripulacion implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_TRIPULACION")
@@ -54,5 +54,5 @@ public class Tripulacion extends BaseEntity implements Serializable {
 	private boolean activo;
 	@Basic
 	@Column(name = "IND_SISTEMA")
-	private boolean indiceSistema;
+	private boolean sistema;
 }
