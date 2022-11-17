@@ -18,11 +18,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import mx.gob.imss.mssistrans.ccom.rutas.service.SolicitudTrasladoService;
 
 @AllArgsConstructor
-@Slf4j
 @RestController
 @RequestMapping("/solicitudes")
 @CrossOrigin(methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE })

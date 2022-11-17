@@ -35,10 +35,6 @@ public class UnidadAdscripcion extends BaseEntity implements Serializable {
     private String desTipoUnidad;
 
     @Basic
-    @Column(name = "IND_UNIDAD_PERNOCTA")
-    private boolean pernocta;
-
-    @Basic
     @Column(name = "NUM_UN_INF")
     private String numUnInf;
 

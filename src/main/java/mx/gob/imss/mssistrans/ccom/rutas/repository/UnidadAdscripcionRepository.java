@@ -21,18 +21,6 @@ public interface UnidadAdscripcionRepository extends JpaRepository<UnidadAdscrip
     Optional<UnidadAdscripcion> findByIdUnidadAdscripcionAndActivoEquals(Integer idUnidadAdscripcion, boolean activo);
 
     /**
-     * Recupera las UnidadAdscripcion activa, que sean pernocta y pertenezcan a la OOAD.
-     *
-     * @param idOoad
-     * @return
-     */
-    @Query(value = "SELECT u " +
-            "FROM UnidadAdscripcion u WHERE u.activo = true " +
-            "AND u.pernocta = true " +
-            "AND u.ooad.idOoad = ?1")
-    List<UnidadAdscripcion> findAllUnidadAdscripcionPernoctaActivo(Integer idOoad);
-
-    /**
      * Recupera las UnidadAdscripcion activa y pertenezcan a la OOAD.
      *
      * @param idOoad

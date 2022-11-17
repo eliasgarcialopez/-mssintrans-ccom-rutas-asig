@@ -14,7 +14,10 @@ import java.time.LocalTime;
 @Getter
 @Setter
 public class SolicitudTraslado extends BaseEntity implements Serializable {
-    @Id
+	
+	private static final long serialVersionUID = 7879115013008362252L;
+
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_SOLICITUD")
     private Integer idSolicitud;
