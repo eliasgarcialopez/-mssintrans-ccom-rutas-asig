@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Getter
 @MappedSuperclass
 public class BaseEntity {
-    @Column(name = "CVE_MATRICULA", insertable = false, updatable = false)
+    @Column(name = "CVE_MATRICULA")
     private String matricula;
     @Column(name = "FEC_ALTA")
     private LocalDate fechaAlta;
@@ -19,8 +19,8 @@ public class BaseEntity {
     private LocalDate fechaActualizacion;
     @Column(name = "FEC_BAJA")
     private LocalDate fechaBaja;
-    @Column(name = "IND_ACTIVO", insertable = false, updatable = false)
+    @Column(name = "IND_ACTIVO")
     private Boolean activo;
-    @Column(name = "IND_ACTIVO", insertable = false, updatable = false)
+    @Column(name = "IND_ACTIVO")
     private Boolean sistema;
 }
