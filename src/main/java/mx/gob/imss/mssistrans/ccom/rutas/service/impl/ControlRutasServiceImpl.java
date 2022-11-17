@@ -286,7 +286,7 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 			//Creando la ruta
 			
 			Rutas ruta=new Rutas();
-			ruta.setActivo(true);
+			//ruta.setActivo(true);
 			ruta.setCveMatricula(rutas.getCveMatricula());			
 			ruta.setFechaAlta(LocalDate.now());
 			ruta.setIndiceSistema(true);
