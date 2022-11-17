@@ -17,12 +17,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf();
-        http.authorizeRequests().anyRequest().authenticated() //cualquier otra peticion requiere autenticacion
-                .and()
-                // Las demás peticiones pasarán por este filtro para validar el token
-                .addFilterBefore(new JWTAuthorizationFilter(secretkey),
-                        UsernamePasswordAuthenticationFilter.class);
+        http.csrf().disable().authorizeRequests().anyRequest().authenticated() //cualquier otra peticion requiere autenticacion
+            .and()
+            // Las demás peticiones pasarán por este filtro para validar el token
+            .addFilterBefore(new JWTAuthorizationFilter(secretkey),
+                    UsernamePasswordAuthenticationFilter.class);
     }
  
 }
