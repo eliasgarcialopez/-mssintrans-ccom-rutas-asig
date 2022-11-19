@@ -18,11 +18,11 @@ public class Viaticos {
     @OneToOne
     @JoinColumn( name = "ID_CONTROL_RUTA")
     private ControlRutas controlRutas;
-    @Column(name = "VIATICOS_CHOFER")
+    @Column(name = "CAN_VIATICOS_CHOFER")
     private Double viaticosChofer;
-    @Column(name = "VIATICOS_CAMILLERO_1")
+    @Column(name = "CAN_VIATICOS_CAMILLERO_1")
     private Double viaticosCamillero1;
-    @Column(name = "VIATICOS_CAMILLERO_2")
+    @Column(name = "CAN_VIATICOS_CAMILLERO_2")
     private Double viaticosCamillero2;
     @Column(name = "NUM_VIATICOS_CASETA")
     private Double viaticosCaseta;
