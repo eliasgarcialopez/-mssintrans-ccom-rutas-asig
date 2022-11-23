@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import mx.gob.imss.mssistrans.ccom.rutas.model.ModuloAmbulancia;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -26,5 +27,11 @@ public interface ModuloAmbulanciaRepository extends JpaRepository<ModuloAmbulanc
      * @return
      */
     Optional<ModuloAmbulancia> findByIdModuloAndActivoEquals(Integer idModulo, boolean activo);
+
+    @Query(value = "select u from ModuloAmbulancia u where u.unidadAdscripcion.idUnidadAdscripcion=:idUnidad AND u.activo=true")
+    ModuloAmbulancia findByIdUnidad(Integer idUnidad);
+
+    @Query(value = "select u from ModuloAmbulancia u where u.idModulo=:idModulo AND u.activo=true")
+    Optional<ModuloAmbulancia> findByIdModulosActivo(Integer idModulo);
 
 }

@@ -44,6 +44,12 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
     @Autowired
     private AsignacionesServiceImpl asignaciones;
 
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private ModuloAmbulanciaRepository moduloAmbulanciaRepository;
+
     public ControlRutasForaneasServiceImpl(
             ControlRutasForaneasRepository controlRutasForaneasRepository,
             UnidadAdscripcionRepository unidadAdscripcionRepository,
@@ -150,9 +156,17 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
             Gson gson = new Gson();
             DatosUsuario datosUsuarios = gson.fromJson(user, DatosUsuario.class);
             Integer idOOAD = datosUsuarios.getIDOOAD();
-
-            Optional<ModuloAmbulancia> opModulo = moAmbulanciaRepository.findByIdOOADAndActivoEquals(idOOAD, true);
-
+            Usuario usrEntity=usuarioRepository.getUsuario(datosUsuarios.matricula);
+            ModuloAmbulancia modAmb=null;
+            if(usrEntity!=null && usrEntity.getIdUsuario()!=null){
+                modAmb=moduloAmbulanciaRepository.findByIdUnidad(usrEntity.getIdUnidad());
+            }
+            Optional<ModuloAmbulancia> opModulo=null;
+            if(modAmb!=null && modAmb.getIdModulo()!=null){
+                opModulo = moAmbulanciaRepository.findByIdModulosActivo(modAmb.getIdModulo());
+            } else {
+                opModulo = moAmbulanciaRepository.findByIdOOADAndActivoEquals(idOOAD, true);
+            }
 
             Optional<ControlRutas> result = controlRutasForaneasRepository.findByIdControlRuta(idControlRuta);
             ControlRutasForaneasResponse rutasResponse = new ControlRutasForaneasResponse();

@@ -68,6 +68,12 @@ public class ControlRutasServiceImpl implements ControlRutasService {
 	@Autowired
 	private BitacoraServiciosAsigRepository bitacoraRepositoryAsig;
 
+	@Autowired
+	private UsuarioRepository usuarioRepository;
+
+	@Autowired
+	private ModuloAmbulanciaRepository moduloAmbulanciaRepository;
+
 	@Override
 	public Respuesta<Page<ControlRutasTablaResponse>> consultarRutas(Pageable pageable) {
 		Respuesta<Page<ControlRutasTablaResponse>> response = new Respuesta<>();
@@ -667,7 +673,19 @@ public Respuesta<ControlRutasTotalesResponse> consultarTotalesVehiculos() {
 		DatosUsuario datosUsuarios = gson.fromJson(user, DatosUsuario.class);
 	    Integer idOOAD= datosUsuarios.getIDOOAD();
 	    ControlRutasTotalesResponse rutasResponse=new ControlRutasTotalesResponse();
-	   Optional<ModuloAmbulancia> opModulo=moAmbulanciaRepository.findByIdOOADAndActivoEquals(idOOAD, true);
+		Usuario usrEntity=usuarioRepository.getUsuario(datosUsuarios.matricula);
+		ModuloAmbulancia modAmb=null;
+		if(usrEntity!=null && usrEntity.getIdUsuario()!=null){
+			modAmb=moduloAmbulanciaRepository.findByIdUnidad(usrEntity.getIdUnidad());
+		}
+		Optional<ModuloAmbulancia> opModulo=null;
+		if(modAmb!=null && modAmb.getIdModulo()!=null){
+			opModulo = moAmbulanciaRepository.findByIdModulosActivo(modAmb.getIdModulo());
+		} else {
+			opModulo = moAmbulanciaRepository.findByIdOOADAndActivoEquals(idOOAD, true);
+		}
+
+		//Optional<ModuloAmbulancia> opModulo=moAmbulanciaRepository.findByIdOOADAndActivoEquals(idOOAD, true);
 		if(opModulo.isPresent()) {
 			ModuloAmbulancia moduloAmbulancia=opModulo.get();
 			if (null != moduloAmbulancia && null != moduloAmbulancia.getUnidadAdscripcion() &&  null != moduloAmbulancia.getUnidadAdscripcion().getIdUnidadAdscripcion() && moduloAmbulancia.getUnidadAdscripcion().getIdUnidadAdscripcion() != 0 ) {
