@@ -1,6 +1,7 @@
 package mx.gob.imss.mssistrans.ccom.rutas.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +14,7 @@ import java.time.LocalTime;
 @Table(name = "SINTRANSC_UNIDADES_ADSCRIPCION")
 @Getter
 @Setter
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class UnidadAdscripcion extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
