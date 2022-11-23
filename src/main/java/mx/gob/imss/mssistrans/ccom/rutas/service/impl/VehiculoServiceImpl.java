@@ -9,8 +9,10 @@ import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosUsuario;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.Respuesta;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.VehiculoResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.model.ModuloAmbulancia;
+import mx.gob.imss.mssistrans.ccom.rutas.model.Usuario;
 import mx.gob.imss.mssistrans.ccom.rutas.model.Vehiculos;
 import mx.gob.imss.mssistrans.ccom.rutas.model.ZonaAtencion;
+import mx.gob.imss.mssistrans.ccom.rutas.repository.UsuarioRepository;
 import mx.gob.imss.mssistrans.ccom.rutas.util.VehiculoMapper;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,9 @@ private ModuloAmbulanciaRepository moAmbulanciaRepository;
 @Autowired
 private ZonaAtencionRepository zonaAtencionRepository;
 
+	@Autowired
+	private UsuarioRepository usuarioRepository;
+
 	@Override
 	public Respuesta<List<VehiculoResponse>> findVehiculoAsignables() {
 		 Respuesta<List<VehiculoResponse>> response = new Respuesta<>();
@@ -58,8 +63,17 @@ private ZonaAtencionRepository zonaAtencionRepository;
 				DatosUsuario datosUsuarios = gson.fromJson(usuario, DatosUsuario.class);
 				
 	        	 log.info("consultando los vehiculos disponibles, {}", datosUsuarios.getIDOOAD());
-	        	 
-	        	Optional<ModuloAmbulancia> modOp= moAmbulanciaRepository.findByIdOOADAndActivoEquals(datosUsuarios.getIDOOAD(), true);
+				Usuario usrEntity=usuarioRepository.getUsuario(datosUsuarios.matricula);
+				ModuloAmbulancia modAmb=null;
+				if(usrEntity!=null && usrEntity.getIdUsuario()!=null){
+					modAmb=moAmbulanciaRepository.findByIdUnidad(usrEntity.getIdUnidad());
+				}
+				Optional<ModuloAmbulancia> modOp=null;
+				if(modAmb!=null && modAmb.getIdModulo()!=null){
+					modOp = moAmbulanciaRepository.findByIdModulosActivo(modAmb.getIdModulo());
+				} else {
+					modOp = moAmbulanciaRepository.findByIdOOADAndActivoEquals(datosUsuarios.getIDOOAD(), true);
+				}
 	        	if(modOp.isPresent()) {
 	        	//ZonaAtencion zona=	modOp.get().getZona();
 	        	

@@ -6,6 +6,8 @@ import mx.gob.imss.mssistrans.ccom.rutas.dto.DatosUsuario;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.ModuloResponse;
 import mx.gob.imss.mssistrans.ccom.rutas.dto.Respuesta;
 import mx.gob.imss.mssistrans.ccom.rutas.model.ModuloAmbulancia;
+import mx.gob.imss.mssistrans.ccom.rutas.model.Usuario;
+import mx.gob.imss.mssistrans.ccom.rutas.repository.UsuarioRepository;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,6 +27,9 @@ import mx.gob.imss.mssistrans.ccom.rutas.service.ModuloService;
 public class ModuloServiceImpl implements ModuloService {
 	@Autowired
 	private ModuloAmbulanciaRepository moAmbulanciaRepository;
+
+	@Autowired
+	private UsuarioRepository usuarioRepository;
 
 	@Override
 	public Respuesta<ModuloResponse> busquedaModulo() {
@@ -47,7 +52,17 @@ public class ModuloServiceImpl implements ModuloService {
 	 			DatosUsuario datosUsuarios = gson.fromJson(usuario, DatosUsuario.class);
 	 			
 	 			 log.info("consultando modulo  de ambulancia , {}", datosUsuarios.getIDOOAD());
-	 			 Optional<ModuloAmbulancia>modOpt= moAmbulanciaRepository.findByIdOOADAndActivoEquals(datosUsuarios.getIDOOAD(), true);
+				Usuario usrEntity=usuarioRepository.getUsuario(datosUsuarios.matricula);
+				ModuloAmbulancia modAmb=null;
+				if(usrEntity!=null && usrEntity.getIdUsuario()!=null){
+					modAmb=moAmbulanciaRepository.findByIdUnidad(usrEntity.getIdUnidad());
+				}
+				Optional<ModuloAmbulancia> modOpt=null;
+				if(modAmb!=null && modAmb.getIdModulo()!=null){
+					modOpt = moAmbulanciaRepository.findByIdModulosActivo(modAmb.getIdModulo());
+				} else {
+					modOpt = moAmbulanciaRepository.findByIdOOADAndActivoEquals(datosUsuarios.getIDOOAD(), true);
+				}
 	 	   ModuloResponse mod=new ModuloResponse(); 
 	 	   if(modOpt.isPresent()) {
 	        	mod.setDesNombre(modOpt.get().getDesNombre());
