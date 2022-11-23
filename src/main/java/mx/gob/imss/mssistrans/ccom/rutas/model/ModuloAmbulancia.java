@@ -1,6 +1,7 @@
 package mx.gob.imss.mssistrans.ccom.rutas.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 @Table(name = "SINTRANST_MODULO_AMBULANCIA")
 @Getter
 @Setter
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class ModuloAmbulancia extends BaseEntity implements Serializable {
 	
 	private static final long serialVersionUID = 557392331621149264L;
