@@ -103,7 +103,7 @@ public class AsigRutasServiceImpl implements AsigRutasService {
         Response<T> respuesta = new Response<>();
         List<RutasAsigEntity> consultaGeneral = null;
         try {
-            if (rol.equals("Administrador") || rol.equals("Normativo") || idOoad == 9 || idOoad == 39) {
+            if (rol.equals("Administrador") || rol.equals("Normativo")) {
                 consultaGeneral = rutasRepository.getRutas();
             } else {
                 consultaGeneral = rutasRepository.getRutasByOoad(idOoad);

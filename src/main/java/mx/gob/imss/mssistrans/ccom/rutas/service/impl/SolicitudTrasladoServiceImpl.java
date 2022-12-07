@@ -54,7 +54,7 @@ public class SolicitudTrasladoServiceImpl implements SolicitudTrasladoService {
 				List<SolicitudTraslado> result = new ArrayList<SolicitudTraslado>();
 				
 				//if (ruta == 0) {
-					if (datosUsuario.rol.equals("Administrador") || datosUsuario.rol.equals("Normativo") || datosUsuario.IDOOAD == 9 || datosUsuario.IDOOAD == 39) {
+					if (datosUsuario.rol.equals("Administrador") || datosUsuario.rol.equals("Normativo")) {
 						result = solicitudTrasladoRepository.findSolicitudTrasladoAceptadasAdminLocal();
 					} else {
 						result = solicitudTrasladoRepository.findSolicitudTrasladoAceptadasLocal(datosUsuario.IDOOAD);
