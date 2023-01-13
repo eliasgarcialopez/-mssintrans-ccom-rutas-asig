@@ -24,6 +24,8 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,7 +51,13 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
 
     @Autowired
     private ModuloAmbulanciaRepository moduloAmbulanciaRepository;
+    
+    @Autowired
+	private BitacoraServiciosRepository bitacoraRepository;
 
+    @Autowired
+	private BitacoraServiciosAsigRepository bitacoraRepositoryAsig;
+    
     public ControlRutasForaneasServiceImpl(
             ControlRutasForaneasRepository controlRutasForaneasRepository,
             UnidadAdscripcionRepository unidadAdscripcionRepository,
@@ -441,6 +449,21 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
             RespuestaAsig<AsignacionesEntity> aa = asignaciones.registraAsignacion(asignacion, datosUsuarios);
             AsignacionesEntity asignacionEntity = aa.getDatos();
 
+            
+            /* Crea la Bitacora con el id de asignacion */
+			 String numBitacora = getSigBitacora(veOp.get().getUnidad().getOoad().getIdOoad());  // validar
+			 BitacoraServiciosAsignacionEntity bitacoraServiciosEntity = new BitacoraServiciosAsignacionEntity();
+			    bitacoraServiciosEntity.setNumBitacora(numBitacora);
+			    bitacoraServiciosEntity.setFecBitacora(new Date());
+			    bitacoraServiciosEntity.setIdOoad(veOp.get().getUnidad().getOoad().getIdOoad());  // validar
+			    bitacoraServiciosEntity.setAsignacion(asignacionEntity);  // setear dato
+			    bitacoraServiciosEntity.setMatricula(datosUsuarios.getMatricula());
+			    bitacoraServiciosEntity.setFechaAlta(new Date());
+			    bitacoraServiciosEntity.setIndActivo(true);
+			    bitacoraServiciosEntity.setIndSistema(true);
+			    
+			    bitacoraRepositoryAsig.save(bitacoraServiciosEntity);
+            
             response.setCodigo(HttpStatus.OK.value());
             response.setMensaje("Exito");
             response.setError(false);
@@ -661,5 +684,16 @@ public class ControlRutasForaneasServiceImpl implements ControlRutasForaneasServ
             response.setError(true);
         }
         return response;
+    }
+    
+    private String getSigBitacora(Integer idOoad) {
+        String mes = String.format("%02d", Calendar.getInstance().get(Calendar.MONTH) + 1);
+        String ooad = String.format("%02d", idOoad);
+        String ultimoFolio = bitacoraRepository.findUltimoFolioByMesOoad(idOoad, mes);
+        if (ultimoFolio == null) {
+            ultimoFolio = "0000";
+        }
+
+        return mes + '-' + ooad + '-' + String.format("%04d", Integer.parseInt(ultimoFolio) + 1);
     }
 }
