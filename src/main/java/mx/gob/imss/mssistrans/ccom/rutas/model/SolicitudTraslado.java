@@ -153,7 +153,7 @@ public class SolicitudTraslado extends BaseEntity implements Serializable {
 
 
     @Basic
-    @Column(name = "TEL_FAMILIAR")
+    @Column(name = "NUM_TEL_FAMILIAR")
     private String telFamiliar;
 
 
